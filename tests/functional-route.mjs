@@ -15,6 +15,11 @@
  * ATLAS_BASE_URL. Ajustes opcionales de entorno, sin rutas en el código:
  * - ATLAS_CHROMIUM_PATH: ejecutable de Chromium alternativo.
  * - ATLAS_PROXY: servidor proxy para el navegador (p. ej. http://127.0.0.1:8080).
+ * - ATLAS_FORCE_SWIFTSHADER=1: fuerza el render WebGL por software
+ *   (SwiftShader). Solo para entornos sin GPU donde el valor por defecto
+ *   no funcione; en un equipo normal NO debe usarse: con esos argumentos
+ *   Chromium puede perder el contexto WebGL (CONTEXT_LOST_WEBGL) y la
+ *   capa Three.js no llega a renderizar.
  */
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
@@ -56,7 +61,15 @@ if (!BASE) BASE = await startServer();
 if (!BASE.endsWith('/')) BASE += '/';
 
 // --- Navegador administrado por Playwright ---
-const launchOptions = { args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox'] };
+// Por defecto, la GPU que ofrezca el sistema (en headless sin GPU,
+// Chromium usa su ruta por software estándar). SwiftShader forzado solo
+// si se pide expresamente: en Windows rompe el contexto WebGL.
+const launchArgs = [];
+if (process.platform === 'linux') launchArgs.push('--no-sandbox');
+if (process.env.ATLAS_FORCE_SWIFTSHADER === '1') {
+  launchArgs.push('--use-gl=swiftshader', '--enable-unsafe-swiftshader');
+}
+const launchOptions = { args: launchArgs };
 if (process.env.ATLAS_CHROMIUM_PATH) launchOptions.executablePath = process.env.ATLAS_CHROMIUM_PATH;
 if (process.env.ATLAS_PROXY) launchOptions.proxy = { server: process.env.ATLAS_PROXY };
 const browser = await chromium.launch(launchOptions);
@@ -82,7 +95,7 @@ try {
 
   await page.goto(BASE, { waitUntil: 'load' });
   await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
-  await page.waitForTimeout(6000); // primer render del globo (SwiftShader es lento)
+  await page.waitForTimeout(6000); // primer render del globo (sin GPU es lento)
   check('Mundo: contador total', true, '1.382 iniciativas');
   const worldCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   check('Mundo: 70 países y 942 con ubicación', worldCounters.includes('70') && worldCounters.includes('942'), worldCounters.replace(/\n/g, ' '));

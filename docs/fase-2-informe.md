@@ -157,6 +157,17 @@ verde): **21/21 PASS**, con capturas de escritorio y móvil regeneradas
 bajo MapLibre 6. El chunk cartográfico (1,61 MB) se mantiene como
 limitación conocida hasta la Fase 5, como aceptó la revisión.
 
+**Segunda corrección (misma revisión, 2026-11-11).** La repetición del
+comando oficial en Windows falló solo en las dos comprobaciones del
+marcador Three.js: el recorrido forzaba SwiftShader en todos los
+sistemas (`--use-gl=swiftshader --enable-unsafe-swiftshader`) y con esos
+argumentos Chromium pierde el contexto WebGL (CONTEXT_LOST_WEBGL). Ahora
+SwiftShader es opt-in (`ATLAS_FORCE_SWIFTSHADER=1`, solo para entornos
+sin GPU que lo necesiten); por defecto se usa la GPU del sistema y
+`--no-sandbox` solo en Linux. Repetido desde una copia limpia, sin
+ninguna variable especial: **21/21 PASS**, y las capturas entregadas son
+las generadas por esa corrida con la configuración por defecto.
+
 ## 6. Cómo ejecutarlo
 
 Ver `README.md`. En síntesis: `npm install` → `npm run dev` (los JSON de
