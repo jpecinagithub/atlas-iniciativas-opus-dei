@@ -1,0 +1,1 @@
+{"_comment":"Correcciones manuales de ubicación por ID del Excel. Una reimportación nunca las sobrescribe. Formato: { \"ES-001\": { \"lat\": 0.0, \"lng\": 0.0, \"precision\": \"locality\", \"note\": \"motivo\" } }","corrections":{}}

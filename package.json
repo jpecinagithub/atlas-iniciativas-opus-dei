@@ -1,0 +1,1 @@
+{"name":"atlas-iniciativas-opus-dei","private":true,"scripts":{"build":"npm run build --workspace=@atlas/web","data":"tools/data/.venv/bin/python tools/data/build_catalog.py","dev":"npm run dev --workspace=@atlas/web"},"version":"0.2.0","workspaces":["apps/*","packages/*"]}

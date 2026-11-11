@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: #0a1120;
+  color: #f1f5f9;
+  font-family: ui-sans-system, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Foco visible para navegación por teclado */
+:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* Controles de MapLibre en oscuro */
+.maplibregl-ctrl-group {
+  background: #16233d !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45) !important;
+}
+.maplibregl-ctrl-group button {
+  width: 38px !important;
+  height: 38px !important;
+}
+.maplibregl-ctrl-group button span {
+  filter: invert(0.85);
+}
+.maplibregl-ctrl-attrib {
+  background: rgba(10, 17, 32, 0.75) !important;
+  color: #7d8aa5 !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: #9db8e8 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
