@@ -136,7 +136,7 @@ export default function App() {
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a1120] p-6" role="alert">
               <div className="max-w-md text-center">
                 <p className="font-medium text-slate-100">No se ha podido cargar el catálogo</p>
-                <p className="mt-1 text-sm text-slate-400">{error}. Comprueba que <code>data/catalog.json</code> se ha generado con el pipeline de datos.</p>
+                <p className="mt-1 text-sm text-slate-400">{error}. Comprueba que la API del Atlas está en marcha y la base de datos importada (<code>npm run api</code> y <code>npm run import</code>).</p>
                 <button type="button" onClick={() => void load()} className="mt-4 h-11 rounded-lg bg-slate-100 px-4 text-sm font-medium text-slate-900">Reintentar</button>
               </div>
             </div>

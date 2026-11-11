@@ -19,14 +19,16 @@ export interface Initiative {
   entity: string | null;
   entityRaw: string | null;
   linkageType: string | null;
-  evidence: string | null;
+  /** Solo en el detalle de la API (GET /api/initiatives/:id); el catálogo ligero no lo trae. */
+  evidence?: string | null;
   verificationState: string;
   activityStateRaw: string | null;
   activityState: string;
   consultedAt: string | null;
   source1: string | null;
   source2: string | null;
-  doubleCheck: string | null;
+  /** Solo en el detalle de la API (GET /api/initiatives/:id); el catálogo ligero no lo trae. */
+  doubleCheck?: string | null;
   email: string | null;
   searchText: string;
   lat: number | null;

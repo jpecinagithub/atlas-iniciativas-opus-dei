@@ -60,6 +60,36 @@ async function startServer() {
 if (!BASE) BASE = await startServer();
 if (!BASE.endsWith('/')) BASE += '/';
 
+// --- API de la Fase 3: la web lee el catálogo de la API. Si no responde,
+// se arranca la compilada (apps/api/dist) y, si la base está vacía, se
+// importa (requiere PostgreSQL accesible según DATABASE_URL o el valor
+// por defecto de desarrollo).
+const API = (process.env.ATLAS_API_URL || 'http://127.0.0.1:3001').replace(/\/$/, '');
+let apiServer = null;
+async function apiHealth() {
+  try {
+    const res = await fetch(`${API}/api/health`);
+    return res.ok ? await res.json() : null;
+  } catch { return null; }
+}
+if (!(await apiHealth())) {
+  apiServer = spawn(process.execPath, [join(ROOT, 'apps', 'api', 'dist', 'server.js')], {
+    stdio: 'ignore', env: { ...process.env, PORT: '3001' },
+  });
+  const deadline = Date.now() + 60000;
+  while (Date.now() < deadline && !(await apiHealth())) {
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  if (!(await apiHealth())) throw new Error('La API no respondió en 60 s (¿PostgreSQL en marcha?)');
+}
+if ((await apiHealth())?.counts?.initiatives === 0) {
+  const { spawnSync } = await import('node:child_process');
+  const imp = spawnSync(process.execPath, [join(ROOT, 'apps', 'api', 'dist', 'import.js')], {
+    stdio: 'inherit', env: { ...process.env },
+  });
+  if (imp.status !== 0) throw new Error('La importación inicial de la base de datos falló');
+}
+
 // --- Navegador administrado por Playwright ---
 // Por defecto, la GPU que ofrezca el sistema (en headless sin GPU,
 // Chromium usa su ruta por software estándar). SwiftShader forzado solo
@@ -222,6 +252,7 @@ try {
 } finally {
   await browser.close();
   if (server) server.kill('SIGTERM');
+  if (apiServer) apiServer.kill('SIGTERM');
 }
 
 const failed = results.filter((r) => !r.ok);

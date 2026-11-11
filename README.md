@@ -5,34 +5,47 @@ al Opus Dei en el mundo, a partir del directorio verificado
 `Directorio_Opus_Dei_MUNDIAL_v14.xlsx` (1.382 registros, 70 países o
 territorios, 14 categorías).
 
-Estado: **Fase 2** (primera experiencia visual). El catálogo es JSON
-generado del Excel; PostgreSQL y la API completa llegan en la Fase 3.
-Ver `docs/fase-1-informe.md` y `docs/fase-2-informe.md`.
+Estado: **Fase 3** (datos completos y backend). La web lee el catálogo de
+una API (Fastify) servida desde PostgreSQL, importado del Excel con un
+proceso transaccional e idempotente. Ver `docs/fase-1-informe.md`,
+`docs/fase-2-informe.md` y `docs/fase-3-informe.md`.
 
 ## Puesta en marcha
 
-Requisitos: Node 20+ y Python 3.11+.
+Requisitos: Node 20+, Python 3.11+ y un PostgreSQL 16 accesible
+(propio del proyecto; en local puedes levantarlo con
+`docker compose up -d db` o usar uno ya instalado, creando la base y el
+usuario `atlas` — ver `apps/api/.env.example`).
 
 ```bash
 # 1) Dependencias
 npm install
 
-# 2) Datos (solo si hay que regenerar el catálogo)
+# 2) Datos (solo si hay que regenerar los artefactos desde el Excel)
 python3 -m venv tools/data/.venv
 tools/data/.venv/bin/pip install -r tools/data/requirements.txt
 #    Descargas previas en data/cache/ (ver «Datos» más abajo)
-npm run data        # genera apps/web/public/data/catalog.json + countries.geojson
+npm run data        # catalog.json + countries.geojson + sources.json
 
-# 3) Desarrollo
-npm run dev         # http://127.0.0.1:5173
+# 3) Base de datos: migraciones + importación (idempotente)
+npm run import      # informa altas/cambios/ausentes; no borra nada
 
-# 4) Producción local
+# 4) API y web (dos terminales)
+npm run api         # http://127.0.0.1:3001 (GET /api/health, /api/catalog…)
+npm run dev         # http://127.0.0.1:5173 (Vite redirige /api a la API)
+
+# 5) Producción local
 npm run build       # tsc --noEmit + vite build → apps/web/dist
-cd apps/web && npx vite preview --port 4173
+cd apps/web && npx vite preview --port 4173   # también redirige /api
 ```
 
-La ruta base es configurable para un despliegue en subruta:
-`VITE_BASE_PATH=/subruta/ npm run build`.
+Variables: `DATABASE_URL` y `PORT` para la API (defectos de desarrollo
+en `apps/api/.env.example`). La ruta base es configurable para un
+despliegue en subruta: `VITE_BASE_PATH=/subruta/ npm run build`.
+
+Comprobaciones: `npm run test:api` (humo de la API, 13 comprobaciones) y
+`npm run test:functional` (recorrido web completo; arranca la API si no
+responde y la importación si la base está vacía).
 
 ## Datos
 
@@ -86,9 +99,11 @@ escribir en el buscador solo actualiza la entrada actual.
 
 ```
 apps/web/        React + TypeScript + Vite, MapLibre GL, Three.js, Zustand
+apps/api/        API Fastify + PostgreSQL (pg) e importador del Excel
+db/migrations/   Esquema SQL versionado
 tools/data/      Pipeline Python (openpyxl + httpx)
 data/source/     Excel v14 (original intacto)
-data/generated/  Informes de generación
+data/generated/  Informes de generación y catálogo de fuentes (sources.json)
 docs/            Informes de fase y capturas
-tests/           Recorrido funcional documentado
+tests/           Recorrido funcional documentado y humo de la API
 ```

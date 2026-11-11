@@ -48,8 +48,10 @@ export const useAtlas = create<AtlasState>((set, get) => ({
 
   load: async () => {
     try {
+      // Fase 3: el catálogo lo sirve la API desde PostgreSQL (antes era un
+      // JSON estático). La ruta es relativa a la base de la app.
       const base = import.meta.env.BASE_URL || '/';
-      const res = await fetch(`${base}data/catalog.json`);
+      const res = await fetch(`${base}api/catalog`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const catalog = (await res.json()) as Catalog;
       set({ catalog, status: 'ready' });

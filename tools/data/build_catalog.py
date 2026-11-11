@@ -428,6 +428,22 @@ def main() -> int:
     }
     catalog = {"meta": meta, "countries": countries, "initiatives": initiatives}
     (OUT / "catalog.json").write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    # Catálogo de fuentes (hoja Fuentes) para la importación de la Fase 3.
+    # La 8ª columna no tiene encabezado en origen: son notas; se conservan.
+    f_rows = real_rows(wb["Fuentes"])
+    sources = []
+    for r in f_rows[1:]:
+        if not r[0]:
+            continue
+        sources.append({
+            "id": raw(r[0]), "domain": raw(r[1]), "title": raw(r[2]), "url": raw(r[3]),
+            "country": raw(r[4]), "nature": raw(r[5]), "consultedAt": raw(r[6]),
+            "notes": raw(r[7]) if len(r) > 7 else None,
+        })
+    (GEN / "sources.json").write_text(json.dumps(
+        {"generatedAt": now, "total": len(sources), "sources": sources},
+        ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (OUT / "countries.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     report = {
