@@ -13,6 +13,7 @@ Documento único de pendientes. Actualizado: 2026-11-11 (Fase 2 CERTIFICADA; Fas
 - [x] Esquema PostgreSQL (migraciones 001-002), importador transaccional e idempotente con informe de altas/cambios/ausentes sin borrado.
 - [x] Catálogo de fuentes importado (2.626) y relaciones solo por URL exacta: 2.164 (3 ambiguas por URL duplicada, no creadas).
 - [x] API Fastify completa y web leyendo de la API; humo 13/13 y recorrido 21/21.
+- [x] Bloqueo de integridad corregido: `sourceSha256` en los artefactos y verificación previa en el importador (aborta sin crear corrida si no coincide); prueba reproducible `npm run test:integrity` 6/6.
 - [ ] Certificación de la Fase 3 por la revisión. La Fase 4 no comienza hasta entonces.
 
 ## Decisiones

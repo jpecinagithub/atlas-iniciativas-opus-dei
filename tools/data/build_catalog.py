@@ -252,6 +252,10 @@ def main() -> int:
 
     index, admin1 = load_geonames()
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Huella del Excel del que salen TODOS los artefactos de esta corrida.
+    # El importador la exige: si el Excel cambia sin regenerar, la
+    # importación se rechaza en vez de acreditar datos que no son suyos.
+    source_sha = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
 
     initiatives = []
     pending_second_pass: list[dict] = []
@@ -415,6 +419,7 @@ def main() -> int:
     GEN.mkdir(parents=True, exist_ok=True)
     meta = {
         "sourceFile": SOURCE.name,
+        "sourceSha256": source_sha,
         "generatedAt": now,
         "totalInitiatives": len(initiatives),
         "totalCountries": len(countries),
@@ -442,7 +447,7 @@ def main() -> int:
             "notes": raw(r[7]) if len(r) > 7 else None,
         })
     (GEN / "sources.json").write_text(json.dumps(
-        {"generatedAt": now, "total": len(sources), "sources": sources},
+        {"generatedAt": now, "sourceSha256": source_sha, "total": len(sources), "sources": sources},
         ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (OUT / "countries.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 

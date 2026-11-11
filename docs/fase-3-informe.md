@@ -94,3 +94,28 @@ base reconstruida, con los mismos resultados.
 - El resumen geográfico fino (ambiguas/sin coincidencia por grupo) sigue
   viviendo en el informe del pipeline (`data/generated/`); la API
   informa ubicadas/no ubicadas y el estado de revisión por registro.
+
+## 5. Corrección de integridad (revisión de la Fase 3, 2026-11-11)
+
+La revisión detectó un bloqueo real: el importador leía los datos de
+`catalog.json`/`sources.json` pero registraba en `import_runs` el hash
+del Excel presente; si el Excel se sustituía sin regenerar los
+artefactos, la corrida acreditaría una versión que no es la importada.
+
+Corregido como se pidió:
+1. El pipeline incluye `sourceSha256` (SHA-256 del Excel) en
+   `catalog.json` y en `sources.json`.
+2. El importador comprueba **antes de migrar o abrir la transacción**
+   que ambos hashes coinciden con el Excel presente; si falta el hash o
+   difiere, aborta con el motivo y el hash esperado, **sin crear
+   ninguna corrida**.
+3. Prueba reproducible nueva: `npm run test:integrity`
+   (`tests/import-integrity.mjs`) — sustituye el Excel por una copia con
+   un byte añadido dejando los artefactos antiguos: la importación se
+   rechaza (salida 1, motivo de hash) y `import_runs` no crece; al
+   restaurar el Excel, la importación vuelve a funcionar y la corrida
+   válida sí se registra. Resultado: **6/6 PASS**.
+
+Repetida la verificación completa tras la corrección: importación
+normal (0 altas, 0 cambios, 2.164 relaciones), humo de API **13/13** y
+recorrido web **21/21**.

@@ -43,7 +43,9 @@ Variables: `DATABASE_URL` y `PORT` para la API (defectos de desarrollo
 en `apps/api/.env.example`). La ruta base es configurable para un
 despliegue en subruta: `VITE_BASE_PATH=/subruta/ npm run build`.
 
-Comprobaciones: `npm run test:api` (humo de la API, 13 comprobaciones) y
+Comprobaciones: `npm run test:api` (humo de la API, 13 comprobaciones),
+`npm run test:integrity` (el importador rechaza artefactos que no
+proceden del Excel presente, sin registrar la corrida) y
 `npm run test:functional` (recorrido web completo; arranca la API si no
 responde y la importación si la base está vacía).
 

@@ -14,6 +14,11 @@
  *   exacta de URL; si la URL está duplicada en el catálogo, la relación
  *   es ambigua y no se crea (se cuenta). El enlace se conserva siempre
  *   en la propia iniciativa.
+ * - Integridad: catalog.json y sources.json declaran el SHA-256 del
+ *   Excel del que proceden (sourceSha256, puesto por el pipeline). Si no
+ *   coincide con el Excel presente, la importación se RECHAZA antes de
+ *   abrir la transacción: ninguna corrida puede acreditar una versión
+ *   que no es la importada.
  */
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -72,13 +77,31 @@ async function upsertTable(
 }
 
 async function main(): Promise<void> {
-  await ensureMigrated();
   const root = repoRoot();
   const catalog = JSON.parse(readFileSync(join(root, 'apps/web/public/data/catalog.json'), 'utf-8'));
   const sourcesFile = JSON.parse(readFileSync(join(root, 'data/generated/sources.json'), 'utf-8'));
   const sourceName: string = catalog.meta.sourceFile;
   const xlsx = readFileSync(join(root, 'data/source', sourceName));
   const fileSha = createHash('sha256').update(xlsx).digest('hex');
+
+  // Integridad: los artefactos deben proceder EXACTAMENTE del Excel
+  // presente. Si el Excel se sustituyó sin regenerar (`npm run data`),
+  // importar acreditaría en import_runs una versión que no está en la
+  // base. Se comprueba ANTES de migrar o abrir la transacción: si falta
+  // el hash o difiere, se aborta sin crear ninguna corrida.
+  const problems: string[] = [];
+  if (!catalog.meta.sourceSha256) problems.push('catalog.json no declara sourceSha256');
+  else if (catalog.meta.sourceSha256 !== fileSha) problems.push('catalog.json procede de otro Excel (hash distinto)');
+  if (!sourcesFile.sourceSha256) problems.push('sources.json no declara sourceSha256');
+  else if (sourcesFile.sourceSha256 !== fileSha) problems.push('sources.json procede de otro Excel (hash distinto)');
+  if (problems.length > 0) {
+    throw new Error(
+      `Importación rechazada: ${problems.join('; ')}. ` +
+      `El hash del Excel presente es ${fileSha}. Regenera los artefactos con «npm run data» y vuelve a intentarlo.`,
+    );
+  }
+
+  await ensureMigrated();
 
   const countries: Row[] = catalog.countries.map((c: Row, idx: number) => ({
     ord: idx,
