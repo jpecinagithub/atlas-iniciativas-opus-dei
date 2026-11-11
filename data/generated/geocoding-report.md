@@ -1,6 +1,6 @@
 # Informe de resolución de ubicaciones (Fase 2)
 
-Generado: 2026-11-11T10:43:30Z · Fuente: Directorio_Opus_Dei_MUNDIAL_v14.xlsx · Gazetteer: GeoNames cities1000 (extracto local, CC BY 4.0)
+Generado: 2026-11-11T20:37:34Z · Fuente: Directorio_Opus_Dei_MUNDIAL_v14.xlsx · Gazetteer: GeoNames cities1000 (extracto local, CC BY 4.0)
 
 - Resueltas con precisión de localidad (punto representativo GeoNames): **942** (de ellas, 29 en la segunda pasada con el extracto por país)
 - Correcciones manuales aplicadas: **0**
