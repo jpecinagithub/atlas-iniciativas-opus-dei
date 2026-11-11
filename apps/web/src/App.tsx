@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
-import { useAtlas, filterInitiatives, syncUrl } from './store';
+import { useAtlas, filterInitiatives, syncUrl, applyStateFromUrl } from './store';
 // Carga diferida del motor cartográfico y de Three.js (no bloquean la lista)
 const MapView = lazy(() => import('./components/MapView'));
 import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips } from './components/Panels';
@@ -29,6 +29,14 @@ export default function App() {
 
   const state = useAtlas();
   useEffect(() => { if (status === 'ready') syncUrl(state); }, [state, status]);
+
+  // Navegación atrás/adelante del navegador: reaplicar el estado de la URL
+  useEffect(() => {
+    if (status !== 'ready') return;
+    const onPopState = () => applyStateFromUrl();
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [status]);
 
   useEffect(() => {
     if (selectedId) { setMobileTab('ficha'); setSheetLevel(1); }

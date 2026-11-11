@@ -64,13 +64,23 @@ hay calles. La configuración del estilo es intercambiable.
 
 ## Verificación de la Fase 2
 
+Reproducible desde un clon limpio (Playwright es dependencia de
+desarrollo del repo y el recorrido arranca su propio servidor de preview):
+
 ```bash
-node tests/functional-route.mjs   # con la app servida en :4173
+npm ci
+npx playwright install chromium   # navegador administrado por Playwright
+npm run test:functional           # compila la app y ejecuta el recorrido
 ```
 
 Recorre Mundo → España → Colegios → ficha de Tajamar → marcador 3D →
-restablecer, Países Bajos y un registro sin coordenadas, y deja las
-capturas en `docs/screenshots/`. Resultado de la entrega: **15/15**.
+restablecer, Países Bajos, un registro sin coordenadas y la navegación
+atrás/adelante del navegador, y deja las capturas en `docs/screenshots/`.
+Resultado tras las correcciones de la revisión: **21/21**.
+
+La URL refleja filtros y selección y participa en el historial: cambiar
+de país, de categorías o de selección crea una entrada navegable;
+escribir en el buscador solo actualiza la entrada actual.
 
 ## Estructura
 

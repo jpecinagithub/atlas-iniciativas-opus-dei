@@ -65,6 +65,8 @@ export const useAtlas = create<AtlasState>((set, get) => ({
       if (cats) set({ categories: cats.split(',').filter((c) => catalog.meta.categories.includes(c)) });
       if (q) set({ query: q });
       if (sel && catalog.initiatives.some((i) => i.id === sel)) set({ selectedId: sel });
+      const restored = get();
+      lastNavKey = navKeyOf(restored.countryCode, restored.categories, restored.selectedId);
     } catch (e) {
       set({ status: 'error', error: e instanceof Error ? e.message : 'Error desconocido' });
     }
@@ -118,7 +120,22 @@ export function filterInitiatives(
   });
 }
 
-/** Sincroniza filtros y selección en la URL (enlaces compartibles). */
+/**
+ * Historial del navegador:
+ * - Cada «lugar» de la exploración es una entrada navegable: cambiar de país,
+ *   de conjunto de categorías o de selección crea una entrada (pushState).
+ * - Escribir en el buscador solo actualiza la entrada actual (replaceState),
+ *   para no generar una entrada por tecla.
+ * - Al navegar atrás/adelante (popstate), `applyStateFromUrl` reaplica el
+ *   estado guardado en la URL, con su vuelo de cámara.
+ */
+let lastNavKey: string | null = null;
+
+function navKeyOf(countryCode: string | null, categories: string[], selectedId: string | null): string {
+  return `${countryCode ?? ''}|${[...categories].sort().join(',')}|${selectedId ?? ''}`;
+}
+
+/** Sincroniza filtros y selección en la URL (enlaces compartibles + historial). */
 export function syncUrl(state: AtlasState) {
   const params = new URLSearchParams();
   if (state.countryCode) params.set('pais', state.countryCode);
@@ -127,7 +144,36 @@ export function syncUrl(state: AtlasState) {
   if (state.selectedId) params.set('sel', state.selectedId);
   const qs = params.toString();
   const url = `${window.location.pathname}${qs ? `?${qs}` : ''}`;
-  if (url !== `${window.location.pathname}${window.location.search}`) {
-    window.history.replaceState(null, '', url);
+  const key = navKeyOf(state.countryCode, state.categories, state.selectedId);
+  if (lastNavKey === null) lastNavKey = key;
+  if (url === `${window.location.pathname}${window.location.search}`) {
+    // Sin cambio de URL (p. ej. llegada por popstate): solo bookkeeping.
+    lastNavKey = key;
+    return;
   }
+  if (key !== lastNavKey) window.history.pushState(null, '', url);
+  else window.history.replaceState(null, '', url);
+  lastNavKey = key;
+}
+
+/** Reaplica a la store el estado de la URL actual (navegación atrás/adelante). */
+export function applyStateFromUrl() {
+  const { catalog } = useAtlas.getState();
+  if (!catalog) return;
+  const params = new URLSearchParams(window.location.search);
+  const countryParam = params.get('pais');
+  const countryCode = countryParam && catalog.countries.some((c) => c.code === countryParam) ? countryParam : null;
+  const catsParam = params.get('categorias');
+  const categories = catsParam ? catsParam.split(',').filter((c) => catalog.meta.categories.includes(c)) : [];
+  const query = params.get('q') ?? '';
+  const selParam = params.get('sel');
+  const selectedId = selParam && catalog.initiatives.some((i) => i.id === selParam) ? selParam : null;
+  useAtlas.setState({
+    countryCode,
+    categories,
+    query,
+    selectedId,
+    camera: countryCode ? cam('country', { countryCode }) : cam('world'),
+  });
+  lastNavKey = navKeyOf(countryCode, categories, selectedId);
 }

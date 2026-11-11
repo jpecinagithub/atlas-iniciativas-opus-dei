@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+// MapLibre GL JS 6 carga su worker desde un módulo aparte que el empaquetado
+// no copia junto al chunk: hay que darle la URL del asset emitido por Vite.
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
+
+maplibregl.setWorkerUrl(workerUrl);
 import { useAtlas, filterInitiatives } from '../store';
 import { categoryColor } from '../categories';
 import { SelectedMarkerLayer } from '../map/threeMarker';

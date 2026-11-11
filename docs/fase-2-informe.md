@@ -121,6 +121,42 @@ Capturas en `docs/screenshots/`: 01 mundo · 02 España · 03 España+Colegios
 - D7 sigue provisional: no se ha creado ningún PostgreSQL; la ruta base
   ya es configurable.
 
+## 5 bis. Correcciones tras la revisión independiente (2026-11-11)
+
+La primera revisión del repositorio público no certificó la fase y señaló
+tres bloqueos. Corregidos y reverificados desde una copia limpia:
+
+1. **MapLibre GL JS 5.24.0 → 6.17.0.** La 5.24.0 es vulnerable a
+   GHSA-jrc7-96c5-q579 (XSS en `DOM.sanitize()`). La actualización exigió
+   una adaptación real: en la v6 el worker va en un módulo aparte que el
+   empaquetado no copia junto al chunk, y la build de producción dejaba
+   el mapa en blanco (en desarrollo sí funcionaba). Se fija la URL del
+   worker emitido por Vite con `setWorkerUrl`. Lo detectó la propia
+   comprobación «sin errores de página» del recorrido: el resto de
+   contadores pasaba con el lienzo vacío, así que la verificación visual
+   de las capturas regeneradas forma parte de esta corrección.
+   Auditoría: el endpoint de `npm audit` está bloqueado en el entorno de
+   construcción por la política del registro proxy; como contraste
+   independiente se consultó OSV (avisos de GitHub) para los 198 paquetes
+   del `package-lock.json`: **0 vulnerabilidades**, y la 6.17.0 queda
+   fuera del rango afectado del aviso.
+2. **Recorrido reproducible desde un clon limpio.** Playwright pasa a ser
+   dependencia de desarrollo del repo; el script usa el navegador
+   administrado por Playwright, sin rutas absolutas (solo variables de
+   entorno opcionales documentadas), y arranca su propio `vite preview`.
+   Instrucciones en el README: `npm ci` → `npx playwright install
+   chromium` → `npm run test:functional`.
+3. **Historial atrás/adelante implementado.** Cambiar de país, de
+   conjunto de categorías o de selección crea una entrada (`pushState`);
+   escribir en el buscador actualiza la entrada actual (`replaceState`);
+   `popstate` reaplica el estado de la URL con su vuelo de cámara. El
+   recorrido añade 6 comprobaciones de historial.
+
+Resultado de la reverificación (copia limpia, `npm ci`, tipos y build en
+verde): **21/21 PASS**, con capturas de escritorio y móvil regeneradas
+bajo MapLibre 6. El chunk cartográfico (1,61 MB) se mantiene como
+limitación conocida hasta la Fase 5, como aceptó la revisión.
+
 ## 6. Cómo ejecutarlo
 
 Ver `README.md`. En síntesis: `npm install` → `npm run dev` (los JSON de

@@ -1,6 +1,12 @@
 # Pendientes — Atlas de iniciativas · Opus Dei
 
-Documento único de pendientes. Actualizado: 2026-11-11 (Fase 2 entregada para revisión).
+Documento único de pendientes. Actualizado: 2026-11-11 (Fase 2 corregida tras la revisión independiente; pendiente de recertificación).
+
+## Revisión de la Fase 2 (2026-11-11)
+- [x] MapLibre GL JS actualizado a 6.17.0 (GHSA-jrc7-96c5-q579) con la URL del worker fijada; auditoría contrastada en OSV: 0 vulnerabilidades en el lockfile.
+- [x] Recorrido funcional reproducible desde clon limpio (Playwright como devDependency, navegador administrado, sin rutas absolutas, servidor propio).
+- [x] Historial atrás/adelante implementado (pushState/popstate) y cubierto en el recorrido: 21/21 PASS con capturas regeneradas.
+- [ ] Recertificación de la Fase 2 por la revisión independiente. La Fase 3 no comienza hasta entonces.
 
 ## Decisiones
 - [x] D1–D6 aprobadas y aplicadas. D1: Fuente 1/2 visibles en ficha aunque no haya coincidencia catalogada.
