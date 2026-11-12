@@ -34,8 +34,8 @@ export function WebViewer() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#0a1120]" role="dialog" aria-modal="true" aria-label={`Visor web: ${host}`}>
-      <header className="flex items-center gap-3 border-b border-slate-800 px-4 py-2.5">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#04070d]" role="dialog" aria-modal="true" aria-label={`Visor web: ${host}`}>
+      <header className="flex items-center gap-3 border-b border-white/10 bg-[#0a1120] px-4 py-2.5">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-slate-100">{host}</p>
           <p className="truncate text-xs text-slate-500">{url}</p>
@@ -44,7 +44,7 @@ export function WebViewer() {
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="shrink-0 rounded-lg border border-slate-700 px-3 py-2 text-sm text-sky-300 hover:bg-slate-800"
+          className="shrink-0 rounded-full border border-white/15 px-3.5 py-2 text-sm text-[#f5d9a8] hover:bg-white/5"
         >
           Abrir en pestaña nueva ↗
         </a>
@@ -52,13 +52,13 @@ export function WebViewer() {
           type="button"
           onClick={closeViewer}
           autoFocus
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-slate-100 hover:bg-white/5"
           aria-label="Cerrar visor"
         >
           ✕
         </button>
       </header>
-      <p className="border-b border-slate-800 px-4 py-1.5 text-xs text-slate-500">
+      <p className="border-b border-white/10 bg-[#0a1120] px-4 py-1.5 text-xs text-[#8ca3c7]">
         La página se carga directamente desde su sitio, sin intermediarios. Algunos sitios no permiten mostrarse
         incrustados: si el área queda en blanco, ábrela en una pestaña nueva.
       </p>

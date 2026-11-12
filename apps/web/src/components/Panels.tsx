@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtlas, filterInitiatives } from '../store';
 import { normalizeExternalUrl } from '../urls';
 import { categoryColor, RECIPIENT_LABELS } from '../categories';
@@ -16,11 +16,11 @@ export function precisionLabel(i: Initiative): string {
 
 function verificationBadge(state: string) {
   const styles: Record<string, string> = {
-    'Confirmado y contrastado': 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    'Confirmado con datos parciales': 'bg-sky-500/15 text-sky-300 border-sky-500/30',
-    'Confirmado': 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    'Pendiente': 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    'Histórico': 'bg-zinc-500/15 text-zinc-300 border-zinc-500/30',
+    'Confirmado y contrastado': 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200',
+    'Confirmado con datos parciales': 'border-[#e8a33d]/50 bg-[#e8a33d]/10 text-[#f5d9a8]',
+    'Confirmado': 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200',
+    'Pendiente': 'border-slate-400/40 bg-slate-400/10 text-slate-200',
+    'Histórico': 'border-zinc-400/30 bg-zinc-400/10 text-zinc-300',
   };
   return (
     <span className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium ${styles[state] ?? styles['Pendiente']}`}>
@@ -28,6 +28,9 @@ function verificationBadge(state: string) {
     </span>
   );
 }
+
+const SECTION_TITLE = 'text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8ca3c7]';
+const ROW_BUTTON = 'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition';
 
 export function FiltersPanel() {
   const catalog = useAtlas((s) => s.catalog);
@@ -60,45 +63,45 @@ export function FiltersPanel() {
   return (
     <div className="space-y-5">
       <section aria-label="País o territorio">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">País o territorio</h3>
+        <h3 className={`mb-2 ${SECTION_TITLE}`}>País o territorio</h3>
         <input
           value={countrySearch}
           onChange={(e) => setCountrySearch(e.target.value)}
           placeholder="Buscar país…"
-          className="mb-2 w-full rounded-lg border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-400 focus:outline-none"
+          className="mb-2 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-[#e8a33d] focus:outline-none"
           aria-label="Buscar país"
         />
         <div className="max-h-56 space-y-0.5 overflow-y-auto pr-1">
           <button
             type="button"
             onClick={() => setCountry(null)}
-            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${countryCode === null ? 'bg-sky-500/20 text-sky-200' : 'text-slate-200 hover:bg-slate-800'}`}
+            className={`${ROW_BUTTON} ${countryCode === null ? 'bg-[#e8a33d]/15 text-[#f5d9a8]' : 'text-slate-200 hover:bg-white/5'}`}
             aria-pressed={countryCode === null}
           >
             <span>Todo el mundo</span>
-            <span className="text-xs text-slate-400">{catalog.meta.totalInitiatives}</span>
+            <span className="text-xs text-[#8ca3c7]">{catalog.meta.totalInitiatives}</span>
           </button>
           {countries.map((c) => (
             <button
               key={c.code}
               type="button"
               onClick={() => setCountry(c.code)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${countryCode === c.code ? 'bg-sky-500/20 text-sky-200' : 'text-slate-200 hover:bg-slate-800'}`}
+              className={`${ROW_BUTTON} ${countryCode === c.code ? 'bg-[#e8a33d]/15 text-[#f5d9a8]' : 'text-slate-200 hover:bg-white/5'}`}
               aria-pressed={countryCode === c.code}
             >
               <span>{c.name}</span>
-              <span className="text-xs text-slate-400">{countryCounts.get(c.code) ?? 0}</span>
+              <span className="text-xs text-[#8ca3c7]">{countryCounts.get(c.code) ?? 0}</span>
             </button>
           ))}
           {countries.length === 0 && <p className="px-3 py-2 text-sm text-slate-500">Sin países con ese nombre.</p>}
         </div>
       </section>
 
-      <section aria-label="Categorías">
+      <section aria-label="Categorías" id="panel-categorias">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Categorías</h3>
+          <h3 className={SECTION_TITLE}>Categorías</h3>
           {categories.length > 0 && (
-            <button type="button" onClick={() => setCategories([])} className="text-xs text-sky-300 hover:underline">
+            <button type="button" onClick={() => setCategories([])} className="text-xs text-[#f5d9a8] hover:underline">
               Quitar todas
             </button>
           )}
@@ -110,17 +113,17 @@ export function FiltersPanel() {
             return (
               <label
                 key={cat}
-                className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm ${active ? 'bg-slate-800 text-slate-100' : 'text-slate-300 hover:bg-slate-800/60'} ${count === 0 ? 'opacity-45' : ''}`}
+                className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${active ? 'bg-white/10 text-slate-50' : 'text-slate-300 hover:bg-white/5'} ${count === 0 ? 'opacity-45' : ''}`}
               >
                 <input
                   type="checkbox"
                   checked={active}
                   onChange={() => toggleCategory(cat)}
-                  className="h-4 w-4 shrink-0 accent-sky-400"
+                  className="h-4 w-4 shrink-0 accent-[#e8a33d]"
                 />
                 <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
                 <span className="flex-1">{cat}</span>
-                <span className="text-xs text-slate-500">{count}</span>
+                <span className="text-xs text-[#8ca3c7]">{count}</span>
               </label>
             );
           })}
@@ -129,7 +132,7 @@ export function FiltersPanel() {
           <button
             type="button"
             onClick={() => setCountry(null)}
-            className="mt-3 w-full rounded-lg border border-slate-700 px-3 py-2 text-sm text-sky-300 hover:bg-slate-800"
+            className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2 text-sm text-[#f5d9a8] hover:bg-white/5"
           >
             Ver esta categoría en el mundo
           </button>
@@ -157,9 +160,9 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
   if (!catalog) return null;
   if (filtered.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-700 p-6 text-center" role="status">
-        <p className="font-medium text-slate-200">Sin resultados con estos filtros</p>
-        <p className="mt-1 text-sm text-slate-400">Prueba a quitar una categoría, cambiar el país o borrar la búsqueda.</p>
+      <div className="rounded-xl border border-dashed border-white/15 p-6 text-center" role="status">
+        <p className="font-medium text-slate-100">Sin resultados con estos filtros</p>
+        <p className="mt-1 text-sm text-[#8ca3c7]">Prueba a quitar una categoría, cambiar el país o borrar la búsqueda.</p>
       </div>
     );
   }
@@ -171,19 +174,19 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
             <button
               type="button"
               onClick={() => { select(i.id); onPick?.(); }}
-              className={`w-full rounded-xl border px-3 py-2.5 text-left transition ${selectedId === i.id ? 'border-sky-400/60 bg-sky-500/10' : 'border-slate-800 bg-slate-900/60 hover:border-slate-600'}`}
+              className={`w-full rounded-xl border px-3 py-2.5 text-left transition ${selectedId === i.id ? 'border-[#e8a33d]/60 bg-[#e8a33d]/10' : 'border-white/10 bg-white/[0.03] hover:border-white/30'}`}
               aria-current={selectedId === i.id}
             >
               <span className="flex items-start gap-2.5">
                 <span className="mt-1.5 h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(i.category) }} aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium text-slate-100">{i.name}</span>
-                  <span className="block truncate text-xs text-slate-400">
+                  <span className="block truncate font-medium text-slate-50">{i.name}</span>
+                  <span className="block truncate text-xs text-[#8ca3c7]">
                     {i.category} · {[i.locality, i.country].filter(Boolean).join(', ')}
                   </span>
                 </span>
                 {i.lat === null && (
-                  <span className="shrink-0 rounded-full border border-slate-700 px-1.5 py-0.5 text-[10px] text-slate-400" title="Este registro no se representa como punto en el mapa">
+                  <span className="shrink-0 rounded-full border border-white/15 px-1.5 py-0.5 text-[10px] text-[#8ca3c7]" title="Este registro no se representa como punto en el mapa">
                     sin punto
                   </span>
                 )}
@@ -196,7 +199,7 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
         <button
           type="button"
           onClick={() => setShown((n) => n + PAGE)}
-          className="mt-3 w-full rounded-lg border border-slate-700 px-3 py-2.5 text-sm text-slate-200 hover:bg-slate-800"
+          className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2.5 text-sm text-slate-100 hover:bg-white/5"
         >
           Mostrar más ({filtered.length - shown} restantes)
         </button>
@@ -205,6 +208,12 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
   );
 }
 
+/**
+ * Ficha híbrida (Fase 7B): tarjeta inmersiva de la propuesta B con el
+ * interior editorial de la A — resumen esencial primero y secciones
+ * numeradas 01/02/03; la documentación (03) nace desplegada porque es
+ * el rasgo distintivo del Atlas, y puede plegarse.
+ */
 export function DetailPanel() {
   const catalog = useAtlas((s) => s.catalog);
   const selectedId = useAtlas((s) => s.selectedId);
@@ -213,8 +222,14 @@ export function DetailPanel() {
   const detailFailedFor = useAtlas((s) => s.detailFailedFor);
   const loadDetail = useAtlas((s) => s.loadDetail);
   const openViewer = useAtlas((s) => s.openViewer);
+  const [docOpen, setDocOpen] = useState(true);
+  const articleRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    if (selectedId) void loadDetail(selectedId);
+    if (selectedId) {
+      void loadDetail(selectedId);
+      setDocOpen(true);
+      articleRef.current?.focus({ preventScroll: true });
+    }
   }, [selectedId, loadDetail]);
   if (!catalog || !selectedId) return null;
   const rec = catalog.initiatives.find((i) => i.id === selectedId);
@@ -222,174 +237,204 @@ export function DetailPanel() {
   const colocated = rec.lat !== null && rec.lng !== null
     ? catalog.initiatives.filter((i) => i.id !== rec.id && i.lat === rec.lat && i.lng === rec.lng)
     : [];
+  const catalogedCount = detail?.catalogedSources.length ?? 0;
+
+  const field = (label: string, value: React.ReactNode) => (
+    <div>
+      <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">{label}</dt>
+      <dd className="mt-0.5 leading-snug text-slate-100">{value}</dd>
+    </div>
+  );
 
   return (
-    <article aria-label={`Ficha de ${rec.name}`} className="space-y-4">
+    <article ref={articleRef} tabIndex={-1} aria-label={`Ficha de ${rec.name}`} className="space-y-5 outline-none">
       <header>
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-lg font-semibold leading-snug text-slate-50">{rec.name}</h2>
+          <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f5d9a8]">
+            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: categoryColor(rec.category) }} aria-hidden />
+            {rec.category}
+            <span className="font-normal normal-case tracking-normal text-[#8ca3c7]">· {rec.id}</span>
+          </p>
           <button
             type="button"
             onClick={() => select(null)}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/15 text-slate-200 hover:bg-white/5"
             aria-label="Cerrar ficha"
           >
             ✕
           </button>
         </div>
-        <p className="mt-1.5 flex items-center gap-2 text-sm text-slate-300">
-          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: categoryColor(rec.category) }} aria-hidden />
-          {rec.category}
-          <span className="text-slate-500">· {rec.id}</span>
+        <h2 className="font-display mt-2 text-[26px] font-normal leading-tight text-slate-50">{rec.name}</h2>
+        <p className="mt-1 text-sm text-[#b9c9e2]">
+          {[rec.locality, rec.region, rec.country].filter(Boolean).join(', ') || rec.country}
         </p>
-      </header>
-
-      <dl className="space-y-2.5 text-sm">
-        <div>
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Lugar</dt>
-          <dd className="text-slate-200">
-            {[rec.locality, rec.region, rec.country].filter(Boolean).join(', ') || rec.country}
-            {rec.address && <span className="block text-slate-400">{rec.address}{rec.postalCode ? ` · CP ${rec.postalCode}` : ''}</span>}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Ubicación en el mapa</dt>
-          <dd className="text-slate-200">
-            {precisionLabel(rec)}
-            {rec.lat !== null && rec.geocodingProvider && (
-              <span className="block text-xs text-slate-500">
-                Punto representativo de la localidad ({rec.geocodingProvider}
-                {rec.geonameId ? `, GeoNames ${rec.geonameId}` : ''}). No es la dirección exacta.
-              </span>
-            )}
-            {rec.lat === null && (
-              <span className="block text-xs text-slate-500">
-                Este registro cuenta en la lista y en los totales, pero no se dibuja como punto: su ubicación no se ha resuelto de forma verificable.
-              </span>
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Destinatarios</dt>
-          <dd className="text-slate-200">{rec.sexRaw ?? 'No consta'}</dd>
-        </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {verificationBadge(rec.verificationState)}
-          <span className="inline-block rounded-full border border-slate-600 px-2 py-0.5 text-[11px] font-medium text-slate-300">
+          <span className="inline-block rounded-full border border-white/20 px-2 py-0.5 text-[11px] font-medium text-slate-200">
             Actividad: {rec.activityStateRaw ?? rec.activityState}
           </span>
         </div>
-        {rec.entity && (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-slate-500">Entidad titular</dt>
-            <dd className="text-slate-200">{rec.entity}</dd>
-          </div>
-        )}
-        {rec.linkageType && (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-slate-500">Tipo de vinculación</dt>
-            <dd className="text-slate-200">{rec.linkageType}</dd>
-          </div>
-        )}
-        {(rec.web || rec.phone || rec.email) && (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-slate-500">Contacto publicado</dt>
-            <dd className="space-y-0.5 text-slate-200">
-              {rec.web && (normalizeExternalUrl(rec.web)
-                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.web)!} target="_blank" rel="noreferrer">{rec.web}</a>
-                : <span className="block truncate" title={rec.web}>{rec.web}</span>)}
-              {rec.web && normalizeExternalUrl(rec.web) && (
-                <button type="button" onClick={() => openViewer(rec.web!)} className="text-xs font-medium text-sky-300 hover:underline">
-                  Ver la web en el visor
-                </button>
-              )}
-              {rec.phone && <span className="block">{rec.phone}</span>}
-              {rec.email && <span className="block">{rec.email}</span>}
-            </dd>
-          </div>
-        )}
-        {rec.consultedAt && (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-slate-500">Fecha de consulta</dt>
-            <dd className="text-slate-200">{rec.consultedAt}</dd>
-          </div>
-        )}
-        {(rec.source1 || rec.source2) && (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-slate-500">Fuentes</dt>
-            <dd className="space-y-1">
-              {rec.source1 && (normalizeExternalUrl(rec.source1)
-                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.source1)!} target="_blank" rel="noreferrer">Fuente 1</a>
-                : <span className="block text-xs leading-relaxed text-slate-400"><span className="text-slate-500">Fuente 1 (sin enlace válido): </span>{rec.source1}</span>)}
-              {rec.source2 && (normalizeExternalUrl(rec.source2)
-                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.source2)!} target="_blank" rel="noreferrer">Fuente 2</a>
-                : <span className="block text-xs leading-relaxed text-slate-400"><span className="text-slate-500">Fuente 2 (sin enlace válido): </span>{rec.source2}</span>)}
-            </dd>
-          </div>
-        )}
-      </dl>
+        <p className="mt-3 text-sm leading-relaxed text-slate-200">
+          {rec.category} en {[rec.locality, rec.country].filter(Boolean).join(', ')}. {precisionLabel(rec)}
+          {rec.lat !== null ? ': el punto marca la localidad, no la dirección exacta.' : ': consta en la lista y en los totales, pero su ubicación no se ha resuelto de forma verificable.'}
+        </p>
+      </header>
 
-      {/* Documentación completa (Fase 4): llega del detalle de la API. La
-          ficha básica de arriba es la del catálogo y se ve al instante. */}
-      {!detail && detailFailedFor !== rec.id && (
-        <p className="text-xs text-slate-500" role="status">Cargando la documentación completa…</p>
-      )}
-      {!detail && detailFailedFor === rec.id && (
-        <p className="text-xs text-slate-500">La documentación completa no está disponible ahora; la ficha básica es la del catálogo.</p>
-      )}
-      {detail?.evidence && (
-        <section aria-label="Evidencia de vinculación">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Evidencia de vinculación</h3>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-300">{detail.evidence}</p>
-        </section>
-      )}
-      {detail?.doubleCheck && (
-        <section aria-label="Doble comprobación">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Doble comprobación</h3>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-300">{detail.doubleCheck}</p>
-        </section>
-      )}
-      {detail && detail.catalogedSources.length > 0 && (
-        <section aria-label="Fuentes catalogadas">
-          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Fuentes catalogadas ({detail.catalogedSources.length})
-          </h3>
-          <ul className="space-y-2">
-            {detail.catalogedSources.map((cs) => (
-              <li key={cs.role} className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2.5">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-                  {cs.role === 'fuente_1' ? 'Fuente 1' : 'Fuente 2'} · coincidencia exacta de URL
-                </p>
-                <p className="mt-0.5 truncate text-sm font-medium text-slate-100" title={cs.source.title ?? undefined}>
-                  {cs.source.title ?? cs.source.domain ?? cs.source.id}
-                </p>
-                <p className="truncate text-xs text-slate-400">
-                  {[cs.source.domain, cs.source.nature].filter(Boolean).join(' · ')}
-                </p>
-                {cs.source.consultedAt && (
-                  <p className="text-xs text-slate-500">Consultada el {cs.source.consultedAt} · {cs.source.id}</p>
+      <section aria-label="La iniciativa">
+        <h3 className="mb-2.5 flex items-baseline gap-2">
+          <span className="font-display text-sm italic text-[#e8a33d]">01</span>
+          <span className={SECTION_TITLE}>La iniciativa</span>
+        </h3>
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+          {field('Destinatarios', rec.sexRaw ?? 'No consta')}
+          {rec.entity && field('Entidad titular', rec.entity)}
+          {rec.linkageType && field('Tipo de vinculación', rec.linkageType)}
+          {rec.consultedAt && field('Fecha de consulta', rec.consultedAt)}
+        </dl>
+      </section>
+
+      <section aria-label="Ubicación y contacto">
+        <h3 className="mb-2.5 flex items-baseline gap-2">
+          <span className="font-display text-sm italic text-[#e8a33d]">02</span>
+          <span className={SECTION_TITLE}>Ubicación y contacto</span>
+        </h3>
+        <dl className="space-y-3 text-sm">
+          <div>
+            <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">Lugar</dt>
+            <dd className="mt-0.5 text-slate-100">
+              {[rec.locality, rec.region, rec.country].filter(Boolean).join(', ') || rec.country}
+              {rec.address && <span className="block text-[#b9c9e2]">{rec.address}{rec.postalCode ? ` · CP ${rec.postalCode}` : ''}</span>}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">Precisión geográfica</dt>
+            <dd className="mt-0.5 text-slate-100">
+              {precisionLabel(rec)}
+              {rec.lat !== null && rec.geocodingProvider && (
+                <span className="block text-xs leading-relaxed text-[#8ca3c7]">
+                  Punto representativo de la localidad ({rec.geocodingProvider}
+                  {rec.geonameId ? `, GeoNames ${rec.geonameId}` : ''}). No es la dirección exacta.
+                </span>
+              )}
+              {rec.lat === null && (
+                <span className="block text-xs leading-relaxed text-[#8ca3c7]">
+                  Este registro cuenta en la lista y en los totales, pero no se dibuja como punto: su ubicación no se ha resuelto de forma verificable.
+                </span>
+              )}
+            </dd>
+          </div>
+          {(rec.web || rec.phone || rec.email) && (
+            <div>
+              <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">Contacto publicado</dt>
+              <dd className="mt-0.5 space-y-0.5 text-slate-100">
+                {rec.web && (normalizeExternalUrl(rec.web)
+                  ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.web)!} target="_blank" rel="noreferrer">{rec.web}</a>
+                  : <span className="block truncate" title={rec.web}>{rec.web}</span>)}
+                {rec.web && normalizeExternalUrl(rec.web) && (
+                  <button type="button" onClick={() => openViewer(rec.web!)} className="text-xs font-medium text-[#f5d9a8] hover:underline">
+                    Ver la web en el visor
+                  </button>
                 )}
-                {cs.source.url && normalizeExternalUrl(cs.source.url) && (
-                  <p className="mt-1.5 flex gap-3 text-xs font-medium">
-                    <button type="button" onClick={() => openViewer(cs.source.url!)} className="text-sky-300 hover:underline">
-                      Ver en el visor
-                    </button>
-                    <a href={normalizeExternalUrl(cs.source.url)!} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
-                      Abrir en pestaña nueva ↗
-                    </a>
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+                {rec.phone && <span className="block">{rec.phone}</span>}
+                {rec.email && <span className="block">{rec.email}</span>}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </section>
+
+      <section aria-label="Evidencia y fuentes" className="rounded-xl border border-white/12 bg-white/[0.03] p-3.5">
+        <button
+          type="button"
+          onClick={() => setDocOpen((v) => !v)}
+          aria-expanded={docOpen}
+          className="flex w-full items-baseline justify-between gap-2 text-left"
+        >
+          <span className="flex items-baseline gap-2">
+            <span className="font-display text-sm italic text-[#e8a33d]">03</span>
+            <span className={SECTION_TITLE}>Evidencia y fuentes</span>
+          </span>
+          <span className="text-xs text-[#f5d9a8]">
+            {detail ? `${catalogedCount} catalogada${catalogedCount === 1 ? '' : 's'} ${docOpen ? '· Plegar ↑' : '· Expandir ↓'}` : docOpen ? 'Plegar ↑' : 'Expandir ↓'}
+          </span>
+        </button>
+        {docOpen && (
+          <div className="mt-3 space-y-4">
+            {(rec.source1 || rec.source2) && (
+              <div>
+                <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Fuentes del directorio</h4>
+                <div className="space-y-1 text-sm">
+                  {rec.source1 && (normalizeExternalUrl(rec.source1)
+                    ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.source1)!} target="_blank" rel="noreferrer">Fuente 1</a>
+                    : <span className="block text-xs leading-relaxed text-slate-300"><span className="text-[#8ca3c7]">Fuente 1 (sin enlace válido): </span>{rec.source1}</span>)}
+                  {rec.source2 && (normalizeExternalUrl(rec.source2)
+                    ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.source2)!} target="_blank" rel="noreferrer">Fuente 2</a>
+                    : <span className="block text-xs leading-relaxed text-slate-300"><span className="text-[#8ca3c7]">Fuente 2 (sin enlace válido): </span>{rec.source2}</span>)}
+                </div>
+              </div>
+            )}
+            {!detail && detailFailedFor !== rec.id && (
+              <p className="text-xs text-[#8ca3c7]" role="status">Cargando la documentación completa…</p>
+            )}
+            {!detail && detailFailedFor === rec.id && (
+              <p className="text-xs text-[#8ca3c7]">La documentación completa no está disponible ahora; la ficha básica es la del catálogo.</p>
+            )}
+            {detail?.evidence && (
+              <div>
+                <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Evidencia de vinculación</h3>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200">{detail.evidence}</p>
+              </div>
+            )}
+            {detail?.doubleCheck && (
+              <div>
+                <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Doble comprobación</h3>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200">{detail.doubleCheck}</p>
+              </div>
+            )}
+            {detail && detail.catalogedSources.length > 0 && (
+              <div>
+                <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">
+                  Fuentes catalogadas ({detail.catalogedSources.length})
+                </h3>
+                <ul className="space-y-2">
+                  {detail.catalogedSources.map((cs) => (
+                    <li key={cs.role} className="rounded-lg border border-white/10 bg-black/20 px-3 py-2.5">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#8ca3c7]">
+                        {cs.role === 'fuente_1' ? 'Fuente 1' : 'Fuente 2'} · coincidencia exacta de URL
+                      </p>
+                      <p className="mt-0.5 truncate text-sm font-medium text-slate-50" title={cs.source.title ?? undefined}>
+                        {cs.source.title ?? cs.source.domain ?? cs.source.id}
+                      </p>
+                      <p className="truncate text-xs text-[#8ca3c7]">
+                        {[cs.source.domain, cs.source.nature].filter(Boolean).join(' · ')}
+                      </p>
+                      {cs.source.consultedAt && (
+                        <p className="text-xs text-[#71809c]">Consultada el {cs.source.consultedAt} · {cs.source.id}</p>
+                      )}
+                      {cs.source.url && normalizeExternalUrl(cs.source.url) && (
+                        <p className="mt-1.5 flex gap-3 text-xs font-medium">
+                          <button type="button" onClick={() => openViewer(cs.source.url!)} className="text-[#f5d9a8] hover:underline">
+                            Ver en el visor
+                          </button>
+                          <a href={normalizeExternalUrl(cs.source.url)!} target="_blank" rel="noreferrer" className="text-[#f5d9a8] hover:underline">
+                            Abrir en pestaña nueva ↗
+                          </a>
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
 
       {rec.lat !== null && (
         <button
           type="button"
           onClick={() => select(rec.id, true)}
-          className="w-full rounded-lg bg-sky-500/90 px-3 py-2.5 text-sm font-medium text-white hover:bg-sky-400"
+          className="w-full rounded-lg bg-[#e8a33d] px-3 py-2.5 text-sm font-semibold text-[#1a1206] transition hover:bg-[#f0b45a]"
         >
           Acercar a esta iniciativa
         </button>
@@ -397,21 +442,21 @@ export function DetailPanel() {
 
       {colocated.length > 0 && (
         <section aria-label="Otras iniciativas en esta misma localidad">
-          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-[#8ca3c7]">
             En esta misma localidad ({colocated.length})
           </h3>
           <ul className="space-y-1">
             {colocated.slice(0, 12).map((i) => (
               <li key={i.id}>
-                <button type="button" onClick={() => select(i.id)} className="w-full rounded-lg border border-slate-800 px-3 py-2 text-left text-sm text-slate-200 hover:border-slate-600">
+                <button type="button" onClick={() => select(i.id)} className="w-full rounded-lg border border-white/10 px-3 py-2 text-left text-sm text-slate-100 hover:border-white/30">
                   <span className="mr-2 inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: categoryColor(i.category) }} aria-hidden />
                   {i.name}
-                  <span className="block pl-5 text-xs text-slate-500">{i.category}</span>
+                  <span className="block pl-5 text-xs text-[#8ca3c7]">{i.category}</span>
                 </button>
               </li>
             ))}
           </ul>
-          <p className="mt-1 text-xs text-slate-500">Comparten el punto representativo de la localidad; no es la misma dirección.</p>
+          <p className="mt-1 text-xs text-[#8ca3c7]">Comparten el punto representativo de la localidad; no es la misma dirección.</p>
         </section>
       )}
     </article>
@@ -422,11 +467,14 @@ export function DetailPanel() {
  * Contexto del país seleccionado (Fase 4): lo que la hoja Países declara
  * y lo que el Directorio contiene, sin mezclarlos. Los desgloses se
  * calculan de las iniciativas del país en el catálogo (D6), ignorando
- * los demás filtros activos.
+ * los demás filtros activos. En la Fase 7B el desglose por categoría
+ * actúa también como filtro (chips con conteo).
  */
 export function CountryContext() {
   const catalog = useAtlas((s) => s.catalog);
   const countryCode = useAtlas((s) => s.countryCode);
+  const categories = useAtlas((s) => s.categories);
+  const toggleCategory = useAtlas((s) => s.toggleCategory);
   const openViewer = useAtlas((s) => s.openViewer);
   const [showNote, setShowNote] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
@@ -450,23 +498,36 @@ export function CountryContext() {
       if (typeof v === 'number') declaredSum += v;
     }
   }
+  const sinPunto = country.computedTotal - country.computedLocated;
 
   return (
-    <section aria-label={`Contexto de ${country.name}`} className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/50 p-3.5">
+    <section aria-label={`Contexto de ${country.name}`} className="space-y-3.5">
       <header>
-        <h3 className="text-base font-semibold text-slate-50">{country.name}</h3>
-        <p className="text-xs text-slate-400">
-          {country.continent}
-          {country.circumscription ? ` · Circunscripción: ${country.circumscription}` : ''}
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f5d9a8]">
+          País · {country.continent}
+        </p>
+        <h3 className="font-display mt-1 text-[30px] font-normal leading-none text-slate-50">{country.name}</h3>
+        <p className="mt-1.5 text-xs text-[#8ca3c7]">
+          {country.circumscription ? `Circunscripción: ${country.circumscription} · ` : ''}Presencia documentada en el directorio v14
         </p>
       </header>
 
-      <p className="text-sm text-slate-300">
-        <strong className="text-slate-50">{fmt(country.computedTotal)}</strong> registros en el directorio ·{' '}
-        <strong className="text-slate-50">{fmt(country.computedLocated)}</strong> con ubicación
-      </p>
+      <div className="flex gap-6" role="group" aria-label="Cifras del país">
+        <span>
+          <strong className="block text-[24px] font-extralight leading-none text-slate-50">{fmt(country.computedTotal)}</strong>
+          <span className="mt-1 block text-[12px] tracking-[0.08em] text-[#8ca3c7] [font-variant:small-caps]">Iniciativas</span>
+        </span>
+        <span>
+          <strong className="block text-[24px] font-extralight leading-none text-slate-50">{fmt(country.computedLocated)}</strong>
+          <span className="mt-1 block text-[12px] tracking-[0.08em] text-[#8ca3c7] [font-variant:small-caps]">Con ubicación</span>
+        </span>
+        <span>
+          <strong className="block text-[24px] font-extralight leading-none text-[#f5d9a8]">{fmt(sinPunto)}</strong>
+          <span className="mt-1 block text-[12px] tracking-[0.08em] text-[#8ca3c7] [font-variant:small-caps]">Sin punto</span>
+        </span>
+      </div>
       {country.declaredTotal !== null && (
-        <p className="text-xs text-slate-400">
+        <p className="text-xs leading-relaxed text-[#8ca3c7]">
           {country.declaredTotal === country.computedTotal
             ? `Coincide con lo declarado en la hoja Países (${fmt(country.declaredTotal)}).`
             : `La hoja Países declara ${fmt(country.declaredTotal)}${declaredSum !== null && declaredSum !== country.declaredTotal ? `, aunque su desglose por estados suma ${fmt(declaredSum)}` : ''}; el Directorio contiene ${fmt(country.computedTotal)}, que es la cifra que manda.`}
@@ -477,34 +538,42 @@ export function CountryContext() {
         {Object.entries(country.computedVerification).map(([state, n]) => (
           <span key={state} className="inline-flex items-center gap-1.5">
             {verificationBadge(state)}
-            <span className="text-xs text-slate-400">{n}</span>
+            <span className="text-xs text-[#8ca3c7]">{n}</span>
           </span>
         ))}
       </div>
 
       {byCategory.length > 0 && (
         <div>
-          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Por categoría</h4>
-          <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs text-slate-300">
-            {byCategory.map(([cat, n]) => (
-              <li key={cat} className="flex items-center gap-1.5">
-                <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
-                <span className="flex-1 truncate" title={cat}>{cat}</span>
-                <span className="text-slate-500">{n}</span>
-              </li>
-            ))}
-          </ul>
+          <h4 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Por categoría · pulsa para filtrar</h4>
+          <div className="flex flex-wrap gap-1.5">
+            {byCategory.map(([cat, n]) => {
+              const active = categories.includes(cat);
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => toggleCategory(cat)}
+                  aria-pressed={active}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${active ? 'border-[#e8a33d]/70 bg-[#e8a33d]/15 text-[#f5d9a8]' : 'border-white/15 text-slate-200 hover:bg-white/5'}`}
+                >
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
+                  {cat} <span className="text-[#8ca3c7]">{n}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {country.presenceEvidence && (
         <div>
-          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Evidencia de presencia</h4>
-          <p className={`whitespace-pre-line text-xs leading-relaxed text-slate-300 ${showEvidence ? '' : 'line-clamp-3'}`}>
+          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Evidencia de presencia</h4>
+          <p className={`whitespace-pre-line text-xs leading-relaxed text-slate-200 ${showEvidence ? '' : 'line-clamp-3'}`}>
             {country.presenceEvidence}
           </p>
           {country.presenceEvidence.length > 220 && (
-            <button type="button" onClick={() => setShowEvidence((v) => !v)} className="mt-0.5 text-xs font-medium text-sky-300 hover:underline">
+            <button type="button" onClick={() => setShowEvidence((v) => !v)} className="mt-0.5 text-xs font-medium text-[#f5d9a8] hover:underline">
               {showEvidence ? 'Leer menos' : 'Leer más'}
             </button>
           )}
@@ -513,28 +582,28 @@ export function CountryContext() {
 
       {country.mainSource && (normalizeExternalUrl(country.mainSource) ? (
         <p className="flex gap-3 text-xs font-medium">
-          <button type="button" onClick={() => openViewer(country.mainSource!)} className="text-sky-300 hover:underline">
+          <button type="button" onClick={() => openViewer(country.mainSource!)} className="text-[#f5d9a8] hover:underline">
             Fuente principal del país en el visor
           </button>
-          <a href={normalizeExternalUrl(country.mainSource)!} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
+          <a href={normalizeExternalUrl(country.mainSource)!} target="_blank" rel="noreferrer" className="text-[#f5d9a8] hover:underline">
             Abrir ↗
           </a>
         </p>
       ) : (
-        <p className="text-xs text-slate-400">
-          <span className="text-slate-500">Fuente principal del país (sin enlace válido): </span>
+        <p className="text-xs text-slate-300">
+          <span className="text-[#8ca3c7]">Fuente principal del país (sin enlace válido): </span>
           {country.mainSource}
         </p>
       ))}
 
       {country.note && (
         <div>
-          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Nota del directorio</h4>
-          <div className={`whitespace-pre-line text-xs leading-relaxed text-slate-400 ${showNote ? 'max-h-64 overflow-y-auto pr-1' : 'line-clamp-3'}`}>
+          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Nota del directorio</h4>
+          <div className={`whitespace-pre-line text-xs leading-relaxed text-[#8ca3c7] ${showNote ? 'max-h-64 overflow-y-auto pr-1' : 'line-clamp-3'}`}>
             {country.note}
           </div>
           {country.note.length > 220 && (
-            <button type="button" onClick={() => setShowNote((v) => !v)} className="mt-0.5 text-xs font-medium text-sky-300 hover:underline">
+            <button type="button" onClick={() => setShowNote((v) => !v)} className="mt-0.5 text-xs font-medium text-[#f5d9a8] hover:underline">
               {showNote ? 'Leer menos' : 'Leer más'}
             </button>
           )}
@@ -547,11 +616,20 @@ export function CountryContext() {
 export function StatsBar({ filtered }: { filtered: Initiative[] }) {
   const countriesCount = new Set(filtered.map((i) => i.countryCode)).size;
   const located = filtered.filter((i) => i.lat !== null).length;
+  // La etiqueta va en versalitas por font-variant, no por text-transform:
+  // el texto real conserva su caso (lo leen los lectores de pantalla y las
+  // comprobaciones de contadores).
+  const stat = (value: string, label: string, amber = false) => (
+    <span key={label}>
+      <strong className={`text-[26px] font-extralight leading-none ${amber ? 'text-[#e8a33d]' : 'text-slate-50'}`}>{value}</strong>{' '}
+      <span className="text-[12px] tracking-[0.08em] text-[#8ca3c7] [font-variant:small-caps]">{label}</span>
+    </span>
+  );
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm" role="status" aria-label="Contadores">
-      <span><strong className="text-slate-50">{fmt(filtered.length)}</strong> <span className="text-slate-400">iniciativas</span></span>
-      <span><strong className="text-slate-50">{countriesCount}</strong> <span className="text-slate-400">países o territorios</span></span>
-      <span><strong className="text-slate-50">{fmt(located)}</strong> <span className="text-slate-400">con ubicación en el mapa</span></span>
+    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="status" aria-label="Contadores">
+      {stat(fmt(filtered.length), 'iniciativas')}
+      {stat(fmt(countriesCount), 'países o territorios')}
+      {stat(fmt(located), 'con ubicación en el mapa', true)}
     </div>
   );
 }
@@ -566,26 +644,26 @@ export function ActiveChips() {
   const setQuery = useAtlas((s) => s.setQuery);
   const country = catalog?.countries.find((c) => c.code === countryCode);
   if (!country && categories.length === 0 && !query.trim()) return null;
-  const chip = 'inline-flex items-center gap-1.5 rounded-full border border-slate-600 bg-slate-800 px-2.5 py-1 text-xs text-slate-200';
+  const chip = 'inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-2.5 py-1 text-xs text-slate-100';
   return (
     <div className="flex flex-wrap gap-1.5" aria-label="Filtros activos">
       {country && (
         <span className={chip}>
           {country.name}
-          <button type="button" onClick={() => setCountry(null)} aria-label="Quitar filtro de país" className="text-slate-400 hover:text-white">✕</button>
+          <button type="button" onClick={() => setCountry(null)} aria-label="Quitar filtro de país" className="text-[#8ca3c7] hover:text-white">✕</button>
         </span>
       )}
       {categories.map((cat) => (
         <span key={cat} className={chip}>
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
-          {cat}
-          <button type="button" onClick={() => toggleCategory(cat)} aria-label={`Quitar categoría ${cat}`} className="text-slate-400 hover:text-white">✕</button>
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
+          <span className="truncate">{cat}</span>
+          <button type="button" onClick={() => toggleCategory(cat)} aria-label={`Quitar categoría ${cat}`} className="text-[#8ca3c7] hover:text-white">✕</button>
         </span>
       ))}
       {query.trim() && (
         <span className={chip}>
-          «{query.trim()}»
-          <button type="button" onClick={() => setQuery('')} aria-label="Borrar búsqueda" className="text-slate-400 hover:text-white">✕</button>
+          <span className="truncate">«{query.trim()}»</span>
+          <button type="button" onClick={() => setQuery('')} aria-label="Borrar búsqueda" className="text-[#8ca3c7] hover:text-white">✕</button>
         </span>
       )}
     </div>

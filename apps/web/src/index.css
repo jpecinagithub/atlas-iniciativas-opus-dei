@@ -1,25 +1,67 @@
 @import "tailwindcss";
 
+/* Sistema visual de la Fase 7B («Exploración inmersiva»): tokens del
+   tema oscuro, un único acento ámbar y cristal SOLO en los paneles
+   principales, siempre con fondo sólido de respaldo. */
+:root {
+  --atlas-bg: #04070d;
+  --atlas-panel: rgba(7, 12, 22, 0.88);
+  --atlas-panel-solid: #0a1120;
+  --atlas-line: rgba(148, 178, 226, 0.22);
+  --atlas-amber: #e8a33d;
+  --atlas-amber-soft: #f5d9a8;
+  --atlas-ink: #eaf0fa;
+  --atlas-muted: #8ca3c7;
+}
+
 html, body, #root {
   height: 100%;
 }
 
 body {
-  background-color: #0a1120;
-  color: #f1f5f9;
+  background-color: var(--atlas-bg);
+  color: var(--atlas-ink);
   font-family: ui-sans-system, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Titulares editoriales de la ficha (herencia de la propuesta A):
+   serif del sistema, sin fuentes descargadas. */
+.font-display {
+  font-family: Georgia, "Times New Roman", "Nimbus Roman", serif;
+}
+
+/* Cristal disciplinado: solo paneles principales. Sin backdrop-filter
+   (o con transparencia reducida) el respaldo es el color sólido. */
+.glass {
+  background: var(--atlas-panel-solid);
+  border: 1px solid var(--atlas-line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .glass {
+    background: var(--atlas-panel);
+    backdrop-filter: blur(12px) saturate(1.15);
+    -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--atlas-panel-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 /* Foco visible para navegación por teclado */
 :focus-visible {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid var(--atlas-amber);
   outline-offset: 2px;
 }
 
-/* Controles de MapLibre en oscuro */
+/* Controles de MapLibre en oscuro, apartados de la barra flotante */
 .maplibregl-ctrl-group {
-  background: #16233d !important;
+  background: #101c33 !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45) !important;
 }
 .maplibregl-ctrl-group button {
@@ -29,13 +71,29 @@ body {
 .maplibregl-ctrl-group button span {
   filter: invert(0.85);
 }
+/* El CSS de MapLibre llega en el chunk diferido, después que este
+   fichero: sin !important ganaría su top: 0 y los controles quedarían
+   bajo la barra flotante. */
+.maplibregl-ctrl-top-right {
+  top: 84px !important;
+}
+@media (max-width: 1023px) {
+  .maplibregl-ctrl-top-right {
+    top: 160px !important;
+  }
+}
 .maplibregl-ctrl-attrib {
-  background: rgba(10, 17, 32, 0.75) !important;
-  color: #7d8aa5 !important;
+  background: rgba(4, 7, 13, 0.75) !important;
+  color: #71809c !important;
   font-size: 10px !important;
 }
 .maplibregl-ctrl-attrib a {
   color: #9db8e8 !important;
+}
+@media (min-width: 1024px) {
+  .maplibregl-ctrl-bottom-right {
+    bottom: 96px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

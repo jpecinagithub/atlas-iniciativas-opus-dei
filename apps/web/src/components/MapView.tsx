@@ -96,7 +96,7 @@ export default function MapView() {
         // las etiquetas no dependen de ningún servidor externo.
         glyphs: `${base}glyphs/{fontstack}/{range}.pbf`,
         sources: {},
-        layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#0a1120' } }],
+        layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#04070d' } }],
       },
       center: [5, 22],
       zoom: 1.6,
@@ -112,7 +112,7 @@ export default function MapView() {
       } catch { /* proyección por defecto si no está disponible */ }
       try {
         (map as unknown as { setSky?: (s: Record<string, string | number>) => void }).setSky?.({
-          'sky-color': '#0a1120', 'horizon-color': '#1c2f52', 'fog-color': '#0a1120',
+          'sky-color': '#04070d', 'horizon-color': '#16294d', 'fog-color': '#04070d',
           'sky-horizon-blend': 0.6, 'horizon-fog-blend': 0.6, 'fog-ground-blend': 0.4,
         });
       } catch { /* atmósfera opcional */ }
@@ -134,7 +134,7 @@ export default function MapView() {
       map.addSource('reticulado', { type: 'geojson', data: graticule });
       map.addLayer({
         id: 'reticulado', type: 'line', source: 'reticulado',
-        paint: { 'line-color': '#22345a', 'line-width': 0.7, 'line-opacity': 0.55 },
+        paint: { 'line-color': '#1d3157', 'line-width': 0.7, 'line-opacity': 0.5 },
       });
 
       const res = await fetch(`${base}data/countries.geojson`);
@@ -143,18 +143,23 @@ export default function MapView() {
       map.addLayer({
         id: 'paises-relleno', type: 'fill', source: 'countries',
         paint: {
-          'fill-color': ['case', ['boolean', ['get', 'inDirectory'], false], '#1b2c4d', '#131e33'],
+          'fill-color': ['case', ['boolean', ['get', 'inDirectory'], false], '#16294d', '#0d1830'],
           'fill-opacity': 0.95,
         },
       });
       map.addLayer({
         id: 'paises-borde', type: 'line', source: 'countries',
-        paint: { 'line-color': '#43598a', 'line-width': 0.6 },
+        paint: { 'line-color': '#2a4a7f', 'line-width': 0.7 },
+      });
+      map.addLayer({
+        id: 'pais-seleccionado-relleno', type: 'fill', source: 'countries',
+        filter: ['==', ['get', 'code'], ''],
+        paint: { 'fill-color': '#e8a33d', 'fill-opacity': 0.07 },
       });
       map.addLayer({
         id: 'pais-seleccionado', type: 'line', source: 'countries',
         filter: ['==', ['get', 'code'], ''],
-        paint: { 'line-color': '#f5c542', 'line-width': 1.8 },
+        paint: { 'line-color': '#e8a33d', 'line-width': 2 },
       });
 
       // Etiquetas de país: un punto por país del directorio (el mayor
@@ -174,8 +179,8 @@ export default function MapView() {
           'text-max-width': 9,
         },
         paint: {
-          'text-color': '#c8d7ee',
-          'text-halo-color': '#0a1120',
+          'text-color': '#b9c9e2',
+          'text-halo-color': '#04070d',
           'text-halo-width': 1.3,
         },
       });
@@ -189,10 +194,10 @@ export default function MapView() {
         id: 'clusters', type: 'circle', source: 'iniciativas',
         filter: ['has', 'point_count'],
         paint: {
-          'circle-color': '#2c4a7c',
-          'circle-stroke-color': '#9db8e8', 'circle-stroke-width': 1,
+          'circle-color': '#e8a33d',
+          'circle-stroke-color': '#e8a33d', 'circle-stroke-width': 1.5,
           'circle-radius': ['step', ['get', 'point_count'], 15, 25, 21, 80, 27, 200, 34],
-          'circle-opacity': 0.92,
+          'circle-opacity': 0.14, 'circle-stroke-opacity': 0.9,
         },
       });
       map.addLayer({
@@ -201,7 +206,7 @@ export default function MapView() {
         paint: {
           'circle-color': ['get', 'color'],
           'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 3.2, 6, 5, 12, 7.5],
-          'circle-stroke-color': '#0a1120', 'circle-stroke-width': 1.1,
+          'circle-stroke-color': '#04070d', 'circle-stroke-width': 1.1,
           'circle-opacity': 0.95,
         },
       });
@@ -222,7 +227,7 @@ export default function MapView() {
           'text-font': ['Noto Sans Regular'],
           'text-size': 12.5,
         },
-        paint: { 'text-color': '#eaf1fb', 'text-halo-color': '#16263f', 'text-halo-width': 0.8 },
+        paint: { 'text-color': '#f5d9a8', 'text-halo-color': '#04070d', 'text-halo-width': 0.9 },
       });
       // Nombre de la localidad bajo cada punto al acercar.
       map.addLayer({
@@ -240,10 +245,15 @@ export default function MapView() {
         },
         paint: {
           'text-color': '#e8eef7',
-          'text-halo-color': '#0a1120',
+          'text-halo-color': '#04070d',
           'text-halo-width': 1.2,
         },
       });
+
+      const notifyExplored = () => window.dispatchEvent(new Event('atlas:explored'));
+      map.once('dragstart', notifyExplored);
+      map.once('zoomstart', notifyExplored);
+      map.once('wheel', notifyExplored);
 
       // La capa Three.js ya no se crea aquí: se carga bajo demanda
       // (ensureMarker) cuando aparece la primera selección ubicada.
@@ -293,8 +303,9 @@ export default function MapView() {
       const filtered = filterInitiatives(catalog.initiatives, countryCode, categories, query);
       const source = map.getSource('iniciativas') as maplibregl.GeoJSONSource | undefined;
       source?.setData(toFeatureCollection(filtered));
-      const selLayer = map.getLayer('pais-seleccionado');
-      if (selLayer) map.setFilter('pais-seleccionado', ['==', ['get', 'code'], countryCode ?? '']);
+      for (const layerId of ['pais-seleccionado', 'pais-seleccionado-relleno']) {
+        if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get', 'code'], countryCode ?? '']);
+      }
     };
     if (readyRef.current) apply();
     else {
@@ -338,17 +349,18 @@ export default function MapView() {
     if (!map || !camera || !catalog) return;
     const run = () => {
       if (!readyRef.current) return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (camera.kind === 'world') {
-        map.flyTo({ center: [5, 22], zoom: 1.6, pitch: 0, bearing: 0, duration: 1400, essential: true });
+        map.flyTo({ center: [5, 22], zoom: 1.6, pitch: 0, bearing: 0, duration: reduced ? 0 : 1500, essential: !reduced });
       } else if (camera.kind === 'country' && camera.countryCode) {
         const country = catalog.countries.find((c) => c.code === camera.countryCode);
         const override = VIEW_OVERRIDES[camera.countryCode];
         const bounds = override?.bounds ?? country?.bbox;
         if (bounds) {
-          map.fitBounds([[bounds[0], bounds[1]], [bounds[2], bounds[3]]], { padding: 36, duration: 1400 });
+          map.fitBounds([[bounds[0], bounds[1]], [bounds[2], bounds[3]]], { padding: 36, duration: reduced ? 0 : 1500 });
         }
       } else if (camera.kind === 'point' && camera.lng !== undefined && camera.lat !== undefined) {
-        map.flyTo({ center: [camera.lng, camera.lat], zoom: Math.max(map.getZoom(), 7), duration: 1200, essential: true });
+        map.flyTo({ center: [camera.lng, camera.lat], zoom: Math.max(map.getZoom(), 7), duration: reduced ? 0 : 850, essential: !reduced });
       }
     };
     if (readyRef.current) run();

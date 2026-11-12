@@ -149,6 +149,11 @@ try {
   check('Mundo: contador total', true, '1.382 iniciativas');
   const worldCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   check('Mundo: 70 países y 942 con ubicación', worldCounters.includes('70') && worldCounters.includes('942'), worldCounters.replace(/\n/g, ' '));
+  check('Inmersivo (7B): acción primaria «Explorar por país» y secundaria de categorías visibles',
+    await page.getByRole('button', { name: /Explorar por país/ }).isVisible() &&
+    await page.getByRole('button', { name: /Categorías/ }).first().isVisible(), '');
+  check('Inmersivo (7B): sin lista de resultados antes de buscar o filtrar',
+    (await page.getByRole('list', { name: 'Resultados' }).count()) === 0, '');
 
   // Etiquetas del mapa (Fase 5): glifos autoalojados y capas de texto
   const labelInfo = await page.evaluate(() => {
@@ -185,6 +190,8 @@ try {
   const ctxText = await ctx.innerText();
   check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('296'), '');
   check('Contexto de país: desglose por categoría (Colegios 108)', /Colegios\s+108/.test(ctxText), '');
+  check('País (7B): el panel muestra «Sin punto» junto a iniciativas y con ubicación',
+    ctxText.includes('Sin punto') && ctxText.includes('272'), '');
   await ctx.evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await page.waitForTimeout(500);
   await page.screenshot({ path: join(SHOTS, '12-contexto-pais.png') });
@@ -384,6 +391,17 @@ try {
   await waitCounters(page, '108');
   check('Historial: adelante reaplica Colegios', page.url().includes('categorias=Colegios'), page.url());
 
+  // Ficha híbrida (7B): secciones numeradas y cierre con Escape
+  await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
+  await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
+  const ficha7b = await page.getByRole('article').textContent() ?? '';
+  check('Ficha (7B): secciones 01 La iniciativa, 02 Ubicación y contacto, 03 Evidencia y fuentes',
+    ficha7b.includes('La iniciativa') && ficha7b.includes('Ubicación y contacto') && ficha7b.includes('Evidencia y fuentes'), '');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  check('Ficha (7B): Escape la cierra y limpia la URL',
+    (await page.getByRole('article').count()) === 0 && !page.url().includes('sel='), page.url());
+
   // PWA (Fase 5): manifiesto, service worker y carcasa sin conexión
   const manifest = await page.evaluate(async () => {
     const link = document.querySelector('link[rel="manifest"]');
@@ -440,6 +458,8 @@ try {
   await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
   await mobile.screenshot({ path: join(SHOTS, '07-movil-mundo.png') });
+  const mobileOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check('Móvil (7B): sin desbordamiento horizontal con la hoja colapsada', mobileOverflow <= 0, String(mobileOverflow));
   await mobile.getByRole('tab', { name: 'resultados' }).click();
   await mobile.waitForTimeout(900);
   await mobile.screenshot({ path: join(SHOTS, '08-movil-resultados.png') });
@@ -447,6 +467,18 @@ try {
   await mobile.waitForTimeout(800);
   await mobile.screenshot({ path: join(SHOTS, '09-movil-ficha.png') });
   check('Móvil: panel inferior y navegación por pestañas', true, 'capturas 07-09');
+
+  // Movimiento reducido (7B): sin vuelos animados, todo funciona igual
+  const rmContext = await browser.newContext({ reducedMotion: 'reduce', ...contextOptions });
+  const rm = await rmContext.newPage();
+  rm.on('pageerror', (e) => errors.push({ text: `reduced-motion: ${e}`, url: '', frameHost: null, offline: false }));
+  await rm.goto(BASE, { waitUntil: 'load' });
+  await rm.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
+  await rm.getByRole('button', { name: /^España/ }).first().click();
+  await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/296/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
+  const rmCounters = await rm.getByRole('status', { name: 'Contadores' }).first().innerText();
+  check('Movimiento reducido (7B): navegar a España funciona sin animación', rmCounters.includes('296'), rmCounters.replace(/\n/g, ' '));
+  await rmContext.close();
 
   // Errores esperados, clasificados de forma exclusiva: SOLO los del
   // documento externo cargado en el visor (opusdei.org o paloblanco.org),
