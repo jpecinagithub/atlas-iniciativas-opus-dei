@@ -36,7 +36,11 @@ function toFeatureCollection(items: Initiative[]): GeoJSON.FeatureCollection {
       .map((i) => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [i.lng as number, i.lat as number] },
-        properties: { id: i.id, category: i.category, name: i.name, color: categoryColor(i.category) },
+        properties: {
+          id: i.id, category: i.category, name: i.name,
+          locality: i.locality ?? '',
+          color: categoryColor(i.category),
+        },
       })),
   };
 }

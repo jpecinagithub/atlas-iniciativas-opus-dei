@@ -46,7 +46,8 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fas
 - [x] PWA con vite-plugin-pwa: manifiesto, iconos y service worker (precarga de carcasa; API con NetworkFirst; offline verificado en el recorrido).
 - [x] Chunk del mapa reducido: Three.js en chunk propio bajo demanda (529 KB); MapView de 1.612 a 1.083 KB.
 - [x] Acabado: favicon vectorial, theme-color, textos de Método y pie actualizados. Recorrido ampliado a 38/38 PASS.
-- [ ] Certificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
+- [x] Corrección de la revisión: propiedad `locality` en los puntos (las etiquetas no podían mostrar texto) con prueba de renderizado real a zoom 14; OFL.txt de Noto en tools/fonts; prueba offline con datos cacheados (1.382) en flujo de segunda visita; worker .mjs de MapLibre incluido en la precarga. Recorrido: 41/41 PASS.
+- [ ] Recertificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
 
 ## Fases siguientes (no anticipar)
 - [ ] Fase 6: despliegue en Oracle (reverificar servidor; decisión D7).

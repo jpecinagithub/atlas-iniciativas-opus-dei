@@ -37,7 +37,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        // Ojo: el worker de MapLibre es un .mjs; sin él en la precarga,
+        // sin conexión el mapa no puede ni arrancar su motor.
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,ico}'],
         runtimeCaching: [
           {
             urlPattern: /\/data\/[^/]+\.(?:geojson|json)$/,

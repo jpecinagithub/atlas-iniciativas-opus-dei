@@ -230,6 +230,23 @@ try {
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
 
+  // Etiquetas de localidad con datos (Fase 5, corrección): no basta que
+  // la capa exista. A zoom de agrupación los puntos van dentro de
+  // clusters sin esa propiedad; a zoom 14 (> clusterMaxZoom) los
+  // puntos son individuales: la fuente debe llevar «Madrid» y la capa
+  // debe renderizarla.
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-3.7038, 40.4168], zoom: 14, duration: 600 }));
+  const localityInSource = await page.waitForFunction(() => {
+    const feats = window.__atlasMap?.querySourceFeatures('iniciativas') ?? [];
+    return feats.some((f) => f.properties?.locality === 'Madrid');
+  }, null, { polling: 250, timeout: 20000 }).then(() => true).catch(() => false);
+  check('Etiquetas de localidad: los puntos llevan «locality» (Madrid en la fuente)', localityInSource, '');
+  const localityRendered = await page.waitForFunction(() => {
+    const feats = window.__atlasMap?.queryRenderedFeatures({ layers: ['etiquetas-localidades'] }) ?? [];
+    return feats.some((f) => f.properties?.locality === 'Madrid');
+  }, null, { polling: 250, timeout: 25000 }).then(() => true).catch(() => false);
+  check('Etiquetas de localidad: «Madrid» se renderiza en su capa', localityRendered, '');
+
   // Giro del globo: el marcador debe ocultarse tras el globo (vista antípoda)
   await page.evaluate(() => window.__atlasMap?.flyTo({ center: [176.3, -40.4], zoom: 1.8, duration: 600 }));
   await page.waitForTimeout(2500);
@@ -377,12 +394,28 @@ try {
     return false;
   });
   check('PWA: service worker activo', swActive, '');
+  // Flujo real de la PWA: la caché de ejecución se puebla en una visita
+  // ya controlada por el service worker. Se restablece el mundo, se
+  // recarga en línea (segunda visita) y solo entonces se corta la red.
+  await page.getByRole('button', { name: 'Restablecer' }).first().click();
+  await waitCounters(page, '1.382');
+  await page.reload({ waitUntil: 'load' });
+  await waitCounters(page, '1.382');
   offlineDrill = true;
   await page.context().setOffline(true);
   await page.reload({ waitUntil: 'load' });
   await page.waitForTimeout(1500);
   const offlineTitle = await page.evaluate(() => document.querySelector('h1')?.textContent ?? '');
   check('PWA: sin conexión, la carcasa de la app sigue cargando', offlineTitle.includes('Atlas de iniciativas'), offlineTitle);
+  // Y no solo la carcasa: los datos ya consultados salen de la caché
+  // (la API responde vía NetworkFirst desde el service worker).
+  let offlineCounters = '';
+  try {
+    await waitCounters(page, '1.382', 30000);
+    offlineCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
+  } catch { /* counters quedan vacíos y la comprobación falla */ }
+  check('PWA: sin conexión, abre con lo último consultado (1.382 iniciativas)',
+    offlineCounters.includes('1.382'), offlineCounters.replace(/\n/g, ' '));
   await page.context().setOffline(false);
   await page.reload({ waitUntil: 'load' });
   await page.waitForTimeout(1000);

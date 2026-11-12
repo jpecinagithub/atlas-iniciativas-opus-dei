@@ -38,8 +38,9 @@ español, iconos 192/512 y maskable generados con `tools/build_icons.py`:
 el globo dorado de la casa sobre azul noche) y service worker con
 actualización automática:
 
-- **Precarga solo la carcasa** (HTML, JS, CSS, iconos): 16 ficheros,
-  ~1,9 MB. El geojson de países (3,7 MB) no se precarga.
+- **Precarga solo la carcasa** (HTML, JS, CSS, iconos y el worker de
+  MapLibre): 17 ficheros, ~2,4 MB. El geojson de países (3,7 MB) no
+  se precarga.
 - **Caché de ejecución**: datos estáticos (`/data/*.geojson|json`)
   con StaleWhileRevalidate, glifos con CacheFirst, y respuestas de la
   **API con NetworkFirst** (4 s de espera y caída a la última copia):
@@ -67,11 +68,12 @@ explica cómo está hecha la app.
 
 ## 5. Verificación ejecutada
 
-- **Recorrido oficial ampliado a 38 comprobaciones: 38/38 PASS**, con
-  API 13/13 e integridad OK. Las 4 nuevas: estilo con glifos
+- **Recorrido oficial ampliado: 41/41 PASS** (versión corregida, §7),
+  con API 13/13 e integridad OK. Las nuevas: estilo con glifos
   autoalojados y las tres capas de texto presentes; manifiesto enlazado
-  con nombre e iconos; service worker activo; y **sin conexión (modo
-  offline del navegador), la carcasa sigue cargando**.
+  con nombre e iconos; service worker activo; **sin conexión (modo
+  offline del navegador), la carcasa sigue cargando**; y las de la
+  corrección del §7.
 - La prueba offline deja una huella honesta en la consola (el intento
   de red de la API): el recorrido la clasifica como esperada **solo**
   durante esa prueba deliberada, con el mismo patrón de contexto que
@@ -79,7 +81,35 @@ explica cómo está hecha la app.
 - Capturas regeneradas (12 de 13 cambian: etiquetas y conteos se ven
   en el globo, en España y en el móvil) y revisadas visualmente.
 
-## 6. Límites y notas
+## 7. Corrección tras la primera revisión
+
+La revisión encontró un bloqueo real y dos cierres pendientes; los
+tres están corregidos y una cuarta cosa apareció por el camino:
+
+- **Las etiquetas de localidad no podían mostrar nada**: el GeoJSON
+  de puntos no llevaba la propiedad `locality` que la capa pide.
+  Añadida a las propiedades de cada punto. Y la prueba ya no se fía de
+  que la capa exista: vuela a Madrid a zoom 14 (por encima del zoom de
+  agrupación, donde los puntos son individuales; dentro de un cluster
+  la propiedad no existe) y comprueba en la fuente y en lo renderizado
+  (`querySourceFeatures` / `queryRenderedFeatures`) que «Madrid» está
+  y se dibuja.
+- **La licencia de la fuente no estaba en el repo**: la afirmación
+  «licencia OFL» ahora se cumple con `tools/fonts/OFL.txt`, el texto
+  oficial de Noto (SIL Open Font License 1.1).
+- **La prueba offline solo acreditaba la carcasa**: ahora reproduce el
+  flujo real de una PWA — la caché de ejecución se puebla en una
+  visita ya controlada por el service worker — y, sin conexión,
+  comprueba también los datos cacheados (los contadores con las
+  **1.382 iniciativas**). Matiz honesto: lo de «abre con lo último
+  consultado» vale **desde la segunda visita**, que es cuando la caché
+  existe.
+- **Hallazgo al endurecer esa prueba**: el worker de MapLibre es un
+  fichero `.mjs` y el patrón de precarga solo cubría `.js`: sin
+  conexión, el mapa no podía arrancar su motor. Incluido en la
+  precarga (17 ficheros, ~2,4 MB).
+
+## 8. Límites y notas
 
 - La caché sin conexión guarda lo ya consultado en ese navegador; no
   convierte la app en una copia completa sin haberla usado antes.
