@@ -224,3 +224,29 @@ Generadas con `tests/capture-hotfix.mjs` contra el preview local.
 **No desplegado.** Pendiente: revisión de Jon y certificación de
 Codex. Tras certificar y desplegar este hotfix, se reanuda la
 Fase 8A.
+
+## 8. Corrección de legibilidad del selector móvil (2026-11-12)
+
+Jon aprobó la solución funcional en revisión de código y capturas y
+pidió una única corrección antes de la certificación: en
+`hotfix-selector-movil.png` la hoja y las cifras de la interfaz se
+transparentaban a través del selector.
+
+- En móvil (<1024 px) el selector es **opaco**: clase
+  `glass-opaque-mobile` en `index.css` — fondo sólido
+  `var(--atlas-panel-solid)` (**#0A1120**) y `backdrop-filter: none`,
+  con el borde y la sombra del panel. En escritorio se conserva el
+  cristal.
+- Las tarjetas también son sólidas en móvil (#141F38, hover
+  #1A2947); en escritorio conservan el fondo translúcido.
+- El spiderfy sigue visible en el mapa libre sobre la hoja
+  (verificado en la captura regenerada).
+- Comprobación dirigida nueva en la batería: en viewport móvil, el
+  fondo computado del selector es `rgb(10, 17, 32)` y el
+  `backdrop-filter` es `none`.
+- Regenerada **únicamente** `hotfix-selector-movil.png` (la de
+  escritorio salió byte a byte idéntica).
+- Verificación posterior: build limpio, `test:sw` OK y batería
+  **69/69** (los 68 anteriores + la comprobación de opacidad).
+
+**Sin desplegar**: a la espera de la certificación final.
