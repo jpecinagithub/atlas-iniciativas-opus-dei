@@ -210,17 +210,17 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
 
 /**
  * Ficha híbrida (Fase 7B): tarjeta inmersiva de la propuesta B con el
- * interior editorial de la A — resumen esencial primero y secciones
- * numeradas 01/02. La antigua sección 03 «Evidencia y fuentes» se
- * retiró el 2026-11-12 por decisión de Jon («no aporta nada» en la
- * ficha); la documentación sigue existiendo en los datos y en la
- * API, pero ya no se muestra ni se descarga en la ficha.
+ * interior editorial de la A. Por decisión de Jon (2026-11-12) se
+ * retiraron de la ficha la sección 03 «Evidencia y fuentes» y la
+ * sección 01 «La iniciativa» (destinatarios, entidad titular, tipo
+ * de vinculación y fecha de consulta): queda el resumen con sus
+ * chips y la sección 02 «Ubicación y contacto», que conserva su
+ * numeración. Los datos retirados siguen en el catálogo y la API.
  */
 export function DetailPanel() {
   const catalog = useAtlas((s) => s.catalog);
   const selectedId = useAtlas((s) => s.selectedId);
   const select = useAtlas((s) => s.select);
-  const openViewer = useAtlas((s) => s.openViewer);
   const articleRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (selectedId) {
@@ -233,12 +233,6 @@ export function DetailPanel() {
   const colocated = rec.lat !== null && rec.lng !== null
     ? catalog.initiatives.filter((i) => i.id !== rec.id && i.lat === rec.lat && i.lng === rec.lng)
     : [];
-  const field = (label: string, value: React.ReactNode) => (
-    <div>
-      <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">{label}</dt>
-      <dd className="mt-0.5 leading-snug text-slate-100">{value}</dd>
-    </div>
-  );
 
   return (
     <article ref={articleRef} tabIndex={-1} aria-label={`Ficha de ${rec.name}`} className="space-y-5 outline-none">
@@ -273,19 +267,6 @@ export function DetailPanel() {
           {rec.lat !== null ? ': el punto marca la localidad, no la dirección exacta.' : ': consta en la lista y en los totales, pero su ubicación no se ha resuelto de forma verificable.'}
         </p>
       </header>
-
-      <section aria-label="La iniciativa">
-        <h3 className="mb-2.5 flex items-baseline gap-2">
-          <span className="font-display text-sm italic text-[#e8a33d]">01</span>
-          <span className={SECTION_TITLE}>La iniciativa</span>
-        </h3>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-          {field('Destinatarios', rec.sexRaw ?? 'No consta')}
-          {rec.entity && field('Entidad titular', rec.entity)}
-          {rec.linkageType && field('Tipo de vinculación', rec.linkageType)}
-          {rec.consultedAt && field('Fecha de consulta', rec.consultedAt)}
-        </dl>
-      </section>
 
       <section aria-label="Ubicación y contacto">
         <h3 className="mb-2.5 flex items-baseline gap-2">
@@ -324,11 +305,6 @@ export function DetailPanel() {
                 {rec.web && (normalizeExternalUrl(rec.web)
                   ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.web)!} target="_blank" rel="noreferrer">{rec.web}</a>
                   : <span className="block truncate" title={rec.web}>{rec.web}</span>)}
-                {rec.web && normalizeExternalUrl(rec.web) && (
-                  <button type="button" onClick={() => openViewer(rec.web!)} className="text-xs font-medium text-[#f5d9a8] hover:underline">
-                    Ver la web en el visor
-                  </button>
-                )}
                 {rec.phone && <span className="block">{rec.phone}</span>}
                 {rec.email && <span className="block">{rec.email}</span>}
               </dd>
@@ -382,7 +358,6 @@ export function CountryContext() {
   const countryCode = useAtlas((s) => s.countryCode);
   const categories = useAtlas((s) => s.categories);
   const toggleCategory = useAtlas((s) => s.toggleCategory);
-  const openViewer = useAtlas((s) => s.openViewer);
   const [showNote, setShowNote] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
   useEffect(() => { setShowNote(false); setShowEvidence(false); }, [countryCode]);
@@ -489,9 +464,6 @@ export function CountryContext() {
 
       {country.mainSource && (normalizeExternalUrl(country.mainSource) ? (
         <p className="flex gap-3 text-xs font-medium">
-          <button type="button" onClick={() => openViewer(country.mainSource!)} className="text-[#f5d9a8] hover:underline">
-            Fuente principal del país en el visor
-          </button>
           <a href={normalizeExternalUrl(country.mainSource)!} target="_blank" rel="noreferrer" className="text-[#f5d9a8] hover:underline">
             Abrir ↗
           </a>

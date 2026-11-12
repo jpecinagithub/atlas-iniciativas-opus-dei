@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import type { Catalog, Initiative, InitiativeDetail } from './types';
-import { normalizeExternalUrl } from './urls';
 
 export type LoadStatus = 'loading' | 'ready' | 'error';
 
@@ -43,10 +42,6 @@ interface AtlasState {
   details: Record<string, InitiativeDetail>;
   detailFailedFor: string | null;
   loadDetail: (id: string) => Promise<void>;
-  /** Visor web (Fase 4): URL abierta en el visor, o null. */
-  viewerUrl: string | null;
-  openViewer: (url: string) => void;
-  closeViewer: () => void;
   load: () => Promise<void>;
   setCountry: (code: string | null, fly?: boolean) => void;
   toggleCategory: (category: string) => void;
@@ -77,7 +72,6 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   closeCoincident: () => set({ coincident: null }),
   details: {},
   detailFailedFor: null,
-  viewerUrl: null,
 
   loadDetail: async (id) => {
     if (get().details[id]) return;
@@ -91,12 +85,6 @@ export const useAtlas = create<AtlasState>((set, get) => ({
       set({ detailFailedFor: id });
     }
   },
-  openViewer: (url) => {
-    // Defensa final: el visor solo acepta URLs externas normalizadas.
-    const normalized = normalizeExternalUrl(url);
-    if (normalized) set({ viewerUrl: normalized });
-  },
-  closeViewer: () => set({ viewerUrl: null }),
 
   load: async () => {
     try {

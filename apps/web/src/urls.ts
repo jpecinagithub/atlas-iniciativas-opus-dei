@@ -6,17 +6,17 @@
  * («www.paloblanco.org»), algunos con comillas tipográficas finales
  * («www.tahilan.org”») y hasta textos documentales completos en campos
  * de fuente (BR-10, CL-16). Usar el valor tal cual como href o como src
- * del visor convertiría un dominio desnudo en una ruta INTERNA de la
+ * de un iframe convertiría un dominio desnudo en una ruta INTERNA de la
  * app y un texto en un enlace roto.
  *
- * Regla única para toda la app (enlaces y visor):
+ * Regla única para toda la app (enlaces externos):
  * - Se recortan espacios y comillas (tipográficas o rectas) finales.
  * - Con esquema: solo se admiten http: y https: (javascript:, data: y
  *   demás se rechazan).
  * - Sin esquema: solo si es un dominio reconocible (con su ruta
  *   opcional, sin espacios) se le antepone https://.
  * - Cualquier otra cosa devuelve null: el valor original se sigue
- *   mostrando como texto, pero no se crea enlace ni visor con él.
+ *   mostrando como texto, pero no se crea enlace con él.
  */
 const TRAILING_JUNK = /[\s"'“”‘’]+$/;
 const BARE_DOMAIN = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?:[/?#]\S*)?$/i;

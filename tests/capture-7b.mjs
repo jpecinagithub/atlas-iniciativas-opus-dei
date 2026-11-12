@@ -1,5 +1,5 @@
 // Capturas de entrega de la Fase 7B (no forma parte de la batería):
-// escritorio (mundo, país, iniciativa, visor)
+// escritorio (mundo, país, iniciativa)
 // y móvil (mundo colapsado, resultados, iniciativa) contra el preview
 // local de producción. Salida: docs/fase-7b/.
 //
@@ -78,11 +78,6 @@ await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 
 await page.waitForTimeout(1200);
 await snap(page, 'iniciativa');
 
-await page.getByRole('button', { name: 'Ver la web en el visor' }).first().click();
-await page.getByRole('dialog').waitFor({ timeout: 10000 });
-await page.waitForTimeout(2500);
-await page.screenshot({ path: join(OUT, 'despues-visor.png') });
-await page.getByRole('button', { name: 'Cerrar visor' }).click();
 await page.close();
 
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });

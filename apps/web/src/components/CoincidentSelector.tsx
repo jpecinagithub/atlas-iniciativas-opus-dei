@@ -72,7 +72,7 @@ export function CoincidentSelector() {
       role="dialog"
       aria-modal="false"
       aria-label={`${fmt(n)} iniciativas en esta ubicación`}
-      className="glass absolute inset-x-0 bottom-0 z-30 flex max-h-[70dvh] flex-col rounded-t-3xl p-4 shadow-2xl outline-none lg:inset-x-auto lg:bottom-auto lg:right-4 lg:top-[92px] lg:max-h-[calc(100dvh-190px)] lg:w-[min(360px,calc(100vw-2rem))] lg:rounded-2xl lg:p-5"
+      className="glass glass-opaque-mobile absolute inset-x-0 bottom-0 z-30 flex max-h-[70dvh] flex-col rounded-t-3xl p-4 shadow-2xl outline-none lg:inset-x-auto lg:bottom-auto lg:right-4 lg:top-[92px] lg:max-h-[calc(100dvh-190px)] lg:w-[min(360px,calc(100vw-2rem))] lg:rounded-2xl lg:p-5"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -96,7 +96,7 @@ export function CoincidentSelector() {
             <button
               type="button"
               onClick={() => select(rec.id)}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 text-left transition hover:border-[#e8a33d]/50 hover:bg-white/[0.06]"
+              className="w-full rounded-xl border border-white/10 bg-[#141f38] px-3.5 py-3 text-left transition hover:border-[#e8a33d]/50 hover:bg-[#1a2947] lg:bg-white/[0.03] lg:hover:bg-white/[0.06]"
             >
               <span className="block truncate text-sm font-medium text-slate-50">{rec.name}</span>
               <span className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-[#8ca3c7]">

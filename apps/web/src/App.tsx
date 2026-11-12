@@ -4,7 +4,6 @@ import { useAtlas, filterInitiatives, syncUrl, applyStateFromUrl } from './store
 const MapView = lazy(() => import('./components/MapView'));
 import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips, CountryContext } from './components/Panels';
 import { CoincidentSelector } from './components/CoincidentSelector';
-import { WebViewer } from './components/WebViewer';
 import { categoryColor } from './categories';
 import { fmt } from './format';
 import { normalizeExternalUrl } from './urls';
@@ -95,10 +94,10 @@ export default function App() {
     if (query.trim()) setForcePanels(true);
   }, [query]);
 
-  // Escape cierra la ficha (el visor gestiona su propio Escape)
+  // Escape cierra la ficha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && useAtlas.getState().selectedId && !useAtlas.getState().viewerUrl) {
+      if (e.key === 'Escape' && useAtlas.getState().selectedId) {
         useAtlas.getState().select(null);
       }
     };
@@ -407,7 +406,6 @@ export default function App() {
       )}
 
       <CoincidentSelector />
-      <WebViewer />
     </div>
   );
 }

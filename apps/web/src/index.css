@@ -53,6 +53,19 @@ body {
   }
 }
 
+/* Selector de coincidentes en móvil: hoja OPACA (corrección de
+   legibilidad del hotfix de Fase 7, 2026-11-12). El contenido que
+   queda debajo (contadores, hojas) no debe transparentarse: fondo
+   sólido del token y sin backdrop-filter por debajo del corte de
+   escritorio (1024 px). En escritorio se conserva el cristal. */
+@media (max-width: 1023.98px) {
+  .glass-opaque-mobile {
+    background: var(--atlas-panel-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 /* Foco visible para navegación por teclado */
 :focus-visible {
   outline: 2px solid var(--atlas-amber);

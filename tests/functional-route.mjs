@@ -243,23 +243,12 @@ try {
     !fichaDoc.includes('Evidencia y fuentes') && !fichaDoc.includes('Evidencia de vinculación') && !fichaDoc.includes('Fuentes catalogadas'), '');
   await page.screenshot({ path: join(SHOTS, '10-ficha-desktop.png') });
 
-  // Visor web (Fase 4): solo se abre tras una acción del usuario;
-  // en la ficha queda la entrada de la web propia de la entidad
-  // (sección 02). La entrada por las fuentes catalogadas se fue
-  // con la sección 03; el visor sigue cubierto también por la
-  // fuente principal del país (flujo de Puerto Rico, más abajo).
-  expectedFrameHost = 'tajamar.es';
-  await page.getByRole('button', { name: 'Ver la web en el visor' }).first().click();
-  const dialog = page.getByRole('dialog');
-  await dialog.waitFor({ timeout: 10000 });
-  const frameSrc = await dialog.locator('iframe').getAttribute('src');
-  check('Visor web: se abre con la fuente cargada en un iframe', !!frameSrc && frameSrc.startsWith('http'), frameSrc ?? '');
-  await page.waitForTimeout(1500);
-  await page.screenshot({ path: join(SHOTS, '11-visor-web.png') });
-  await page.getByRole('button', { name: 'Cerrar visor' }).click();
-  await page.waitForTimeout(400);
-  check('Visor web: se cierra', (await page.getByRole('dialog').count()) === 0, '');
-  expectedFrameHost = null;
+  // El visor web se retiró por completo el 2026-11-12 por decisión
+  // de Jon: ni el componente, ni sus enlaces en la ficha y el país.
+  // Quedan los enlaces externos normales (target=_blank).
+  check('Ficha: sin visor ni enlace al visor (retirado 2026-11-12)',
+    (await page.getByRole('button', { name: 'Ver la web en el visor' }).count()) === 0 &&
+    (await page.locator('iframe').count()) === 0, '');
 
   // Acercar: valida el marcador Three.js con coordenada real validada
   await page.getByRole('button', { name: 'Acercar a esta iniciativa' }).click();
@@ -380,24 +369,21 @@ try {
   const fichaSinPunto = await page.getByRole('article').innerText();
   check('Sin coordenadas: la ficha lo explica', fichaSinPunto.includes('Sin ubicación en el mapa'), '');
 
-  // Puerto Rico (corrección de la Fase 4): su fuente principal es un
-  // dominio desnudo; el visor debe abrir https://www.paloblanco.org/ y
-  // nunca una ruta interna de la propia app.
+  // Puerto Rico (corrección de la Fase 4, adaptada a la retirada
+  // del visor): su fuente principal es un dominio desnudo; el
+  // enlace externo «Abrir ↗» debe llevar https://www.paloblanco.org/
+  // y nunca una ruta interna de la propia app, y ya no existe el
+  // botón del visor.
   await page.getByRole('button', { name: 'Restablecer' }).click();
   await page.waitForTimeout(600);
   await page.getByRole('button', { name: /^Puerto Rico/ }).first().click();
   await page.waitForTimeout(1200);
   const ctxPR = page.getByLabel('Contexto de Puerto Rico').first();
-  expectedFrameHost = 'www.paloblanco.org';
-  await ctxPR.getByRole('button', { name: 'Fuente principal del país en el visor' }).click();
-  const dialogPR = page.getByRole('dialog');
-  await dialogPR.waitFor({ timeout: 10000 });
-  const prSrc = await dialogPR.locator('iframe').getAttribute('src');
-  check('Puerto Rico: la fuente principal abre https://www.paloblanco.org/ en el visor',
-    prSrc === 'https://www.paloblanco.org/', prSrc ?? '');
-  await page.getByRole('button', { name: 'Cerrar visor' }).click();
-  await page.waitForTimeout(400);
-  expectedFrameHost = null;
+  const prHref = await ctxPR.getByRole('link', { name: /Abrir/ }).getAttribute('href');
+  check('Puerto Rico: la fuente principal enlaza fuera a https://www.paloblanco.org/',
+    prHref === 'https://www.paloblanco.org/', prHref ?? '');
+  check('Puerto Rico: sin botón del visor (retirado 2026-11-12)',
+    (await ctxPR.getByRole('button', { name: 'Fuente principal del país en el visor' }).count()) === 0, '');
 
   // Historial atrás/adelante: cada lugar de la exploración es una entrada
   await page.getByRole('button', { name: 'Restablecer' }).click();
@@ -431,8 +417,8 @@ try {
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
   const ficha7b = await page.getByRole('article').textContent() ?? '';
-  check('Ficha (7B): secciones 01 La iniciativa y 02 Ubicación y contacto; sin 03 (retirada 2026-11-12)',
-    ficha7b.includes('La iniciativa') && ficha7b.includes('Ubicación y contacto') && !ficha7b.includes('Evidencia y fuentes'), '');
+  check('Ficha (7B): solo queda 02 Ubicación y contacto; sin 01 (retirada 2026-11-12) ni 03',
+    !ficha7b.includes('Entidad titular') && !ficha7b.includes('Tipo de vinculación') && ficha7b.includes('Ubicación y contacto') && !ficha7b.includes('Evidencia y fuentes'), '');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   check('Ficha (7B): Escape la cierra y limpia la URL',
@@ -703,6 +689,16 @@ try {
   const mobileBox = await mobileDialog.boundingBox();
   check('Hotfix móvil: el selector se presenta en la parte inferior de la pantalla',
     !!mobileBox && mobileBox.y > 844 / 2, mobileBox ? `y=${Math.round(mobileBox.y)}` : 'sin caja');
+  // Legibilidad (corrección del hotfix, 2026-11-12): en móvil la
+  // hoja del selector es OPACA — fondo sólido #0A1120 y sin
+  // backdrop-filter; nada de la interfaz inferior se transparenta.
+  const mobileSheetStyle = await mobileDialog.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { bg: cs.backgroundColor, bf: cs.backdropFilter };
+  });
+  check('Hotfix móvil: el selector es opaco (fondo #0A1120, sin backdrop-filter)',
+    mobileSheetStyle.bg === 'rgb(10, 17, 32)' && (mobileSheetStyle.bf === 'none' || mobileSheetStyle.bf === ''),
+    JSON.stringify(mobileSheetStyle));
   await mobileDialog.getByRole('button', { name: /Asociación Gara/ }).click();
   await mobile.getByRole('heading', { name: 'Asociación Gara' }).waitFor({ timeout: 10000 });
   check('Hotfix móvil: Asociación Gara abre su ficha desde el selector (sel=ES-200)',
