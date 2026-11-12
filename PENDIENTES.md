@@ -23,6 +23,7 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 3 CERTIFICADA; Fas
 - [x] Visor web solo tras acción del usuario, sin proxy anti-incrustación; aviso permanente y salida a pestaña nueva.
 - [x] Recorrido ampliado a 27 comprobaciones: 27/27 PASS; capturas nuevas 10, 11 y 12.
 - [x] Bloqueo del visor corregido: `normalizeExternalUrl` única (85 valores sin esquema de 6.205: dominios desnudos, comillas tipográficas y 2 textos documentales); el original se muestra como texto sin enlace si no normaliza; defensa en `openViewer`/`WebViewer` y `sandbox` en el iframe. Recorrido ampliado a 34/34 PASS (Puerto Rico abre https://www.paloblanco.org/; BR-10 y CL-16 sin enlace; `javascript:`/`data:` rechazados).
+- [x] Clasificación de errores del recorrido corregida: solo se aceptan como esperados los del iframe externo (opusdei.org/paloblanco.org, incluido su X-Frame-Options); los de la app/API/mapa siguen fallando. 34/34 reproducible.
 - [ ] Certificación de la Fase 4 por la revisión. La Fase 5 no comienza hasta entonces.
 
 ## Decisiones

@@ -104,6 +104,18 @@ CL-16 sin enlace en su Fuente 2, **Puerto Rico abre
 https://www.paloblanco.org/ en el visor** y Tajamar sigue abriendo su
 fuente https.
 
+**Corrección del propio recorrido (misma revisión):** en Windows, el
+rechazo X-Frame-Options de opusdei.org — el comportamiento esperado y
+documentado del visor — llegaba a la consola como error y la
+comprobación «Sin errores de página» lo trataba como fallo de la app
+(33/34). El recorrido ahora guarda texto y URL de origen
+(`location().url`) de cada mensaje y clasifica como **esperados solo**
+los procedentes del documento externo cargado en el visor
+(opusdei.org, paloblanco.org) o su rechazo X-Frame-Options; cualquier
+error de la app, la API o el mapa — incluido un 403 propio — sigue
+siendo un fallo, sin filtro genérico. Cuando el bloqueo se observa, la
+comprobación lo declara en su detalle. Recorrido reproducible: 34/34.
+
 ## 4. Límites y notas
 
 - El visor no puede detectar de forma fiable si un sitio ha bloqueado

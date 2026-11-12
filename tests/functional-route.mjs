@@ -120,8 +120,10 @@ async function waitCounters(page, text, timeout = 25000) {
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, ...contextOptions });
   const errors = [];
-  page.on('pageerror', (e) => errors.push(String(e)));
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push({ text: String(e), url: '' }));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '' });
+  });
 
   await page.goto(BASE, { waitUntil: 'load' });
   await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
@@ -330,7 +332,7 @@ try {
 
   // Móvil
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, ...contextOptions });
-  mobile.on('pageerror', (e) => errors.push(`móvil: ${e}`));
+  mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '' }));
   await mobile.goto(BASE, { waitUntil: 'load' });
   await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
@@ -343,7 +345,21 @@ try {
   await mobile.screenshot({ path: join(SHOTS, '09-movil-ficha.png') });
   check('Móvil: panel inferior y navegación por pestañas', true, 'capturas 07-09');
 
-  check('Sin errores de página', errors.length === 0, errors.slice(0, 3).join(' | '));
+  // Errores esperados, clasificados de forma exclusiva: SOLO los del
+  // documento externo cargado en el visor (opusdei.org o paloblanco.org),
+  // incluido su rechazo X-Frame-Options documentado. Un 403 de la app,
+  // la API o el mapa sigue siendo un fallo: no hay filtro genérico.
+  const EXTERNAL_FRAME_HOSTS = ['https://opusdei.org/', 'https://www.paloblanco.org/'];
+  const isExpectedExternal = (e) =>
+    EXTERNAL_FRAME_HOSTS.some((h) => e.url.startsWith(h)) ||
+    (/Refused to display/i.test(e.text) && EXTERNAL_FRAME_HOSTS.some((h) => e.text.includes(h)));
+  const expectedBlocked = errors.filter(isExpectedExternal);
+  const unexpected = errors.filter((e) => !isExpectedExternal(e));
+  check('Sin errores de página', unexpected.length === 0,
+    unexpected.slice(0, 3).map((e) => `${e.url} ${e.text}`).join(' | ') ||
+    (expectedBlocked.length
+      ? `bloqueo externo esperado, observado y clasificado: ${expectedBlocked.length} mensaje(s) del iframe`
+      : ''));
 } finally {
   await browser.close();
   if (server) server.kill('SIGTERM');
