@@ -113,3 +113,49 @@ iniciativas y 2.164 relaciones; la base de prueba se eliminó.
   `docker compose run --rm api node dist/import.js`.
 - Sin autenticación, como se decidió en la especificación: es un
   atlas de información pública verificada.
+
+## 7. Corrección posterior a la primera revisión (2026-11-12)
+
+La revisión detectó que **los glifos autoalojados eran defectuosos**
+y la certificación se detuvo ahí, con razón: MapLibre rechazaba cada
+rango («Unable to load glyph range… RangeError: mismatched image
+size») y dibujaba las etiquetas con su renderizado local de
+respaldo, así que las etiquetas visibles no acreditaban los PBF.
+
+**Causa raíz** (leída en el parser de MapLibre y contrastada con
+glifos de referencia de fontnik): en el formato, `width`/`height`
+son la caja de tinta SIN el margen SDF y el bitmap debe medir
+exactamente (width+6)×(height+6). Mi generador guardaba las
+dimensiones CON el margen ya sumado. De paso, las métricas salían
+desplazadas: `left` restaba el margen y `top` lo sumaba; lo correcto
+es `left` = bearing de la tinta y `top` = bearing superior −
+ascendente de la fuente (a 24 px, `fontBoundingBoxAscent` = 26 en
+Noto Sans; comprobado glifo a glifo contra la referencia: A → −9,
+g → −13, Á → −4).
+
+**Correcciones aplicadas:**
+1. `tools/fonts/build_glyphs.mjs`: dimensiones y métricas según el
+   contrato (documentado en su cabecera) y **validación automática**
+   del contrato por glifo antes de escribir cada rango. Regenerados
+   los 4 PBF: 1.024 glifos, 0 incoherencias al decodificarlos.
+2. El recorrido no veía el fallo porque MapLibre avisa por
+   `console.warn`, no por error: ahora captura esos avisos y tiene
+   una comprobación propia («Glifos autoalojados: sin fallos de
+   carga ni de tamaño»). **Prueba negativa:** con los PBF antiguos
+   restaurados temporalmente, la misma captura recoge 41 mensajes de
+   fallo; con los nuevos, el recorrido pasa **42/42**.
+3. La caché de glifos del service worker era CacheFirst con nombre
+   fijo: los PBF defectuosos habrían quedado para siempre en los
+   navegadores que ya visitaron el Atlas. Ahora la caché se llama
+   `atlas-glifos-<VERSION>`, el `activate` borra cualquier caché de
+   glifos que no sea la vigente (incluida la antigua sin versión) y
+   **los bytes de los PBF entran en la huella VERSION** (antes no:
+   un cambio solo de glifos no habría cambiado VERSION).
+
+**Redespliegue y verificación en producción** (VERSION nueva
+`3330a057a2dd`): perfil nuevo → 0 mensajes de glifo, cachés
+versionadas creadas; **perfil sembrado antes del redespliegue con
+la PWA defectuosa** (SW `c0cb04d1bdf1` y caché `atlas-glifos` sin
+versión) → al volver, el SW nuevo se activa, las cachés antiguas
+desaparecen y, tras recargar, 0 mensajes de glifo con las etiquetas
+renderizadas desde los PBF del servidor.

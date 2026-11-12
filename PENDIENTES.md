@@ -59,4 +59,5 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 5 CERTIFICADA; Fas
 - [x] Stack en /opt/atlas (db + api + web en 127.0.0.1:8180), nginx del host con /atlas (copia previa en ~/nginx-backups/), importación completa (1.382/942/70/2.626/2.164).
 - [x] Verificación por la ruta pública real: salud y humo de API 13/13 contra https://jpecina.duckdns.org/atlas, sw.js con la huella de la compilación certificada, persistencia tras down/up, vecinos intactos.
 - [x] Copias: backup.sh + cron semanal (domingos 04:30, retención 30 días); primera copia restaurada a modo de prueba (1.382/2.164).
-- [ ] Certificación de la Fase 6 por la revisión.
+- [x] Corrección del bloqueo detectado por la revisión: glifos PBF fuera de formato (dimensiones con el margen sumado). Generador corregido y validado (1.024 glifos conformes), 4 PBF regenerados, recorrido endurecido (falla ante avisos de glifo; prueba negativa con 41 mensajes) y caché de glifos versionada con purga en activate y PBF dentro de la huella VERSION. Redesplegado (VERSION 3330a057a2dd) y verificado en producción con perfil nuevo y con perfil sembrado con la PWA defectuosa: 0 mensajes de glifo en ambos.
+- [ ] Certificación de la Fase 6 por la revisión (tras la corrección de glifos).
