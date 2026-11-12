@@ -119,3 +119,13 @@ Corregido como se pidió:
 Repetida la verificación completa tras la corrección: importación
 normal (0 altas, 0 cambios, 2.164 relaciones), humo de API **13/13** y
 recorrido web **21/21**.
+
+**Segunda corrección (misma revisión, 2026-11-12).** En Windows la
+prueba no llegaba a ejecutar el importador: lanzaba el shim
+`node_modules/.bin/tsx` con `spawnSync`, que allí devuelve ENOENT y
+`status: null` — y la primera comprobación aceptaba ese `null` como
+rechazo válido. Ahora la prueba resuelve el CLI real
+(`import.meta.resolve('tsx/cli')`) y lo ejecuta con el propio Node
+(`process.execPath`), y la aserción de rechazo exige que el proceso haya
+arrancado (`!error && status !== 0`); la de éxito exige `status === 0`
+sin error. Reverificado en el entorno de construcción: **6/6 PASS**.

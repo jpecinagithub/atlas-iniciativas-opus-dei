@@ -23,6 +23,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 
+// El CLI real de tsx, resuelto como módulo: el shim de node_modules/.bin
+// no es ejecutable directamente en Windows (spawnSync devuelve ENOENT y
+// status null). Se lanza siempre con el propio Node: process.execPath.
+const tsxCli = fileURLToPath(import.meta.resolve('tsx/cli'));
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const XLSX = join(ROOT, 'data/source/Directorio_Opus_Dei_MUNDIAL_v14.xlsx');
 const BACKUP = join(tmpdir(), 'atlas-excel-backup.xlsx');
@@ -42,8 +47,8 @@ async function runCount(client) {
 
 function runImporter() {
   return spawnSync(
-    join(ROOT, 'node_modules/.bin/tsx'),
-    [join(ROOT, 'apps/api/src/import.ts')],
+    process.execPath,
+    [tsxCli, join(ROOT, 'apps/api/src/import.ts')],
     { cwd: ROOT, encoding: 'utf-8', env: { ...process.env, DATABASE_URL } },
   );
 }
@@ -59,8 +64,11 @@ try {
     appendFileSync(XLSX, Buffer.from([0]));
     const rejected = runImporter();
     const out = `${rejected.stdout ?? ''}\n${rejected.stderr ?? ''}`;
-    check('Excel nuevo + artefactos antiguos: importación rechazada', rejected.status !== 0,
-      `código de salida ${rejected.status}`);
+    // Debe haber ARRANCADO y salido con error: un status null con error
+    // (p. ej. ENOENT al lanzar el proceso) no es un rechazo válido.
+    check('Excel nuevo + artefactos antiguos: importación rechazada',
+      !rejected.error && rejected.status !== 0,
+      rejected.error ? `error al lanzar: ${rejected.error.message}` : `código de salida ${rejected.status}`);
     check('El rechazo nombra el problema de hash', /sourceSha256|hash/i.test(out));
     check('No se creó ninguna corrida al rechazar', (await runCount(client)) === before);
   } finally {
@@ -69,8 +77,8 @@ try {
 
   const restoredSha = readFileSync(XLSX).length;
   const okRun = runImporter();
-  check('Excel restaurado: la importación vuelve a funcionar', okRun.status === 0,
-    `bytes del Excel restaurado: ${restoredSha}`);
+  check('Excel restaurado: la importación vuelve a funcionar', !okRun.error && okRun.status === 0,
+    okRun.error ? `error al lanzar: ${okRun.error.message}` : `bytes del Excel restaurado: ${restoredSha}`);
   check('La corrida válida sí se registra', (await runCount(client)) === before + 1);
 } finally {
   await client.end();
