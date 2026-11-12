@@ -204,10 +204,19 @@ try {
     ctxText.includes('Sin punto') && ctxText.includes('272'), '');
   const brand = await page.evaluate(() => {
     const h1 = document.querySelector('h1');
-    if (!h1) return { ok: false, detail: 'sin h1' };
-    const r = h1.getBoundingClientRect();
-    const el = document.elementFromPoint(Math.min(r.right - 2, window.innerWidth - 1), r.top + r.height / 2);
-    return { ok: r.left >= 0 && r.right <= window.innerWidth && !!el && (el === h1 || h1.contains(el)), detail: `${Math.round(r.width)}px` };
+    const input = document.querySelector('#buscador');
+    const actions = [...document.querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Restablecer');
+    if (!h1 || !input || !actions) return { ok: false, detail: 'faltan elementos de cabecera' };
+    const r1 = h1.getBoundingClientRect();
+    const r2 = input.getBoundingClientRect();
+    const r3 = actions.getBoundingClientRect();
+    const overlap = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+    const el = document.elementFromPoint(Math.min(r1.right - 2, window.innerWidth - 1), r1.top + r1.height / 2);
+    const libre = !!el && (el === h1 || h1.contains(el));
+    return {
+      ok: r1.left >= 0 && r1.right <= window.innerWidth && libre && !overlap(r1, r2) && !overlap(r1, r3),
+      detail: `marca ${Math.round(r1.width)}px · buscador desde ${Math.round(r2.left)}px · sin intersecciones`,
+    };
   });
   check('País (7B): la marca completa sigue visible, sin recortes ni solapes', brand.ok, brand.detail);
   await ctx.evaluate((el) => el.scrollIntoView({ block: 'start' }));

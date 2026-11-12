@@ -60,7 +60,7 @@ await page.close();
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
 await mobile.goto(BASE, { waitUntil: 'load' });
 await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
-await mobile.waitForTimeout(3000);
+await mobile.waitForTimeout(6000);
 await mobile.screenshot({ path: join(OUT, 'despues-movil-mundo.png') });
 await mobile.getByRole('tab', { name: 'resultados' }).click();
 await mobile.waitForTimeout(900);

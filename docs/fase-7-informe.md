@@ -87,7 +87,7 @@ con punto + texto.
   dirigidas nuevas (detalle en §5). Glifos: sin fallos (la
   comprobación de la Fase 6 sigue activa). PWA offline: pasa.
 - `test:sw`: 3/3. La huella de la nueva compilación local es
-  VERSION `2f80dfa3bbe5` (solo local; producción no se ha
+  VERSION `1c6b0d7bdc43` (solo local; producción no se ha
   tocado).
 - Auditoría: el endpoint de `npm audit` está bloqueado en esta
   VM; auditoría equivalente por OSV sobre el lockfile:
@@ -172,6 +172,28 @@ marca completa visible en la vista de país y `scrollTop = 0`
 de la ficha móvil tras una selección nueva. Total de la
 batería: **42 heredadas + 13 dirigidas = 55/55 PASS**. Las
 ocho capturas se han regenerado con la composición corregida.
+
+Segunda detención (solo la marca): la cabecera se ha
+reestructurado como capa independiente y aislada — el mapa
+queda en `main` con `z-0` explícito y la barra superior es una
+cuadrícula `max-content minmax(0, 1fr) max-content` con
+`z-40` y `isolation: isolate`, con identidad, buscador y
+acciones en celdas propias; ya no hay flex que pueda encoger
+la marca ni elemento que componga sobre ella. La comprobación
+de la marca exige ahora, además de la geometría anterior, que
+los rectángulos de identidad, buscador y acciones no se
+intersecten. Verificación visual a resolución completa de la
+esquina de la marca en mundo, país, iniciativa, documentación
+desplazada y Método abierto, a 1280×720, 1440×900 y
+1920×1080: «ATLAS DE INICIATIVAS · OPUS DEI» y «Directorio
+mundial de iniciativas» completos en todos los casos. Nota de
+honestidad: a 1440×900 la geometría resultante es la misma
+que ya producía el flex corregido, así que las capturas
+regeneradas a ese tamaño salen idénticas byte a byte a las de
+la ronda anterior — la corrección es estructural y queda
+cubierta por la comprobación de intersecciones y por la
+matriz de tamaños/estados, no por un cambio de píxeles a ese
+tamaño.
 
 ## 6. Pendiente
 Revisión visual de Jon y certificación de Codex. Solo después,

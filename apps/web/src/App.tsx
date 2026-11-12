@@ -135,7 +135,7 @@ export default function App() {
   return (
     <div className="relative h-dvh overflow-hidden bg-[#04070d] text-slate-100">
       {/* Mapa a pantalla completa: siempre el protagonista */}
-      <main className="absolute inset-0">
+      <main className="absolute inset-0 z-0">
         {status === 'loading' && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#04070d]" role="status">
             <p className="animate-pulse text-slate-300">Cargando el directorio…</p>
@@ -158,8 +158,8 @@ export default function App() {
       </main>
 
       {/* Barra superior flotante */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-wrap items-start gap-x-3 gap-y-2 p-3 sm:p-4">
-        <div className="pointer-events-auto shrink-0">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 isolate grid grid-cols-[max-content_minmax(0,1fr)_max-content] items-start gap-x-3 gap-y-2 p-3 sm:p-4">
+        <div className="pointer-events-auto col-start-1 row-start-1 shrink-0">
           <h1 className="whitespace-nowrap text-[13px] font-semibold uppercase leading-tight tracking-[0.18em] text-slate-50">
             Atlas <span className="hidden min-[480px]:inline">de iniciativas </span><span className="text-[#e8a33d]">·</span> Opus Dei
           </h1>
@@ -185,7 +185,7 @@ export default function App() {
           )}
         </div>
 
-        <div className="order-3 flex w-full min-w-0 justify-center sm:order-none sm:w-auto sm:flex-1">
+        <div className="col-span-3 row-start-2 flex min-w-0 justify-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
           <div className="pointer-events-auto w-full max-w-xl">
             <label className="sr-only" htmlFor="buscador">Buscar por nombre, localidad, región o entidad titular</label>
             <input
@@ -198,7 +198,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="pointer-events-auto ml-auto flex gap-2 sm:ml-0">
+        <div className="pointer-events-auto col-start-3 row-start-1 flex gap-2">
           <button
             type="button"
             onClick={() => { reset(); setMobileTab('resultados'); }}
