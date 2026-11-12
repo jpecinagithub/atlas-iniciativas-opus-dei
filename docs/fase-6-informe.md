@@ -159,3 +159,12 @@ la PWA defectuosa** (SW `c0cb04d1bdf1` y caché `atlas-glifos` sin
 versión) → al volver, el SW nuevo se activa, las cachés antiguas
 desaparecen y, tras recargar, 0 mensajes de glifo con las etiquetas
 renderizadas desde los PBF del servidor.
+
+**Certificación (2026-11-12):** la revisión certificó la Fase 6
+desde un clon limpio de `639627b` — npm ci sin vulnerabilidades,
+build de producción, test:sw 3/3, los 4 PBF decodificados (1.024
+glifos, 0 incoherencias) e idénticos byte a byte a los servidos en
+producción, SW `3330a057a2dd` con la caché de glifos versionada,
+perfil heredado sin avisos tras la actualización y recorrido
+oficial contra la URL pública 42/42. **Proyecto técnicamente
+entregado.**

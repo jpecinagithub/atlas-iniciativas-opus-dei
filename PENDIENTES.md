@@ -1,6 +1,6 @@
 # Pendientes — Atlas de iniciativas · Opus Dei
 
-Documento único de pendientes. Actualizado: 2026-11-12 (Fase 5 CERTIFICADA; Fase 6 desplegada en https://jpecina.duckdns.org/atlas/, entregada para revisión).
+Documento único de pendientes. Actualizado: 2026-11-12 (PROYECTO ENTREGADO: Fase 6 CERTIFICADA; en producción en https://jpecina.duckdns.org/atlas/).
 
 ## Revisión de la Fase 2 (2026-11-11) — CERTIFICADA
 - [x] MapLibre GL JS actualizado a 6.17.0 (GHSA-jrc7-96c5-q579) con la URL del worker fijada; auditoría contrastada en OSV: 0 vulnerabilidades en el lockfile.
@@ -60,4 +60,4 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 5 CERTIFICADA; Fas
 - [x] Verificación por la ruta pública real: salud y humo de API 13/13 contra https://jpecina.duckdns.org/atlas, sw.js con la huella de la compilación certificada, persistencia tras down/up, vecinos intactos.
 - [x] Copias: backup.sh + cron semanal (domingos 04:30, retención 30 días); primera copia restaurada a modo de prueba (1.382/2.164).
 - [x] Corrección del bloqueo detectado por la revisión: glifos PBF fuera de formato (dimensiones con el margen sumado). Generador corregido y validado (1.024 glifos conformes), 4 PBF regenerados, recorrido endurecido (falla ante avisos de glifo; prueba negativa con 41 mensajes) y caché de glifos versionada con purga en activate y PBF dentro de la huella VERSION. Redesplegado (VERSION 3330a057a2dd) y verificado en producción con perfil nuevo y con perfil sembrado con la PWA defectuosa: 0 mensajes de glifo en ambos.
-- [ ] Certificación de la Fase 6 por la revisión (tras la corrección de glifos).
+- [x] Fase 6 CERTIFICADA por la revisión (2026-11-12, clon limpio de 639627b: npm ci sin vulnerabilidades, test:sw 3/3, PBF decodificados 1.024/0 incoherencias e idénticos byte a byte a los servidos, SW 3330a057a2dd con caché de glifos versionada, perfil heredado limpio, recorrido oficial contra la URL pública 42/42). **Proyecto técnicamente entregado.** Las mejoras de puesta en escena y fases opcionales quedan como evolución posterior, fuera de esta entrega.
