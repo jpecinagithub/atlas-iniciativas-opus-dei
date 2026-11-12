@@ -87,7 +87,7 @@ con punto + texto.
   dirigidas nuevas (detalle en §5). Glifos: sin fallos (la
   comprobación de la Fase 6 sigue activa). PWA offline: pasa.
 - `test:sw`: 3/3. La huella de la nueva compilación local es
-  VERSION `f0c4f5cee3aa` (solo local; producción no se ha
+  VERSION `30fcfc1e20f6` (solo local; producción no se ha
   tocado).
 - Auditoría: el endpoint de `npm audit` está bloqueado en esta
   VM; auditoría equivalente por OSV sobre el lockfile:
@@ -222,6 +222,36 @@ buscador alteran la franja superior. La prueba geométrica se
 mantiene como lo que es —una comprobación de layout—, no
 como prueba del resultado en píxeles: la prueba de píxeles
 son los recortes `marca-*`.
+
+Cuarta detención (la evidencia de documentación no
+correspondía a su captura): la causa estaba en el propio
+guión de capturas, que acercaba la sección documental con
+`scrollIntoView` — esa llamada desplazaba el viewport y la
+captura completa salía corrida, mientras la evidencia de la
+ronda anterior se había generado desplazando solo el aside.
+Corrección completa: (a) el guión ya no usa `scrollIntoView`
+en ningún punto — la documentación se acerca moviendo solo
+el `scrollTop` del aside, calculado por diferencia de
+posiciones, y cada captura exige antes y después
+`scrollX = scrollY = scrollLeft = 0`, fallando si el
+viewport se mueve; (b) cada recorte `marca-*` se deriva con
+ffmpeg **del mismo fichero** de su captura completa dentro
+del propio guión, y el manifiesto
+`docs/fase-7b/marca-evidencias.sha256` registra los SHA-256
+de los cuatro pares (verificable con `sha256sum -c`); (c)
+endurecimiento en la aplicación: la raíz no permite
+desplazamiento horizontal (`overflow-x: clip`), la ficha usa
+`overscroll-behavior: contain`, y el único `scrollIntoView`
+que quedaba en la app (el ancla de «Categorías») se sustituyó
+por desplazamiento exclusivo del contenedor de la columna.
+Resultado: `despues-documentacion.png` regenerada
+(`f70246af→dd023e2e`) con la marca completa y el viewport en
+cero; su recorte independiente coincide byte a byte con el
+publicado (`ac6421a2`). Que los recortes de iniciativa y
+documentación sean idénticos entre sí es ahora lo esperado
+y está acreditado: al desplazar solo el aside, la franja de
+la cabecera no cambia, y ambos recortes proceden de sus
+propios ficheros completos según el manifiesto.
 
 ## 6. Pendiente
 Revisión visual de Jon y certificación de Codex. Solo después,

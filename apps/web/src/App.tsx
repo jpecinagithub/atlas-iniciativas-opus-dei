@@ -125,7 +125,14 @@ export default function App() {
     setExploreOpen(true);
     requestAnimationFrame(() => {
       if (anchor === 'categorias') {
-        exploreRef.current?.querySelector('#panel-categorias')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        // Solo se desplaza el contenedor de la columna: scrollIntoView
+        // podría mover también el documento y desplazar la cabecera.
+        const col = exploreRef.current;
+        const el = col?.querySelector('#panel-categorias');
+        if (col && el) {
+          const delta = el.getBoundingClientRect().top - col.getBoundingClientRect().top;
+          col.scrollTo({ top: col.scrollTop + delta, behavior: 'smooth' });
+        }
       } else {
         exploreRef.current?.querySelector<HTMLInputElement>('input[aria-label="Buscar país"]')?.focus({ preventScroll: true });
       }
@@ -133,7 +140,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative h-dvh overflow-hidden bg-[#04070d] text-slate-100">
+    <div className="relative h-dvh overflow-hidden overflow-x-clip bg-[#04070d] text-slate-100">
       {/* Mapa a pantalla completa: siempre el protagonista */}
       <main className="absolute inset-0 z-0">
         {status === 'loading' && (
@@ -290,7 +297,7 @@ export default function App() {
 
       {/* Ficha flotante (escritorio) */}
       {selectedId && status === 'ready' && (
-        <aside ref={detailScrollRef} className="glass absolute right-4 top-[92px] z-20 hidden max-h-[calc(100dvh-190px)] w-[min(400px,calc(100vw-2rem))] overflow-y-auto rounded-2xl p-5 lg:block" aria-label="Ficha de la iniciativa">
+        <aside ref={detailScrollRef} className="glass absolute right-4 top-[92px] z-20 hidden max-h-[calc(100dvh-190px)] w-[min(400px,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl p-5 lg:block" aria-label="Ficha de la iniciativa">
           <DetailPanel />
         </aside>
       )}
