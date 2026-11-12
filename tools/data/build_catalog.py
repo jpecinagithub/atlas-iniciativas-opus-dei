@@ -450,6 +450,11 @@ def main() -> int:
         {"generatedAt": now, "sourceSha256": source_sha, "total": len(sources), "sources": sources},
         ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (OUT / "countries.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    # Las salidas web deben ser legibles por cualquier usuario del
+    # contenedor (nginx no corre como root; con 0660 devolvería 403).
+    import os as _os
+    for _f in ("catalog.json", "countries.geojson"):
+        _os.chmod(OUT / _f, 0o644)
 
     report = {
         "generatedAt": now, "geoStats": dict(geo_stats),

@@ -253,7 +253,48 @@ y está acreditado: al desplazar solo el aside, la franja de
 la cabecera no cambia, y ambos recortes proceden de sus
 propios ficheros completos según el manifiesto.
 
-## 6. Pendiente
+## 6. Certificación y despliegue (2026-11-12)
+
+Codex certificó la Fase 7B sobre `c2e534e` (manifiesto 8/8,
+recorte independiente de documentación coincidente, recorrido
+contra la API pública 55/55, `npm ci` con 0 vulnerabilidades)
+y Jon autorizó el despliegue. Despliegue controlado del
+estado certificado, sin importar ni modificar datos (solo se
+reconstruyó el contenedor web):
+
+- **Nueva VERSION en producción: `205ab33c06ff`** (la huella
+  difiere de la local porque la compilación de producción usa
+  la base `/atlas/`; es la huella de los bytes reales servidos).
+- **Datos intactos**: la API pública sigue reportando la
+  importación de la Fase 6 (mismo SHA-256 del Excel, mismo
+  registro de importación): 1.382 iniciativas, 942 con punto,
+  70 países, 2.626 fuentes, 2.164 relaciones.
+- **Perfil nuevo**: recorrido público completo (mundo → país
+  → iniciativa) sin errores de consola ni de página;
+  capturas en `docs/fase-7b/publica-*.png`.
+- **Perfil con la PWA anterior**: un perfil con el service
+  worker de la Fase 6 activo (`3330a057a2dd`) actualizó a
+  `205ab33c06ff` al navegar y tras recargar seguía operativo
+  y sin errores: la migración de la PWA instalada es limpia.
+- **Incidencia encontrada y corregida durante la
+  verificación**: los tres ficheros de `public/data/`
+  (catálogo y GeoJSON de países y etiquetas) se generaban con
+  permisos 0660 y el nginx del contenedor respondía **403**:
+  en producción faltaban las fronteras y etiquetas de país
+  (la avería existía desde el despliegue de la Fase 6; el
+  recorrido no la detectaba porque la vista previa local lee
+  los ficheros como propietario). Corrección: permisos 0644
+  en las salidas y en el generador (`build_catalog.py` ahora
+  fija 0644 al escribirlas), reconstrucción del contenedor
+  web y reverificación: los tres ficheros responden 200, la
+  VERSION no cambia (la huella es sobre el contenido) y el
+  recorrido público se repitió sin errores, ya con España
+  rellenada y las etiquetas visibles en las capturas.
+
+La Fase 8 sigue detenida hasta que el directorio v15 esté
+estable, según lo definido.
+
+## 7. Pendiente
 Revisión visual de Jon y certificación de Codex. Solo después,
 redespliegue de la Fase 7B en Oracle con la misma disciplina de
 la Fase 6 (verificación por la ruta pública real, perfil nuevo
