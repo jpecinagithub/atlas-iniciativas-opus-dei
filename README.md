@@ -5,12 +5,14 @@ al Opus Dei en el mundo, a partir del directorio verificado
 `Directorio_Opus_Dei_MUNDIAL_v14.xlsx` (1.382 registros, 70 países o
 territorios, 14 categorías).
 
-Estado: **Fase 4** (exploración completa). La web lee el catálogo de
-una API (Fastify) servida desde PostgreSQL, importado del Excel con un
-proceso transaccional e idempotente; la ficha es documental (evidencia,
-doble comprobación y fuentes catalogadas), cada país tiene su tarjeta
-de contexto y hay un visor web que solo se abre a petición del usuario.
-Ver los informes de fase en `docs/`.
+Estado: **Fase 5** (PWA y acabado). La web lee el catálogo de una API
+(Fastify) servida desde PostgreSQL, importado del Excel con un proceso
+transaccional e idempotente; la ficha es documental, cada país tiene su
+tarjeta de contexto y hay un visor web que solo se abre a petición del
+usuario. El mapa lleva etiquetas con glifos SDF autoalojados (Noto
+Sans, generados en `tools/fonts`), la app es instalable (PWA) con
+caché sin conexión y Three.js se carga bajo demanda en su propio
+chunk. Ver los informes de fase en `docs/`.
 
 ## Puesta en marcha
 

@@ -8,7 +8,10 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 maplibregl.setWorkerUrl(workerUrl);
 import { useAtlas, filterInitiatives } from '../store';
 import { categoryColor } from '../categories';
-import { SelectedMarkerLayer } from '../map/threeMarker';
+// Solo el tipo: la implementación (Three.js) se carga bajo demanda en
+// su propio chunk la primera vez que hay una selección con ubicación,
+// en vez de engordar el chunk del mapa para todos los visitantes.
+import type { SelectedMarkerLayer } from '../map/threeMarker';
 import type { Initiative } from '../types';
 
 // Encuadres especiales: países cuyo bbox Natural Earth cruza el
@@ -42,6 +45,33 @@ export default function MapView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<SelectedMarkerLayer | null>(null);
+  const markerLoadRef = useRef<Promise<SelectedMarkerLayer | null> | null>(null);
+
+  // Carga perezosa de la capa Three.js (chunk aparte): el halo nativo
+  // cubre la selección mientras el chunk llega.
+  const ensureMarker = (): Promise<SelectedMarkerLayer | null> => {
+    if (markerRef.current) return Promise.resolve(markerRef.current);
+    if (!markerLoadRef.current) {
+      markerLoadRef.current = import('../map/threeMarker')
+        .then(({ SelectedMarkerLayer: Layer }) => {
+          const map = mapRef.current;
+          if (!map || markerRef.current) return markerRef.current;
+          const marker = new Layer();
+          try {
+            map.addLayer(marker);
+            markerRef.current = marker;
+            (window as unknown as { __atlasMarker?: SelectedMarkerLayer }).__atlasMarker = marker;
+            return marker;
+          } catch (e) {
+            // Si la capa 3D falla, el marcador nativo (punto-seleccionado) sigue.
+            console.warn('Capa Three.js no disponible:', e);
+            return null;
+          }
+        })
+        .catch(() => null);
+    }
+    return markerLoadRef.current;
+  };
   const readyRef = useRef(false);
   const catalog = useAtlas((s) => s.catalog);
   const countryCode = useAtlas((s) => s.countryCode);
@@ -58,6 +88,9 @@ export default function MapView() {
       container: containerRef.current,
       style: {
         version: 8,
+        // Glifos SDF autoalojados (Noto Sans, generados en tools/fonts):
+        // las etiquetas no dependen de ningún servidor externo.
+        glyphs: `${base}glyphs/{fontstack}/{range}.pbf`,
         sources: {},
         layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#0a1120' } }],
       },
@@ -120,6 +153,29 @@ export default function MapView() {
         paint: { 'line-color': '#f5c542', 'line-width': 1.8 },
       });
 
+      // Etiquetas de país: un punto por país del directorio (el mayor
+      // polígono), con su nombre en español; ver tools/data/build_labels.py.
+      const labelsRes = await fetch(`${base}data/countries-labels.geojson`);
+      const countryLabels = (await labelsRes.json()) as GeoJSON.FeatureCollection;
+      map.addSource('etiquetas-paises', { type: 'geojson', data: countryLabels });
+      map.addLayer({
+        id: 'etiquetas-paises', type: 'symbol', source: 'etiquetas-paises',
+        maxzoom: 6.5,
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 1.2, 9.5, 3, 12.5, 5.5, 14.5],
+          'text-letter-spacing': 0.07,
+          'text-transform': 'uppercase',
+          'text-max-width': 9,
+        },
+        paint: {
+          'text-color': '#c8d7ee',
+          'text-halo-color': '#0a1120',
+          'text-halo-width': 1.3,
+        },
+      });
+
       map.addSource('iniciativas', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -153,16 +209,40 @@ export default function MapView() {
           'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2.5,
         },
       });
+      // Conteo dentro de cada agrupación (sin glifos era imposible).
+      map.addLayer({
+        id: 'clusters-conteo', type: 'symbol', source: 'iniciativas',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': ['get', 'point_count_abbreviated'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 12.5,
+        },
+        paint: { 'text-color': '#eaf1fb', 'text-halo-color': '#16263f', 'text-halo-width': 0.8 },
+      });
+      // Nombre de la localidad bajo cada punto al acercar.
+      map.addLayer({
+        id: 'etiquetas-localidades', type: 'symbol', source: 'iniciativas',
+        filter: ['!', ['has', 'point_count']],
+        minzoom: 5,
+        layout: {
+          'text-field': ['get', 'locality'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 11,
+          'text-offset': [0, 1.15],
+          'text-anchor': 'top',
+          'text-max-width': 9,
+          'text-optional': true,
+        },
+        paint: {
+          'text-color': '#e8eef7',
+          'text-halo-color': '#0a1120',
+          'text-halo-width': 1.2,
+        },
+      });
 
-      const marker = new SelectedMarkerLayer();
-      markerRef.current = marker;
-      try {
-        map.addLayer(marker);
-        (window as unknown as { __atlasMarker?: SelectedMarkerLayer }).__atlasMarker = marker;
-      } catch (e) {
-        // Si la capa 3D falla, el marcador nativo (punto-seleccionado) sigue.
-        console.warn('Capa Three.js no disponible:', e);
-      }
+      // La capa Three.js ya no se crea aquí: se carga bajo demanda
+      // (ensureMarker) cuando aparece la primera selección ubicada.
       readyRef.current = true;
       (window as unknown as { __atlasMap?: maplibregl.Map }).__atlasMap = map;
 
@@ -230,7 +310,13 @@ export default function MapView() {
         map.setFilter('punto-seleccionado', ['==', ['get', 'id'], selectedId ?? '']);
       }
       if (rec && rec.lat !== null && rec.lng !== null) {
-        markerRef.current?.setTarget(rec.lng, rec.lat, categoryColor(rec.category));
+        const targetId = rec.id;
+        void ensureMarker().then((marker) => {
+          // Solo aplica si la selección no ha cambiado mientras cargaba.
+          if (marker && useAtlas.getState().selectedId === targetId) {
+            marker.setTarget(rec.lng!, rec.lat!, categoryColor(rec.category));
+          }
+        });
       } else {
         markerRef.current?.clearTarget();
       }

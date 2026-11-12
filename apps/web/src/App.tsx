@@ -106,6 +106,8 @@ export default function App() {
             con GeoNames (CC BY 4.0) con reglas conservadoras: {fmt(catalog.meta.located)} registros tienen punto;
             el resto sigue en la lista y en los recuentos sin dibujarse. Una iniciativa vinculada no es necesariamente propiedad
             del Opus Dei: la ficha distingue entidad titular, tipo de vinculación y evidencia. Límites de países: Natural Earth.
+            Las etiquetas del mapa usan glifos generados desde Noto Sans (licencia OFL 1.1) y servidos desde la propia app, sin
+            servicios externos. La app es instalable (PWA): sin conexión conserva la carcasa y la última información consultada.
             {selectedCountry && (
               <> Estás viendo <strong className="text-slate-100">{selectedCountry.name}</strong>
               {selectedCountry.circumscription ? <> · Circunscripción: {selectedCountry.circumscription}</> : null}
@@ -217,7 +219,7 @@ export default function App() {
       </div>
 
       <footer className="z-10 hidden border-t border-slate-800 bg-[#0d1526] px-4 py-1.5 text-[11px] text-slate-500 sm:block">
-        Datos: Directorio Opus Dei MUNDIAL v14 (consulta 2026-11-08 a 2026-11-11) · Ubicaciones: GeoNames (CC BY 4.0), punto representativo de localidad · Límites: Natural Earth · Sin clave CARTO: base local limitada a países, sin detalle de calles.
+        Datos: Directorio Opus Dei MUNDIAL v14 (consulta 2026-11-08 a 2026-11-11) · Ubicaciones: GeoNames (CC BY 4.0), punto representativo de localidad · Límites: Natural Earth · Sin clave CARTO: base local limitada a países, sin detalle de calles · App instalable (PWA), con caché sin conexión.
       </footer>
       <WebViewer />
     </div>

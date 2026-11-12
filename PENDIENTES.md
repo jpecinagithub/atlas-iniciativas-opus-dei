@@ -1,6 +1,6 @@
 # Pendientes — Atlas de iniciativas · Opus Dei
 
-Documento único de pendientes. Actualizado: 2026-11-12 (Fase 3 CERTIFICADA; Fase 4 entregada para revisión).
+Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fase 5 entregada para revisión).
 
 ## Revisión de la Fase 2 (2026-11-11) — CERTIFICADA
 - [x] MapLibre GL JS actualizado a 6.17.0 (GHSA-jrc7-96c5-q579) con la URL del worker fijada; auditoría contrastada en OSV: 0 vulnerabilidades en el lockfile.
@@ -41,6 +41,12 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 3 CERTIFICADA; Fas
 - [ ] 102 Fuente 1 y 134 Fuente 2 con URL no catalogada: enlace conservado en ficha; relación catalogada solo con coincidencia exacta de URL — hecho en la Fase 3 (2.164 relaciones; 3 ambiguas por URL duplicada).
 - [ ] V32-102 y V32-103 sin URL/país/fecha en origen: se importan tal cual (Fase 3).
 
+## Fase 5 (2026-11-12) — entregada para revisión
+- [x] Glifos SDF autoalojados generados desde Noto Sans (tools/fonts) y etiquetas: países (un punto por país, mayor polígono), conteo de agrupaciones y localidades.
+- [x] PWA con vite-plugin-pwa: manifiesto, iconos y service worker (precarga de carcasa; API con NetworkFirst; offline verificado en el recorrido).
+- [x] Chunk del mapa reducido: Three.js en chunk propio bajo demanda (529 KB); MapView de 1.612 a 1.083 KB.
+- [x] Acabado: favicon vectorial, theme-color, textos de Método y pie actualizados. Recorrido ampliado a 38/38 PASS.
+- [ ] Certificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
+
 ## Fases siguientes (no anticipar)
-- [ ] Fase 5: PWA, etiquetas/acabado del mapa (glifos), optimización del chunk cartográfico (~1,6 MB diferido).
 - [ ] Fase 6: despliegue en Oracle (reverificar servidor; decisión D7).

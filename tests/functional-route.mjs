@@ -125,9 +125,10 @@ try {
   // bloqueado a chrome-error://chromewebdata/, sin el origen real; sin
   // este contexto, ese mensaje sería indistinguible de un fallo propio.
   let expectedFrameHost = null;
-  page.on('pageerror', (e) => errors.push({ text: String(e), url: '', frameHost: expectedFrameHost }));
+  let offlineDrill = false;
+  page.on('pageerror', (e) => errors.push({ text: String(e), url: '', frameHost: expectedFrameHost, offline: offlineDrill }));
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '', frameHost: expectedFrameHost });
+    if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '', frameHost: expectedFrameHost, offline: offlineDrill });
   });
 
   await page.goto(BASE, { waitUntil: 'load' });
@@ -136,6 +137,21 @@ try {
   check('Mundo: contador total', true, '1.382 iniciativas');
   const worldCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   check('Mundo: 70 países y 942 con ubicación', worldCounters.includes('70') && worldCounters.includes('942'), worldCounters.replace(/\n/g, ' '));
+
+  // Etiquetas del mapa (Fase 5): glifos autoalojados y capas de texto
+  const labelInfo = await page.evaluate(() => {
+    const style = window.__atlasMap?.getStyle();
+    return {
+      glyphs: style?.glyphs ?? '',
+      layers: (style?.layers ?? []).map((l) => l.id),
+    };
+  });
+  check('Etiquetas: glifos autoalojados y capas de texto presentes',
+    labelInfo.glyphs.includes('/glyphs/') &&
+    labelInfo.layers.includes('etiquetas-paises') &&
+    labelInfo.layers.includes('clusters-conteo') &&
+    labelInfo.layers.includes('etiquetas-localidades'),
+    labelInfo.glyphs);
   await page.screenshot({ path: join(SHOTS, '01-mundo-desktop.png') });
 
   // España
@@ -339,9 +355,42 @@ try {
   await waitCounters(page, '108');
   check('Historial: adelante reaplica Colegios', page.url().includes('categorias=Colegios'), page.url());
 
+  // PWA (Fase 5): manifiesto, service worker y carcasa sin conexión
+  const manifest = await page.evaluate(async () => {
+    const link = document.querySelector('link[rel="manifest"]');
+    if (!link) return null;
+    const res = await fetch(link.href);
+    const json = await res.json();
+    return { href: link.href, name: json.name, icons: (json.icons ?? []).length };
+  });
+  check('PWA: manifiesto enlazado con nombre e iconos',
+    !!manifest && manifest.name.includes('Atlas de iniciativas') && manifest.icons >= 3,
+    manifest ? manifest.href : 'sin manifiesto');
+  const swActive = await page.evaluate(async () => {
+    if (!('serviceWorker' in navigator)) return false;
+    const deadline = Date.now() + 15000;
+    while (Date.now() < deadline) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg?.active) return true;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    return false;
+  });
+  check('PWA: service worker activo', swActive, '');
+  offlineDrill = true;
+  await page.context().setOffline(true);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForTimeout(1500);
+  const offlineTitle = await page.evaluate(() => document.querySelector('h1')?.textContent ?? '');
+  check('PWA: sin conexión, la carcasa de la app sigue cargando', offlineTitle.includes('Atlas de iniciativas'), offlineTitle);
+  await page.context().setOffline(false);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForTimeout(1000);
+  offlineDrill = false;
+
   // Móvil
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, ...contextOptions });
-  mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '', frameHost: null }));
+  mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '', frameHost: null, offline: false }));
   await mobile.goto(BASE, { waitUntil: 'load' });
   await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
@@ -370,7 +419,10 @@ try {
   const isExpectedExternal = (e) =>
     EXTERNAL_FRAME_HOSTS.some((h) => e.url.startsWith(h)) ||
     (/Refused to display/i.test(e.text) && EXTERNAL_FRAME_HOSTS.some((h) => e.text.includes(h))) ||
-    (isChromeError403(e) && EXPECTED_FRAME_HOSTS_BARE.includes(e.frameHost ?? ''));
+    (isChromeError403(e) && EXPECTED_FRAME_HOSTS_BARE.includes(e.frameHost ?? '')) ||
+    // Fallo de red de la API SOLO durante la prueba deliberada sin
+    // conexión de la PWA: es su consecuencia directa y buscada.
+    (e.offline && /\/api\//.test(e.url) && /ERR_FAILED/.test(e.text));
   const expectedBlocked = errors.filter(isExpectedExternal);
   const unexpected = errors.filter((e) => !isExpectedExternal(e));
   check('Sin errores de página', unexpected.length === 0,
