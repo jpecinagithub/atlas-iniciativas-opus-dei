@@ -116,6 +116,19 @@ error de la app, la API o el mapa — incluido un 403 propio — sigue
 siendo un fallo, sin filtro genérico. Cuando el bloqueo se observa, la
 comprobación lo declara en su detalle. Recorrido reproducible: 34/34.
 
+**Segunda vuelta de esa clasificación:** el Chromium de Windows
+atribuye el 403 del iframe bloqueado a `chrome-error://chromewebdata/`,
+sin el origen real, así que tampoco coincidía con la lista de orígenes.
+El recorrido mantiene ahora el **host externo esperado como contexto**
+mientras el visor está abierto (se activa antes del clic que crea el
+iframe y se desactiva al cerrarlo) y lo guarda junto a cada mensaje:
+el 403 con esa URL de error interna solo se clasifica como esperado si
+el contexto activo era opusdei.org o paloblanco.org. Un chrome-error,
+un 403 o cualquier error sin ese contexto sigue siendo un fallo; no se
+ignora `chrome-error://chromewebdata/` de forma global. La lógica se
+ha probado aparte con el mensaje exacto y controles negativos (sin
+contexto, con otro host, 404, 403 propio).
+
 ## 4. Límites y notas
 
 - El visor no puede detectar de forma fiable si un sitio ha bloqueado

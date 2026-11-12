@@ -120,9 +120,14 @@ async function waitCounters(page, text, timeout = 25000) {
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, ...contextOptions });
   const errors = [];
-  page.on('pageerror', (e) => errors.push({ text: String(e), url: '' }));
+  // Contexto del visor: host externo esperado mientras un iframe del
+  // visor está abierto. Chromium (Windows) atribuye el 403 de un iframe
+  // bloqueado a chrome-error://chromewebdata/, sin el origen real; sin
+  // este contexto, ese mensaje sería indistinguible de un fallo propio.
+  let expectedFrameHost = null;
+  page.on('pageerror', (e) => errors.push({ text: String(e), url: '', frameHost: expectedFrameHost }));
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '' });
+    if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '', frameHost: expectedFrameHost });
   });
 
   await page.goto(BASE, { waitUntil: 'load' });
@@ -174,6 +179,7 @@ try {
   await page.screenshot({ path: join(SHOTS, '10-ficha-documental-desktop.png') });
 
   // Visor web (Fase 4): solo se abre tras una acción del usuario
+  expectedFrameHost = 'opusdei.org';
   await page.getByRole('button', { name: 'Ver en el visor' }).first().click();
   const dialog = page.getByRole('dialog');
   await dialog.waitFor({ timeout: 10000 });
@@ -184,6 +190,7 @@ try {
   await page.getByRole('button', { name: 'Cerrar visor' }).click();
   await page.waitForTimeout(400);
   check('Visor web: se cierra', (await page.getByRole('dialog').count()) === 0, '');
+  expectedFrameHost = null;
 
   // Acercar: valida el marcador Three.js con coordenada real validada
   await page.getByRole('button', { name: 'Acercar a esta iniciativa' }).click();
@@ -293,6 +300,7 @@ try {
   await page.getByRole('button', { name: /^Puerto Rico/ }).first().click();
   await page.waitForTimeout(1200);
   const ctxPR = page.getByLabel('Contexto de Puerto Rico').first();
+  expectedFrameHost = 'www.paloblanco.org';
   await ctxPR.getByRole('button', { name: 'Fuente principal del país en el visor' }).click();
   const dialogPR = page.getByRole('dialog');
   await dialogPR.waitFor({ timeout: 10000 });
@@ -301,6 +309,7 @@ try {
     prSrc === 'https://www.paloblanco.org/', prSrc ?? '');
   await page.getByRole('button', { name: 'Cerrar visor' }).click();
   await page.waitForTimeout(400);
+  expectedFrameHost = null;
 
   // Historial atrás/adelante: cada lugar de la exploración es una entrada
   await page.getByRole('button', { name: 'Restablecer' }).click();
@@ -332,7 +341,7 @@ try {
 
   // Móvil
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, ...contextOptions });
-  mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '' }));
+  mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '', frameHost: null }));
   await mobile.goto(BASE, { waitUntil: 'load' });
   await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
@@ -350,9 +359,18 @@ try {
   // incluido su rechazo X-Frame-Options documentado. Un 403 de la app,
   // la API o el mapa sigue siendo un fallo: no hay filtro genérico.
   const EXTERNAL_FRAME_HOSTS = ['https://opusdei.org/', 'https://www.paloblanco.org/'];
+  const EXPECTED_FRAME_HOSTS_BARE = ['opusdei.org', 'www.paloblanco.org'];
+  // Chromium puede ocultar el origen del iframe bloqueado tras
+  // chrome-error://chromewebdata/: ese 403 solo es esperado si el
+  // mensaje se capturó MIENTRAS el visor tenía abierto uno de los
+  // hosts externos previstos (contexto guardado con cada mensaje).
+  const isChromeError403 = (e) =>
+    e.url === 'chrome-error://chromewebdata/' &&
+    /^Failed to load resource: the server responded with a status of 403/.test(e.text);
   const isExpectedExternal = (e) =>
     EXTERNAL_FRAME_HOSTS.some((h) => e.url.startsWith(h)) ||
-    (/Refused to display/i.test(e.text) && EXTERNAL_FRAME_HOSTS.some((h) => e.text.includes(h)));
+    (/Refused to display/i.test(e.text) && EXTERNAL_FRAME_HOSTS.some((h) => e.text.includes(h))) ||
+    (isChromeError403(e) && EXPECTED_FRAME_HOSTS_BARE.includes(e.frameHost ?? ''));
   const expectedBlocked = errors.filter(isExpectedExternal);
   const unexpected = errors.filter((e) => !isExpectedExternal(e));
   check('Sin errores de página', unexpected.length === 0,
