@@ -43,10 +43,11 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fas
 
 ## Fase 5 (2026-11-12) — entregada para revisión
 - [x] Glifos SDF autoalojados generados desde Noto Sans (tools/fonts) y etiquetas: países (un punto por país, mayor polígono), conteo de agrupaciones y localidades.
-- [x] PWA con vite-plugin-pwa: manifiesto, iconos y service worker (precarga de carcasa; API con NetworkFirst; offline verificado en el recorrido).
+- [x] PWA: manifiesto, iconos y service worker (precarga de carcasa; API con NetworkFirst; offline verificado en el recorrido). Inicialmente con vite-plugin-pwa; sustituido por SW propio en la segunda corrección.
 - [x] Chunk del mapa reducido: Three.js en chunk propio bajo demanda (529 KB); MapView de 1.612 a 1.083 KB.
 - [x] Acabado: favicon vectorial, theme-color, textos de Método y pie actualizados. Recorrido ampliado a 38/38 PASS.
 - [x] Corrección de la revisión: propiedad `locality` en los puntos (las etiquetas no podían mostrar texto) con prueba de renderizado real a zoom 14; OFL.txt de Noto en tools/fonts; prueba offline con datos cacheados (1.382) en flujo de segunda visita; worker .mjs de MapLibre incluido en la precarga. Recorrido: 41/41 PASS.
+- [x] Segunda corrección (cadena de dependencias): vite-plugin-pwa/workbox eliminados por sus 6 vulnerabilidades sin arreglo compatible (deepmerge sin fix; glob/minimatch exigen mayores incompatibles); service worker propio generado por un plugin local de Vite + manifiesto estático. Desde clon limpio: npm ci, auditoría OSV 0 avisos (297 paquetes), build, integridad OK, API 13/13, recorrido 41/41.
 - [ ] Recertificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
 
 ## Fases siguientes (no anticipar)

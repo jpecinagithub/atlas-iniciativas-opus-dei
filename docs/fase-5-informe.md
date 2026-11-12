@@ -33,10 +33,12 @@ hay caracteres ausentes en los nombres de los 70 países.
 
 ## 2. PWA: instalable y con caché sin conexión
 
-vite-plugin-pwa con manifiesto completo (nombre, descripción, idioma
-español, iconos 192/512 y maskable generados con `tools/build_icons.py`:
-el globo dorado de la casa sobre azul noche) y service worker con
-actualización automática:
+Manifiesto completo (nombre, descripción, idioma español, iconos
+192/512 y maskable generados con `tools/build_icons.py`: el globo
+dorado de la casa sobre azul noche) y service worker con actualización
+automática. La primera versión se construyó con vite-plugin-pwa; la
+corrección del §9 lo sustituyó por un service worker propio, sin
+cambiar el comportamiento:
 
 - **Precarga solo la carcasa** (HTML, JS, CSS, iconos y el worker de
   MapLibre): 17 ficheros, ~2,4 MB. El geojson de países (3,7 MB) no
@@ -109,7 +111,48 @@ tres están corregidos y una cuarta cosa apareció por el camino:
   conexión, el mapa no podía arrancar su motor. Incluido en la
   precarga (17 ficheros, ~2,4 MB).
 
-## 8. Límites y notas
+## 9. Segunda corrección: fuera la cadena con vulnerabilidades
+
+La recertificación desde un clon limpio encontró que `npm ci` dejaba
+**6 vulnerabilidades** (2 low, 4 moderate) procedentes de la cadena de
+construcción de la PWA: vite-plugin-pwa → workbox-build → glob /
+minimatch / deepmerge. Comprobado aviso a aviso (OSV), no había
+arreglo compatible: deepmerge 4.3.1 está afectado **sin versión
+corregida** (el proyecto está sin mantenimiento), y los fixes de
+minimatch y glob exigen saltos de versión mayor (11 y 14) que
+workbox-build no admite. Forzarlos con overrides era exactamente el
+«audit fix a ciegas» desaconsejado.
+
+**Solución: eliminar la cadena.** La funcionalidad que Workbox
+aportaba es pequeña y ahora es código propio, sin dependencias:
+
+- `apps/web/public/manifest.webmanifest`: el manifiesto como fichero
+  estático, enlazado desde el HTML.
+- Un **plugin local de Vite** en `vite.config.ts` genera `sw.js` en la
+  compilación: precarga de la carcasa con la lista real de assets
+  emitidos (incluido el worker `.mjs` de MapLibre) y versión por
+  huella del contenido; al activar, borra las carcasas antiguas.
+- El service worker propio replica las estrategias acreditadas:
+  navegación con caída a la carcasa, **API NetworkFirst**, datos
+  estáticos StaleWhileRevalidate y glifos CacheFirst. El registro se
+  hace en `main.tsx`, solo en producción.
+
+Dos notas de la depuración, por si sirven fuera de aquí: las
+respuestas de este entorno llevan `Vary: Origin`, y las peticiones de
+módulos/estilos del navegador llevan cabecera `Origin` mientras que
+las de `cache.addAll()` no — sin `ignoreVary` en las consultas a la
+caché, los assets precargados «no existían» para el HTML aunque la
+caché estaba llena (un `fetch()` desde la página sí los veía, porque
+no manda `Origin`). Todas las consultas del SW usan ahora
+`ignoreSearch + ignoreVary`: son ficheros con huella en el nombre,
+inmutables, así que es seguro.
+
+**Batería desde limpio** (la receta de la revisión): `npm ci` →
+auditoría por OSV sobre los 297 paquetes únicos del lockfile: **0
+avisos** (la cadena eliminada se llevaba ~270 paquetes). Build con el
+worker en la precarga; integridad OK; API 13/13; **recorrido 41/41**.
+
+## 10. Límites y notas
 
 - La caché sin conexión guarda lo ya consultado en ese navegador; no
   convierte la app en una copia completa sin haberla usado antes.
