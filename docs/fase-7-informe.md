@@ -87,7 +87,7 @@ con punto + texto.
   dirigidas nuevas (detalle en §5). Glifos: sin fallos (la
   comprobación de la Fase 6 sigue activa). PWA offline: pasa.
 - `test:sw`: 3/3. La huella de la nueva compilación local es
-  VERSION `1c6b0d7bdc43` (solo local; producción no se ha
+  VERSION `f0c4f5cee3aa` (solo local; producción no se ha
   tocado).
 - Auditoría: el endpoint de `npm audit` está bloqueado en esta
   VM; auditoría equivalente por OSV sobre el lockfile:
@@ -194,6 +194,34 @@ la ronda anterior — la corrección es estructural y queda
 cubierta por la comprobación de intersecciones y por la
 matriz de tamaños/estados, no por un cambio de píxeles a ese
 tamaño.
+
+Tercera detención (la marca en mundo e iniciativa): el
+diagnóstico medido es que la caja del título medía 281 px
+mientras el texto pintado ocupa ~302 px — la medición
+intrínseca de Chromium inframida el título con tracking al
+calcular el `max-content` de la celda, y el texto desbordaba
+su caja hacia la celda del buscador (en esta máquina el
+desborde quedaba visible; con métricas de fuente más anchas
+queda tapado). Corrección: la primera columna de la
+cuadrícula es de **ancho fijo (348 px) en escritorio** — la
+caja medida del título pasa a ser exactamente 348 px, con
+~46 px de margen sobre el texto — y la cabecera lleva una
+**superficie opaca compositada** (degradado sólido
+`rgba(4,7,13,0.95 → 0.85 → 0)`) con la identidad en
+`position: relative; z-index: 10` dentro de la capa aislada.
+Evidencias con el recorte exacto prescrito
+(`ffmpeg -vf crop=520:130:0:0`, sin escalado) en
+`docs/fase-7b/marca-{mundo,pais,iniciativa,documentacion}-1440.png`:
+los cuatro muestran completos «ATLAS DE INICIATIVAS ·
+OPUS DEI» y «Directorio mundial de iniciativas», revisados
+píxel a píxel. Las capturas completas se regeneraron y esta
+vez **sí cambian efectivamente** (mundo `c31ca5f5→fe482978`,
+iniciativa `bf24bef3→c298e021`, también país y
+documentación), porque el degradado y el desplazamiento del
+buscador alteran la franja superior. La prueba geométrica se
+mantiene como lo que es —una comprobación de layout—, no
+como prueba del resultado en píxeles: la prueba de píxeles
+son los recortes `marca-*`.
 
 ## 6. Pendiente
 Revisión visual de Jon y certificación de Codex. Solo después,

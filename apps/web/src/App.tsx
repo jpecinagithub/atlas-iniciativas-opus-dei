@@ -158,8 +158,8 @@ export default function App() {
       </main>
 
       {/* Barra superior flotante */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 isolate grid grid-cols-[max-content_minmax(0,1fr)_max-content] items-start gap-x-3 gap-y-2 p-3 sm:p-4">
-        <div className="pointer-events-auto col-start-1 row-start-1 shrink-0">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 isolate grid grid-cols-[max-content_minmax(0,1fr)_max-content] items-start gap-x-3 gap-y-2 bg-[linear-gradient(to_bottom,rgba(4,7,13,0.95),rgba(4,7,13,0.85)_72%,rgba(4,7,13,0))] p-3 sm:grid-cols-[348px_minmax(0,1fr)_max-content] sm:p-4">
+        <div className="pointer-events-auto relative z-10 col-start-1 row-start-1 shrink-0">
           <h1 className="whitespace-nowrap text-[13px] font-semibold uppercase leading-tight tracking-[0.18em] text-slate-50">
             Atlas <span className="hidden min-[480px]:inline">de iniciativas </span><span className="text-[#e8a33d]">·</span> Opus Dei
           </h1>
