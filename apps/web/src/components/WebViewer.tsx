@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAtlas } from '../store';
+import { normalizeExternalUrl } from '../urls';
 
 /**
  * Visor web (Fase 4). Solo se abre tras una acción expresa del usuario
@@ -21,10 +22,13 @@ export function WebViewer() {
     return () => window.removeEventListener('keydown', onKey);
   }, [viewerUrl, closeViewer]);
 
-  if (!viewerUrl) return null;
-  let host = viewerUrl;
+  // Revalidación al renderizar: si el valor no normaliza, no hay visor.
+  const safeUrl = normalizeExternalUrl(viewerUrl);
+  if (!viewerUrl || !safeUrl) return null;
+  const url = safeUrl;
+  let host = url;
   try {
-    host = new URL(viewerUrl).host;
+    host = new URL(url).host;
   } catch {
     /* se muestra la URL tal cual */
   }
@@ -34,10 +38,10 @@ export function WebViewer() {
       <header className="flex items-center gap-3 border-b border-slate-800 px-4 py-2.5">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-slate-100">{host}</p>
-          <p className="truncate text-xs text-slate-500">{viewerUrl}</p>
+          <p className="truncate text-xs text-slate-500">{url}</p>
         </div>
         <a
-          href={viewerUrl}
+          href={url}
           target="_blank"
           rel="noreferrer"
           className="shrink-0 rounded-lg border border-slate-700 px-3 py-2 text-sm text-sky-300 hover:bg-slate-800"
@@ -59,11 +63,12 @@ export function WebViewer() {
         incrustados: si el área queda en blanco, ábrela en una pestaña nueva.
       </p>
       <iframe
-        key={viewerUrl}
-        src={viewerUrl}
+        key={url}
+        src={url}
         title={`Página de ${host}`}
         className="min-h-0 w-full flex-1 bg-white"
         referrerPolicy="no-referrer"
+        sandbox="allow-scripts allow-forms allow-same-origin"
       />
     </div>
   );

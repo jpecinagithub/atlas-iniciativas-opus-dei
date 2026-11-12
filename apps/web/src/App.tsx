@@ -5,6 +5,11 @@ const MapView = lazy(() => import('./components/MapView'));
 import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips, CountryContext } from './components/Panels';
 import { WebViewer } from './components/WebViewer';
 import { fmt } from './format';
+import { normalizeExternalUrl } from './urls';
+
+// Gancho de comprobación (como __atlasMap): el recorrido funcional
+// verifica la normalización de URLs directamente en el navegador.
+(window as unknown as { __atlasNormalize?: typeof normalizeExternalUrl }).__atlasNormalize = normalizeExternalUrl;
 
 type MobileTab = 'resultados' | 'filtros' | 'ficha';
 type SheetLevel = 0 | 1 | 2;

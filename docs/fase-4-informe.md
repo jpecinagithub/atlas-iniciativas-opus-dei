@@ -69,7 +69,42 @@ hay proxy anti-X-Frame-Options, como fijó la especificación.
   los datos.
 - Revisión visual propia de las capturas nuevas antes de entregar.
 
-## 3. Límites y notas
+## 3. Corrección tras la primera revisión — URLs externas (2026-11-12)
+
+La revisión encontró un bloqueo real: el visor y los enlaces usaban el
+valor del directorio tal cual, y no todos los valores son URLs. Censo
+verificado sobre los datos: de **6.205 valores externos** no vacíos
+(web, Fuente 1, Fuente 2, fuente principal de país y catálogo de
+fuentes), 6.120 son http(s) válidas y **85 no traen esquema**: dominios
+desnudos (la fuente principal de Puerto Rico es `www.paloblanco.org`,
+que el navegador resolvía como ruta interna de la propia app), varios
+con comilla tipográfica final (`www.tahilan.org”`) y dos textos
+documentales completos en campos de Fuente 2 (BR-10 y CL-16).
+
+Corrección aplicada, con una única regla para toda la app:
+
+- **`normalizeExternalUrl`** (`apps/web/src/urls.ts`): recorta espacios
+  y comillas finales; con esquema admite solo `http:`/`https:`; sin
+  esquema, antepone `https://` únicamente a dominios reconocibles; todo
+  lo demás devuelve `null`.
+- El **valor original se sigue mostrando**, pero si no normaliza no se
+  crea enlace ni botón de visor: la Fuente 2 de BR-10 y CL-16 se lee
+  como texto con la marca «sin enlace válido», igual que una fuente
+  principal de país no válida.
+- **Defensa final**: `openViewer` normaliza antes de abrir y el propio
+  `WebViewer` revalida al renderizar; el iframe lleva además
+  `sandbox="allow-scripts allow-forms allow-same-origin"`, sin
+  navegación superior ni ventanas emergentes.
+
+Pruebas añadidas al recorrido (**34/34 PASS**, con API 13/13 e
+integridad OK repetidos): normalización directa en el navegador
+(`javascript:` y `data:` rechazados; dominio desnudo → https; comillas
+recortadas; texto documental → sin URL; https válida intacta), BR-10 y
+CL-16 sin enlace en su Fuente 2, **Puerto Rico abre
+https://www.paloblanco.org/ en el visor** y Tajamar sigue abriendo su
+fuente https.
+
+## 4. Límites y notas
 
 - El visor no puede detectar de forma fiable si un sitio ha bloqueado
   la incrustación (el navegador no lo notifica); por eso el aviso es

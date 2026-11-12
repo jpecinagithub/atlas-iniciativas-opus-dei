@@ -210,6 +210,52 @@ try {
   await page.waitForTimeout(2500);
   await page.screenshot({ path: join(SHOTS, '06-globo-antipoda.png') });
 
+  // URLs externas (corrección de la Fase 4): el directorio trae valores
+  // que no son URLs (textos documentales, dominios desnudos, comillas
+  // tipográficas). Deben mostrarse como texto, nunca como enlace/visor.
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.382');
+  const normCases = await page.evaluate(() => {
+    const n = (window).__atlasNormalize;
+    return [
+      n('javascript:alert(1)'),
+      n('data:text/html;base64,SG9sYQ=='),
+      n('www.paloblanco.org'),
+      n('  www.tahilan.org” '),
+      n('No localizado · v30: texto documental con espacios y «comillas»'),
+      n('https://www.tajamar.es/'),
+    ];
+  });
+  check('URLs: javascript: y data: rechazados', normCases[0] === null && normCases[1] === null, JSON.stringify(normCases));
+  check('URLs: dominio desnudo → https y comillas tipográficas recortadas',
+    normCases[2] === 'https://www.paloblanco.org/' && normCases[3] === 'https://www.tahilan.org/', JSON.stringify(normCases));
+  check('URLs: el texto documental no se convierte en URL y la https válida pasa intacta',
+    normCases[4] === null && normCases[5] === 'https://www.tajamar.es/', JSON.stringify(normCases));
+
+  // BR-10: su Fuente 2 es un texto documental completo, no un enlace
+  await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Marumbi');
+  await page.waitForTimeout(700);
+  await page.getByRole('button', { name: /Marumbi/ }).first().click();
+  await page.getByRole('heading', { name: /Marumbi/ }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(600);
+  const fichaBR = await page.getByRole('article').textContent() ?? '';
+  check('BR-10: el texto documental de Fuente 2 se muestra como texto',
+    fichaBR.includes('gazetadopovo.com.br') && fichaBR.includes('sin enlace válido'), '');
+  check('BR-10: Fuente 2 no es un enlace y Fuente 1 sí',
+    (await page.getByRole('article').getByRole('link', { name: 'Fuente 2' }).count()) === 0 &&
+    (await page.getByRole('article').getByRole('link', { name: 'Fuente 1' }).count()) === 1, '');
+
+  // CL-16: mismo caso en su Fuente 2
+  await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Huinganal');
+  await page.waitForTimeout(700);
+  await page.getByRole('button', { name: /Huinganal/ }).first().click();
+  await page.getByRole('heading', { name: 'Colegio Huinganal' }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(600);
+  const fichaCL = await page.getByRole('article').textContent() ?? '';
+  check('CL-16: el texto documental de Fuente 2 se muestra como texto, sin enlace',
+    fichaCL.includes('correos.cl oficial') &&
+    (await page.getByRole('article').getByRole('link', { name: 'Fuente 2' }).count()) === 0, '');
+
   // Restablecer
   await page.getByRole('button', { name: 'Restablecer' }).click();
   await waitCounters(page, '1.382');
@@ -236,6 +282,23 @@ try {
   await page.waitForTimeout(500);
   const fichaSinPunto = await page.getByRole('article').innerText();
   check('Sin coordenadas: la ficha lo explica', fichaSinPunto.includes('Sin ubicación en el mapa'), '');
+
+  // Puerto Rico (corrección de la Fase 4): su fuente principal es un
+  // dominio desnudo; el visor debe abrir https://www.paloblanco.org/ y
+  // nunca una ruta interna de la propia app.
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: /^Puerto Rico/ }).first().click();
+  await page.waitForTimeout(1200);
+  const ctxPR = page.getByLabel('Contexto de Puerto Rico').first();
+  await ctxPR.getByRole('button', { name: 'Fuente principal del país en el visor' }).click();
+  const dialogPR = page.getByRole('dialog');
+  await dialogPR.waitFor({ timeout: 10000 });
+  const prSrc = await dialogPR.locator('iframe').getAttribute('src');
+  check('Puerto Rico: la fuente principal abre https://www.paloblanco.org/ en el visor',
+    prSrc === 'https://www.paloblanco.org/', prSrc ?? '');
+  await page.getByRole('button', { name: 'Cerrar visor' }).click();
+  await page.waitForTimeout(400);
 
   // Historial atrás/adelante: cada lugar de la exploración es una entrada
   await page.getByRole('button', { name: 'Restablecer' }).click();

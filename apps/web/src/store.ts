@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Catalog, Initiative, InitiativeDetail } from './types';
+import { normalizeExternalUrl } from './urls';
 
 export type LoadStatus = 'loading' | 'ready' | 'error';
 
@@ -69,7 +70,11 @@ export const useAtlas = create<AtlasState>((set, get) => ({
       set({ detailFailedFor: id });
     }
   },
-  openViewer: (url) => set({ viewerUrl: url }),
+  openViewer: (url) => {
+    // Defensa final: el visor solo acepta URLs externas normalizadas.
+    const normalized = normalizeExternalUrl(url);
+    if (normalized) set({ viewerUrl: normalized });
+  },
   closeViewer: () => set({ viewerUrl: null }),
 
   load: async () => {

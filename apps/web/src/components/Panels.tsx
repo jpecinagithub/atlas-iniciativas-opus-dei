@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAtlas, filterInitiatives } from '../store';
+import { normalizeExternalUrl } from '../urls';
 import { categoryColor, RECIPIENT_LABELS } from '../categories';
 import type { Initiative } from '../types';
 import { fmt } from '../format';
@@ -294,8 +295,10 @@ export function DetailPanel() {
           <div>
             <dt className="text-xs uppercase tracking-wide text-slate-500">Contacto publicado</dt>
             <dd className="space-y-0.5 text-slate-200">
-              {rec.web && <a className="block truncate text-sky-300 hover:underline" href={rec.web} target="_blank" rel="noreferrer">{rec.web}</a>}
-              {rec.web && (
+              {rec.web && (normalizeExternalUrl(rec.web)
+                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.web)!} target="_blank" rel="noreferrer">{rec.web}</a>
+                : <span className="block truncate" title={rec.web}>{rec.web}</span>)}
+              {rec.web && normalizeExternalUrl(rec.web) && (
                 <button type="button" onClick={() => openViewer(rec.web!)} className="text-xs font-medium text-sky-300 hover:underline">
                   Ver la web en el visor
                 </button>
@@ -314,9 +317,13 @@ export function DetailPanel() {
         {(rec.source1 || rec.source2) && (
           <div>
             <dt className="text-xs uppercase tracking-wide text-slate-500">Fuentes</dt>
-            <dd className="space-y-0.5">
-              {rec.source1 && <a className="block truncate text-sky-300 hover:underline" href={rec.source1} target="_blank" rel="noreferrer">Fuente 1</a>}
-              {rec.source2 && <a className="block truncate text-sky-300 hover:underline" href={rec.source2} target="_blank" rel="noreferrer">Fuente 2</a>}
+            <dd className="space-y-1">
+              {rec.source1 && (normalizeExternalUrl(rec.source1)
+                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.source1)!} target="_blank" rel="noreferrer">Fuente 1</a>
+                : <span className="block text-xs leading-relaxed text-slate-400"><span className="text-slate-500">Fuente 1 (sin enlace válido): </span>{rec.source1}</span>)}
+              {rec.source2 && (normalizeExternalUrl(rec.source2)
+                ? <a className="block truncate text-sky-300 hover:underline" href={normalizeExternalUrl(rec.source2)!} target="_blank" rel="noreferrer">Fuente 2</a>
+                : <span className="block text-xs leading-relaxed text-slate-400"><span className="text-slate-500">Fuente 2 (sin enlace válido): </span>{rec.source2}</span>)}
             </dd>
           </div>
         )}
@@ -362,12 +369,12 @@ export function DetailPanel() {
                 {cs.source.consultedAt && (
                   <p className="text-xs text-slate-500">Consultada el {cs.source.consultedAt} · {cs.source.id}</p>
                 )}
-                {cs.source.url && (
+                {cs.source.url && normalizeExternalUrl(cs.source.url) && (
                   <p className="mt-1.5 flex gap-3 text-xs font-medium">
                     <button type="button" onClick={() => openViewer(cs.source.url!)} className="text-sky-300 hover:underline">
                       Ver en el visor
                     </button>
-                    <a href={cs.source.url} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
+                    <a href={normalizeExternalUrl(cs.source.url)!} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
                       Abrir en pestaña nueva ↗
                     </a>
                   </p>
@@ -504,16 +511,21 @@ export function CountryContext() {
         </div>
       )}
 
-      {country.mainSource && (
+      {country.mainSource && (normalizeExternalUrl(country.mainSource) ? (
         <p className="flex gap-3 text-xs font-medium">
           <button type="button" onClick={() => openViewer(country.mainSource!)} className="text-sky-300 hover:underline">
             Fuente principal del país en el visor
           </button>
-          <a href={country.mainSource} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
+          <a href={normalizeExternalUrl(country.mainSource)!} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
             Abrir ↗
           </a>
         </p>
-      )}
+      ) : (
+        <p className="text-xs text-slate-400">
+          <span className="text-slate-500">Fuente principal del país (sin enlace válido): </span>
+          {country.mainSource}
+        </p>
+      ))}
 
       {country.note && (
         <div>
