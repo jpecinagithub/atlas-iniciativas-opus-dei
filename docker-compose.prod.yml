@@ -1,0 +1,74 @@
+# Atlas de iniciativas · Opus Dei — despliegue en producción (Fase 6).
+#
+# Resolución D7: en el servidor no existe un PostgreSQL compartido;
+# cada proyecto (josemaria, josemaria-rag, nexus) corre el suyo en su
+# propio stack. Crear la base dentro del contenedor de otro proyecto
+# acoplaría el Atlas a su ciclo de vida y a sus copias. Por tanto el
+# Atlas sigue el patrón de la casa: su propio postgres:16 en su stack,
+# solo en la red interna, con volumen propio y copias propias.
+#
+# La contraseña de la base vive SOLO en el .env del servidor
+# (ATLAS_DB_PASSWORD, alfanumérica, chmod 600); nunca en el repo.
+# Solo el contenedor web publica puerto, y solo en localhost del
+# host (127.0.0.1:8180): el exterior entra por el nginx del host
+# bajo https://jpecina.duckdns.org/atlas/.
+name: atlas
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: atlas
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: ${ATLAS_DB_PASSWORD:?falta ATLAS_DB_PASSWORD en .env}
+    volumes:
+      - atlas_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas -d atlas"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - atlas
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://atlas:${ATLAS_DB_PASSWORD}@db:5432/atlas
+      PORT: "3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - atlas
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_BASE_PATH: /atlas/
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8180:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - atlas
+
+volumes:
+  atlas_pgdata:
+
+networks:
+  atlas:
