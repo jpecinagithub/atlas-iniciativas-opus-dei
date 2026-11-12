@@ -152,6 +152,24 @@ auditoría por OSV sobre los 297 paquetes únicos del lockfile: **0
 avisos** (la cadena eliminada se llevaba ~270 paquetes). Build con el
 worker en la precarga; integridad OK; API 13/13; **recorrido 41/41**.
 
+**Tercera corrección (la huella, a petición de la revisión).** La
+primera versión del plugin calculaba VERSION con nombre:tamaño, y
+para los ficheros de `public/` usaba por error la longitud del
+*nombre*: un recurso cambiado conservando ruta y tamaño habría
+dejado `sw.js` idéntico y el navegador no habría actualizado nunca.
+Ahora VERSION es **SHA-256 sobre los bytes reales** de cada recurso
+precargado (del bundle o leídos de `public/`), y el plugin corre con
+`enforce: 'post'` para que el `index.html` emitido ya esté en el
+bundle al calcular la huella. Queda acreditado por una prueba
+reproducible nueva, **`npm run test:sw`**: modifica `favicon.svg`
+cambiando un carácter por otro (mismo tamaño) y exige que VERSION
+cambie; lo restaura byte a byte y exige que VERSION vuelva a la
+original (determinismo). Resultado: 3/3 PASS, y la batería completa
+se repitió tras el cambio con los mismos resultados (auditoría
+limpia, integridad OK, API 13/13, recorrido 41/41; la precarga
+incluye el worker `.mjs` y excluye el GeoJSON, que va por la ruta de
+ejecución).
+
 ## 10. Límites y notas
 
 - La caché sin conexión guarda lo ya consultado en ese navegador; no

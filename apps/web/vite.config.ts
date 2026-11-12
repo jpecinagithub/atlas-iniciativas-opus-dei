@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -96,17 +98,35 @@ self.addEventListener('fetch', (event) => {
 }
 
 function atlasServiceWorker(): Plugin {
+  let publicDir = '';
   return {
     name: 'atlas-service-worker',
+    // Debe ejecutarse tras el plugin interno de HTML de Vite: el
+    // index.html emitido solo está en el bundle en esa fase.
+    enforce: 'post',
+    configResolved(config) {
+      publicDir = config.publicDir;
+    },
     generateBundle(_options, bundle) {
       const emitted = Object.keys(bundle).filter((f) => /\.(?:js|mjs|css|html)$/.test(f));
       const precache = [...new Set(['index.html', ...PUBLIC_SHELL, ...emitted])].sort();
-      const sizes = precache.map((f) => {
-        const item = bundle[f];
-        const len = item && 'source' in item ? String(item.source).length : item && 'code' in item ? item.code.length : f.length;
-        return `${f}:${len}`;
-      });
-      const version = createHash('sha256').update(sizes.join('|')).digest('hex').slice(0, 12);
+      // La versión es una huella del CONTENIDO REAL de cada recurso
+      // precargado (SHA-256 de sus bytes, vengan del bundle o de
+      // public/): si un fichero cambia aunque conserve ruta y tamaño,
+      // sw.js cambia y el navegador instala la actualización.
+      const hash = createHash('sha256');
+      for (const file of precache) {
+        const item = bundle[file] as { source?: string | Uint8Array; code?: string } | undefined;
+        let bytes: string | Uint8Array;
+        if (item && typeof item.code === 'string') bytes = item.code;
+        else if (item && item.source !== undefined) bytes = item.source;
+        else bytes = readFileSync(join(publicDir, file));
+        hash.update(file);
+        hash.update('\0');
+        hash.update(typeof bytes === 'string' ? Buffer.from(bytes) : bytes);
+        hash.update('\0');
+      }
+      const version = hash.digest('hex').slice(0, 12);
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: serviceWorkerSource(version, precache) });
     },
   };

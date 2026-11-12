@@ -48,6 +48,7 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fas
 - [x] Acabado: favicon vectorial, theme-color, textos de Método y pie actualizados. Recorrido ampliado a 38/38 PASS.
 - [x] Corrección de la revisión: propiedad `locality` en los puntos (las etiquetas no podían mostrar texto) con prueba de renderizado real a zoom 14; OFL.txt de Noto en tools/fonts; prueba offline con datos cacheados (1.382) en flujo de segunda visita; worker .mjs de MapLibre incluido en la precarga. Recorrido: 41/41 PASS.
 - [x] Segunda corrección (cadena de dependencias): vite-plugin-pwa/workbox eliminados por sus 6 vulnerabilidades sin arreglo compatible (deepmerge sin fix; glob/minimatch exigen mayores incompatibles); service worker propio generado por un plugin local de Vite + manifiesto estático. Desde clon limpio: npm ci, auditoría OSV 0 avisos (297 paquetes), build, integridad OK, API 13/13, recorrido 41/41.
+- [x] Tercera corrección (huella de versión): VERSION del SW = SHA-256 de los bytes reales de cada recurso precargado, incluidos los de public/ (antes nombre:tamaño, con la longitud del nombre para los públicos). Prueba reproducible `npm run test:sw` (cambio sin cambio de tamaño → cambia VERSION; restauración → vuelve). Batería repetida: todo verde.
 - [ ] Recertificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
 
 ## Fases siguientes (no anticipar)
