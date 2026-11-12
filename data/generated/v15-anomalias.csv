@@ -1,0 +1,191 @@
+tipo,id,campo,detalle
+paises_declarado_vs_calculado_v14,,Países,"Puerto Rico (PR): declarado 6, desglose 5, calculado 6"
+paises_declarado_vs_calculado_v15,,Países,"Puerto Rico (PR): declarado 6, desglose 5, calculado 6"
+categoria_fuera_de_lista,,Categoría principal,«Otros» no está entre las 14 conocidas (2 registros)
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Ambos sexos (casa de retiros: retiros, reuniones, eventos familiares y campamentos juveniles — Annual Report 2025 del titular y web propia)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Ambos sexos (centro de conferencias/retiros con actividades para hombres y mujeres — PFCED, dic-2025)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Ambos sexos (retiros separados para hombres y para mujeres)» (1 registros)
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Ambos sexos (retiros y cursos para mujeres y para hombres, por separado)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Ambos sexos, retiros separados (chicos/hombres vía Mirrabooka; chicas/mujeres vía Eremeran)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Hombres y mujeres» (1 registros)
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Hombres y mujeres *(actividades separadas)*» (1 registros)
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Hombres y mujeres *(centro de convivios y retiros; actividades separadas)*» (1 registros)
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Mixto (Guia do Estudante 2025: coordinación de «turmas das meninas» y de «turmas dos meninos»)» (1 registros)
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Mixto (admisión de la página de la sede: «Vuestro hijo o hija deberá realizar una breve prueba de nivel»)» (7 registros)
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Mixto (admisión del texto oficial del programa Attendis Preschool: «Vuestro hijo o hija…»; página del grupo, no de la sede)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Mixto (clasificación oficial de la Secretaría de Educación, datos 2025-12-31; el colegio declara formación diferenciada por sexos desde 2018 y fue femenino desde 1962)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Mixto (ficha del centro en vamosaestudiar)» (1 registros)
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Mixto (hombres y mujeres, jóvenes y adultos)» (1 registros)"
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Mixto (programa propio: «razvoj sposobnosti dječaka i djevojčica»)» (1 registros)
+valor_nuevo_en_lista,,Sexo,valor nuevo en v15: «Mujeres *(établissement de filles; web propia comprometida — caveat)*» (1 registros)
+valor_nuevo_en_lista,,Sexo,"valor nuevo en v15: «Varones *(colegiosenbuenosaires: ""colegio privado, de varones"")*» (1 registros)"
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): http://www.pgrweb.go.cr/scij/Busqueda/Normativa/Normas/nrm_texto_completo.aspx?nValor1=1&nValor2=56017&nValor3=61381&param1=NRTC&strTipM=TC
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x8): https://correos.gob.gt/CodigosPos/ListaCodigos/Guatemala.pdf
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x9): https://www.correos.cl/codigo-postal
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.iese.edu/contact-us/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.kamalini.org/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.kinal.org.gt/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.lysterfieldlake.vic.edu.au/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.montgrove.nsw.edu.au/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.redfield.nsw.edu.au/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): https://www.tangara.nsw.edu.au/
+url_duplicada_en_fuentes,,Fuentes,URL repetida en la hoja Fuentes v15 (x2): www.opusdei.org.hk
+fuente_sin_url_exacta_v14,AR-12,Fuente 2,[url_con_texto_anadido] https://www.micole.net/ar/cordoba/colon/colegio-bilingue-cinco-rios · v30:
+fuente_sin_url_exacta_v14,AR-13,Fuente 2,[url_con_texto_anadido] https://www.micole.net/ar/ciudad-de-buenos-aires/ciudad-de-buenos-aires/colegio-cruz-del-sur · v30:
+fuente_sin_url_exacta_v14,AR-14,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/un-colegio-de-barracas-puerta-de-inclusion-para-los-chicos-y-las-chicas-de-la-villa-21
+fuente_sin_url_exacta_v14,AT-11,Fuente 2,[url_con_texto_anadido] https://opusdei.org/de-at/article/das-opus-dei-in-osterreich/pdf/ · v30:
+fuente_sin_url_exacta_v14,BR-10,Fuente 2,[dominio_con_nota_sin_url] No localizado · v30: gazetadopovo.com.br 04/05/2012: «primeiro sacerdote Opus Dei na cidade. Foi capelão do Centro Cultu
+fuente_sin_url_exacta_v14,CL-10,Fuente 2,[url_con_texto_anadido] https://doble-espacio.uchile.cl/las-residencias-universitarias-del-opus-dei-en-santiago/ · v30: https://www.correos.cl/c
+fuente_sin_url_exacta_v14,CL-15,Fuente 2,[url_con_texto_anadido] https://www.micole.net/cl/santiago-de-chile/lo-barnechea/colegio-los-alerces · v30:
+fuente_sin_url_exacta_v14,CL-16,Fuente 2,"[dominio_con_nota_sin_url] No localizado · v30: correos.cl oficial: «Código Postal: 7690000 — MONSENOR ADOLFO RODRIGUEZ 13210, LO BARNECHEA» (direc"
+fuente_sin_url_exacta_v14,CL-23,Fuente 2,[url_con_texto_anadido] http://www.puentemaipo.cl/wp/wp-content/uploads/2024/04/contrato-eduactivo-educacion-media-2024.pdf · v30: correos.cl of
+fuente_sin_url_exacta_v14,CL-24,Fuente 2,[url_con_texto_anadido] https://kochenian-taupe-albatross.opusdei.org/es-cl/article/mons-fernando-ocariz-en-chile-24-al-30-de-julio-visita-coleg
+fuente_sin_url_exacta_v14,CO-03,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-co/article/ya-sabes-si-vas-a-torreblanca-trae-pan-de-naranja/ · v30: 1) Sitio propio icsef.edu.co
+fuente_sin_url_exacta_v14,KR-01,Fuente 2,[url_con_texto_anadido] https://dorimdongcenter.org/facilities/ · v30: juso.go.kr (herramienta oficial del Ministerio del Interior y Seguridad d
+fuente_sin_url_exacta_v14,ES-02,Fuente 2,"[url_con_texto_anadido] https://elpais.com/economia/2015/10/21/actualidad/1445426594_649829.html (El País, 21-10-2015: ""José María Escrivá de Ba"
+fuente_sin_url_exacta_v14,ES-20,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/iniciativas-apostolicas-espana/ · v30: https://www.torrealba.es/residencia/ (web propi
+fuente_sin_url_exacta_v14,ES-21,Fuente 2,[url_con_texto_anadido] https://malvesia.es/politica-privacidad/ · v30: https://www.malvesia.es/ideario/ (web propia: «principio de coeducación»
+fuente_sin_url_exacta_v14,FR-02,Fuente 2,[url_con_texto_anadido] https://www.bercour.com/blank-1 · v30: https://recherche-entreprises.api.gouv.fr/search?q=451643357 (registro oficial fr
+fuente_sin_url_exacta_v14,HK-02,Fuente 2,[url_con_texto_anadido] https://opusdei.org/en-sg/article/a-journey-of-grace-mercy/ · v30:
+fuente_sin_url_exacta_v14,HU-03,Fuente 2,[url_con_texto_anadido] https://opusdei.org/hu-hu/article/2018-marciusaban-litus-konferenciakozpont-megnyitja-kapuit/pdf/ · v30:
+fuente_sin_url_exacta_v14,IN-03,Fuente 2,[url_con_texto_anadido] https://www.indiamart.com/kamalini-centre/customprofile.html · v30:
+fuente_sin_url_exacta_v14,IT-01,Fuente 2,"[url_con_texto_anadido] https://roma2pass.it/villa-tevere/ (editorial independiente, guía de Roma: ""Villa Tevere, sede della curia prelatizia de"
+fuente_sin_url_exacta_v14,IT-08,Fuente 2,[url_con_texto_anadido] https://opusdei.org/it-it/article/iniziative-apostoliche/ · v30: sapereisapori.regione.lazio.it (portal oficial Regione 
+fuente_sin_url_exacta_v14,LT-02,Fuente 2,"[url_con_texto_anadido] https://www.vilnensis.lt/?p=23297 · v30: vilnensis.lt (Arquidiócesis de Vilnius, oficial): lista «VILNELĖS KULTŪROS CENT"
+fuente_sin_url_exacta_v14,MX-07,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-mx/article/labores-educativas/ · v30: SEPOMEX oficial (correosdemexico.gob.mx ConsultaCP, catálog"
+fuente_sin_url_exacta_v14,MX-21,Fuente 2,"[url_con_texto_anadido] https://escuelasmex.com/directorio/17PPR0348S/colegio-montefalco · v30: Web propia del colegio, página Inscripciones (co"
+fuente_sin_url_exacta_v14,NG-016,Fuente 2,[url_con_texto_anadido] https://romana.org/en/33/the-centennial-of-his-birth/inauguration-of-the-8220institute-for-industrialte/ · v30: https://
+fuente_sin_url_exacta_v14,NL-17,Fuente 2,[url_con_texto_anadido] https://olvkerk.nl/en/community/opus-dei/ · v30:
+fuente_sin_url_exacta_v14,PT-04,Fuente 2,[url_con_texto_anadido] https://opusdei.org/pt-pt/article/onde-encontrar-o-opus-dei-em-portugal/pdf/ · v30: IPDJ (gobierno PT) PAAJ2020 listado 
+fuente_sin_url_exacta_v14,PT-08,Fuente 2,[url_con_texto_anadido] https://opusdei.org/pt-pt/article/natal-solidario-em-braga-porto-e-lisboa-com-fotos/pdf/ · v30:
+fuente_sin_url_exacta_v14,UY-02,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-uy/article/fallecio-en-kenia-el-primer-director-del-colegio-monte-vi/ · v30:
+fuente_sin_url_exacta_v14,UY-05,Fuente 2,[url_con_texto_anadido] https://lospinos.org.uy/wp-content/uploads/2023/03/Los_Pinos_Liceo_Tecnico.pdf · v30:
+fuente_sin_url_exacta_v14,ES-176,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019: «controla les associ
+fuente_sin_url_exacta_v14,ES-177,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Blaumar entre
+fuente_sin_url_exacta_v14,ES-189,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: elsaltodiario.com 12/11/2024 «el Opus Dei... a tr
+fuente_sin_url_exacta_v14,ES-196,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Comercio (Asturias), 27-11-2011: «la Asociació"
+fuente_sin_url_exacta_v14,ES-199,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: La Provincia (Las Palmas), 28-04-2015: «el Opus D"
+fuente_sin_url_exacta_v14,ES-204,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/opus-dei-bilbao/ · v30: El Correo 21/12/2025 «colegios del Opus Dei... Ayalde y Munabe
+fuente_sin_url_exacta_v14,ES-205,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/opus-dei-bilbao/ · v30: El Correo 21/12/2025 «colegios del Opus Dei... Ayalde y Munabe
+fuente_sin_url_exacta_v14,ES-239,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Dardo entre l
+fuente_sin_url_exacta_v14,ES-241,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Diemal)
+fuente_sin_url_exacta_v14,ES-251,Fuente 2,[url_con_texto_anadido] https://www.lasprovincias.es/valencia-ciudad/iglesia-templaria-centro-valencia-san-juan-del-hospital-20200211215122-nt.h
+fuente_sin_url_exacta_v14,ES-252,Fuente 2,"[url_con_texto_anadido] http://www.parroquiasanjosemaria.org/ · v30: Levante-EMV, 02-07-2007, «El Opus Dei inaugura su iglesia»: la parroquia de"
+fuente_sin_url_exacta_v14,ES-253,Fuente 2,[url_con_texto_anadido] https://iglesiasantacruzzaragoza.org/ · v30: Web propia iglesiasantacruzzaragoza.org (emails exaltacionsantacruz@gmail.c
+fuente_sin_url_exacta_v14,ES-254,Fuente 2,[url_con_texto_anadido] https://www.barcelona.cat/metropolis/es/detall/esglesia-de-santa-maria-de-montalegre_92086000517 ; https://www.montalegr
+fuente_sin_url_exacta_v14,ES-256,Fuente 2,[url_con_texto_anadido] https://www.archimadrid.org/index.php/oficina-de-informacion/noticias-madrid/el-cardenal-celebra-una-misa-en-san-josemar
+fuente_sin_url_exacta_v14,ES-257,Fuente 2,[url_con_texto_anadido] http://www.basilicadesanmiguel.org/ · v30: Web propia basilicadesanmiguel.org (email) + infobae.com 10/04/2025: «Basílic
+fuente_sin_url_exacta_v14,ES-258,Fuente 2,[url_con_texto_anadido] https://www.esmadrid.com/informacion-turistica/real-oratorio-del-caballero-de-gracia ; http://caballerodegracia.org/
+fuente_sin_url_exacta_v14,ES-259,Fuente 2,[url_con_texto_anadido] https://www.parroquiadesanjosemaria.es/ · v30: hispanidad.com 20/06/2023: «la parroquia de san Josemaría -atendida por s
+fuente_sin_url_exacta_v14,ES-260,Fuente 2,[url_con_texto_anadido] https://www.eldiario.es/sociedad/gobierno-quiere-cobrar-arzobispado-madrid-iglesia-csic-le-cedio-2069_1_12756968.html ; 
+fuente_sin_url_exacta_v14,ES-261,Fuente 2,[url_con_texto_anadido] https://www.religiondigital.org/diocesis/Cobo-Vallecas-estrellas-medio-barrio-madrid-arzobispo_0_2578842103.html ; https
+fuente_sin_url_exacta_v14,ES-262,Fuente 2,[url_con_texto_anadido] https://www.abc.es/sevilla/ciudad/san-jose-precisa-reformas-20250322170305-nts.html ; http://www.iglsrsjose.org/
+fuente_sin_url_exacta_v14,ES-263,Fuente 2,[url_con_texto_anadido] https://www.sanantonioalmeria.org/inicio · v30: Web propia sanantonioalmeria.org/contacto (email) + diocesisalmeria.org 
+fuente_sin_url_exacta_v14,ES-264,Fuente 2,[url_con_texto_anadido] https://www.sanildefonso.info/ · v30: Web oficial sanildefonso.info: único número publicado (+34 958 389 454; el supuest
+fuente_sin_url_exacta_v14,ES-265,Fuente 2,"[url_con_texto_anadido] https://www.torreciudad.org/ · v30: Heraldo de Aragón, 12-09-2026: controversia entre la Diócesis de Barbastro-Monzón y "
+fuente_sin_url_exacta_v14,ES-266,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/iniciativas-apostolicas-espana/ · v30: Web oficial cun.es/sedes/sede-madrid: datos est
+fuente_sin_url_exacta_v14,ES-267,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-ec/article/cuidados-paliativos-en-madrid/pdf/ · v30: eldiario.es Somos Madrid 2025: Fundación Via
+fuente_sin_url_exacta_v14,DE-24,Fuente 2,[url_con_texto_anadido] https://www.die-tagespost.de/kirche/bistuemer/koeln/st-pantaleon-in-koeln-wiedereroeffnet-art-258412 ; https://sankt-pan
+fuente_sin_url_exacta_v14,AT-19,Fuente 2,[url_con_texto_anadido] https://hpd.de/artikel/opus-dei-oesterreich-17815 ; https://www.peterskirche.at
+fuente_sin_url_exacta_v14,HU-04,Fuente 2,[url_con_texto_anadido] https://www.szentanna5.hu/ · v30: hetedhetorszag.hu: «templomukat 2006-ban hagyta Erdő Péter... a szervezet vezetésére. 
+fuente_sin_url_exacta_v14,US-62,Fuente 2,[url_con_texto_anadido] https://www.fundforsacredplaces.org/participants/st-mary-of-the-angels-chicago/ ; https://www.sma.family/church/
+fuente_sin_url_exacta_v14,US-63,Fuente 2,[url_con_texto_anadido] https://www.ncregister.com/news/faith-and-the-city-opus-dei-assumes-responsibility-for-st-agnes-church ; https://stagnes
+fuente_sin_url_exacta_v14,ES-280,Fuente 2,[url_con_texto_anadido] https://gecoas.com/erain-eskibel/ · v30: eldiario.es 08/03/2023 nombra «Erain de Irún» entre los colegios del Opus; cont
+fuente_sin_url_exacta_v14,ES-281,Fuente 2,[url_con_texto_anadido] https://www.eskibel.com/ · v30: eldiario.es 08/03/2023 nombra «Eskibel de Donostia» entre los colegios del Opus; continu
+fuente_sin_url_exacta_v14,ES-283,Fuente 2,"[url_con_texto_anadido] https://www.colegioalborada.es/ · v30: El País, 07-02-2009, «Aguirre cede suelo al Opus para un centro que separa por se"
+fuente_sin_url_exacta_v15,DE-07,Fuente 2,"[dominio_con_nota_sin_url] dbk.de (Conferencia Episcopal Alemana, listado oficial de jurisdicciones) + de.wikipedia.org (Regionalvikar actual)"
+fuente_sin_url_exacta_v15,DE-12,Fuente 2,[dominio_con_nota_sin_url] cylex.de (ficha actualizada 14.08.2026)
+fuente_sin_url_exacta_v15,DE-13,Fuente 2,[dominio_con_nota_sin_url] opusfrei.org (contraste independiente)
+fuente_sin_url_exacta_v15,DE-14,Fuente 2,[dominio_con_nota_sin_url] isje.org (revista académica) + inmuebles 50935
+fuente_sin_url_exacta_v15,DE-15,Fuente 2,[dominio_con_nota_sin_url] opusfrei.org (contraste independiente)
+fuente_sin_url_exacta_v15,AR-05,Fuente 2,"[dominio_con_nota_sin_url] mercado.com.ar/negocios/iae-business-school-presenta-nueva-sede-en-polo-dot-baires (Revista Mercado, 14-10-2025)"
+fuente_sin_url_exacta_v15,AR-12,Fuente 2,[url_con_texto_anadido] https://www.micole.net/ar/cordoba/colon/colegio-bilingue-cinco-rios · v30:
+fuente_sin_url_exacta_v15,AR-13,Fuente 2,[url_con_texto_anadido] https://www.micole.net/ar/ciudad-de-buenos-aires/ciudad-de-buenos-aires/colegio-cruz-del-sur · v30:
+fuente_sin_url_exacta_v15,AR-14,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/un-colegio-de-barracas-puerta-de-inclusion-para-los-chicos-y-las-chicas-de-la-villa-21
+fuente_sin_url_exacta_v15,AU-08,Fuente 2,"[texto_libre_sin_url] ABN Lookup (Australian Business Register, oficial)"
+fuente_sin_url_exacta_v15,AU-19,Fuente 2,[dominio_con_nota_sin_url] bargo-nsw.place-advisor.com (dirección+teléfono+web)
+fuente_sin_url_exacta_v15,AT-11,Fuente 2,[url_con_texto_anadido] https://opusdei.org/de-at/article/das-opus-dei-in-osterreich/pdf/ · v30:
+fuente_sin_url_exacta_v15,BR-10,Fuente 2,[dominio_con_nota_sin_url] No localizado · v30: gazetadopovo.com.br 04/05/2012: «primeiro sacerdote Opus Dei na cidade. Foi capelão do Centro Cultu
+fuente_sin_url_exacta_v15,BR-16,Fuente 2,"[texto_libre_sin_url] Censo Escolar 2025 INEP vía Lupa Escolar (INEP 53020464, escuela privada, ensino fundamental, Brasília/DF)"
+fuente_sin_url_exacta_v15,CL-10,Fuente 2,[url_con_texto_anadido] https://doble-espacio.uchile.cl/las-residencias-universitarias-del-opus-dei-en-santiago/ · v30: https://www.correos.cl/c
+fuente_sin_url_exacta_v15,CL-15,Fuente 2,[url_con_texto_anadido] https://www.micole.net/cl/santiago-de-chile/lo-barnechea/colegio-los-alerces · v30:
+fuente_sin_url_exacta_v15,CL-16,Fuente 2,"[dominio_con_nota_sin_url] No localizado · v30: correos.cl oficial: «Código Postal: 7690000 — MONSENOR ADOLFO RODRIGUEZ 13210, LO BARNECHEA» (direc"
+fuente_sin_url_exacta_v15,CL-23,Fuente 2,[url_con_texto_anadido] http://www.puentemaipo.cl/wp/wp-content/uploads/2024/04/contrato-eduactivo-educacion-media-2024.pdf · v30: correos.cl of
+fuente_sin_url_exacta_v15,CL-24,Fuente 2,[url_con_texto_anadido] https://kochenian-taupe-albatross.opusdei.org/es-cl/article/mons-fernando-ocariz-en-chile-24-al-30-de-julio-visita-coleg
+fuente_sin_url_exacta_v15,CO-03,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-co/article/ya-sabes-si-vas-a-torreblanca-trae-pan-de-naranja/ · v30: 1) Sitio propio icsef.edu.co
+fuente_sin_url_exacta_v15,CO-20,Fuente 2,"[dominio_con_nota_sin_url] Secretaría de Educación del Distrito (capa educacion/infraestructuraeducativa, DANE 311001027986; registro ESAL en datos"
+fuente_sin_url_exacta_v15,KR-01,Fuente 2,[url_con_texto_anadido] https://dorimdongcenter.org/facilities/ · v30: juso.go.kr (herramienta oficial del Ministerio del Interior y Seguridad d
+fuente_sin_url_exacta_v15,HR-06,Fuente 2,[texto_libre_sin_url] Registro oficial MZO vía data.gov.hr (dataset Dječji vrtići) ; Arquidiócesis de Zagreb 15-04-2024 (zg-nadbiskupija.hr)
+fuente_sin_url_exacta_v15,EC-02,Fuente 2,"[dominio_con_nota_sin_url] loaizacomunicaciones.com (prensa, 24-03-2025) + amerpages.com (directorio) + hiringroom.uhemisferios.edu.ec (web oficial"
+fuente_sin_url_exacta_v15,SV-07,Fuente 2,[dominio_con_nota_sin_url] internationalschools.net / doris.school
+fuente_sin_url_exacta_v15,SI-02,Fuente 2,[texto_libre_sin_url] reporter.si (27-07-2025) + bizi.si (registro AJPES)
+fuente_sin_url_exacta_v15,ES-02,Fuente 2,"[url_con_texto_anadido] https://elpais.com/economia/2015/10/21/actualidad/1445426594_649829.html (El País, 21-10-2015: ""José María Escrivá de Ba"
+fuente_sin_url_exacta_v15,ES-16,Fuente 2,"[dominio_con_nota_sin_url] diocesisdejerez.org (web oficial diocesana, contraste independiente)"
+fuente_sin_url_exacta_v15,ES-20,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/iniciativas-apostolicas-espana/ · v30: https://www.torrealba.es/residencia/ (web propi
+fuente_sin_url_exacta_v15,ES-21,Fuente 2,[url_con_texto_anadido] https://malvesia.es/politica-privacidad/ · v30: https://www.malvesia.es/ideario/ (web propia: «principio de coeducación»
+fuente_sin_url_exacta_v15,FR-02,Fuente 2,[url_con_texto_anadido] https://www.bercour.com/blank-1 · v30: https://recherche-entreprises.api.gouv.fr/search?q=451643357 (registro oficial fr
+fuente_sin_url_exacta_v15,HK-02,Fuente 2,[url_con_texto_anadido] https://opusdei.org/en-sg/article/a-journey-of-grace-mercy/ · v30:
+fuente_sin_url_exacta_v15,HU-03,Fuente 2,[url_con_texto_anadido] https://opusdei.org/hu-hu/article/2018-marciusaban-litus-konferenciakozpont-megnyitja-kapuit/pdf/ · v30:
+fuente_sin_url_exacta_v15,IN-03,Fuente 2,[url_con_texto_anadido] https://www.indiamart.com/kamalini-centre/customprofile.html · v30:
+fuente_sin_url_exacta_v15,IT-01,Fuente 2,"[url_con_texto_anadido] https://roma2pass.it/villa-tevere/ (editorial independiente, guía de Roma: ""Villa Tevere, sede della curia prelatizia de"
+fuente_sin_url_exacta_v15,IT-02,Fuente 2,"[dominio_con_nota_sin_url] arcer.it/collegi-arcer/collegio-romano-della-santa-croce.html (Via di Grottarossa 1375, 00189 Roma)"
+fuente_sin_url_exacta_v15,IT-08,Fuente 2,[url_con_texto_anadido] https://opusdei.org/it-it/article/iniziative-apostoliche/ · v30: sapereisapori.regione.lazio.it (portal oficial Regione 
+fuente_sin_url_exacta_v15,KE-004,Fuente 2,[url_con_texto_anadido] https://opusdei.org/en-ke/article/centres-for-men-in-east-africa/ ; https://imara-foundation.org/?page_id=7184
+fuente_sin_url_exacta_v15,LT-02,Fuente 2,"[url_con_texto_anadido] https://www.vilnensis.lt/?p=23297 · v30: vilnensis.lt (Arquidiócesis de Vilnius, oficial): lista «VILNELĖS KULTŪROS CENT"
+fuente_sin_url_exacta_v15,MX-07,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-mx/article/labores-educativas/ · v30: SEPOMEX oficial (correosdemexico.gob.mx ConsultaCP, catálog"
+fuente_sin_url_exacta_v15,MX-21,Fuente 2,"[url_con_texto_anadido] https://escuelasmex.com/directorio/17PPR0348S/colegio-montefalco · v30: Web propia del colegio, página Inscripciones (co"
+fuente_sin_url_exacta_v15,NG-016,Fuente 2,[url_con_texto_anadido] https://romana.org/en/33/the-centennial-of-his-birth/inauguration-of-the-8220institute-for-industrialte/ · v30: https://
+fuente_sin_url_exacta_v15,NL-17,Fuente 2,[url_con_texto_anadido] https://olvkerk.nl/en/community/opus-dei/ · v30:
+fuente_sin_url_exacta_v15,PT-04,Fuente 2,[url_con_texto_anadido] https://opusdei.org/pt-pt/article/onde-encontrar-o-opus-dei-em-portugal/pdf/ · v30: IPDJ (gobierno PT) PAAJ2020 listado 
+fuente_sin_url_exacta_v15,PT-08,Fuente 2,[url_con_texto_anadido] https://opusdei.org/pt-pt/article/natal-solidario-em-braga-porto-e-lisboa-com-fotos/pdf/ · v30:
+fuente_sin_url_exacta_v15,GB-06,Fuente 2,[texto_libre_sin_url] Charity Commission registro 278720
+fuente_sin_url_exacta_v15,UY-02,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-uy/article/fallecio-en-kenia-el-primer-director-del-colegio-monte-vi/ · v30:
+fuente_sin_url_exacta_v15,UY-05,Fuente 2,[url_con_texto_anadido] https://lospinos.org.uy/wp-content/uploads/2023/03/Los_Pinos_Liceo_Tecnico.pdf · v30:
+fuente_sin_url_exacta_v15,ES-176,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019: «controla les associ
+fuente_sin_url_exacta_v15,ES-177,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Blaumar entre
+fuente_sin_url_exacta_v15,ES-184,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ ; yoys.es (teléfono y web coincidentes; «dirigida a niña
+fuente_sin_url_exacta_v15,ES-186,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ ; residenciasuniversitarias.es (ficha de Bidealde)
+fuente_sin_url_exacta_v15,ES-189,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: elsaltodiario.com 12/11/2024 «el Opus Dei... a tr
+fuente_sin_url_exacta_v15,ES-196,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Comercio (Asturias), 27-11-2011: «la Asociació"
+fuente_sin_url_exacta_v15,ES-199,Fuente 2,"[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: La Provincia (Las Palmas), 28-04-2015: «el Opus D"
+fuente_sin_url_exacta_v15,ES-204,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/opus-dei-bilbao/ · v30: El Correo 21/12/2025 «colegios del Opus Dei... Ayalde y Munabe
+fuente_sin_url_exacta_v15,ES-205,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/opus-dei-bilbao/ · v30: El Correo 21/12/2025 «colegios del Opus Dei... Ayalde y Munabe
+fuente_sin_url_exacta_v15,ES-213,Fuente 2,[url_con_texto_anadido] https://grazalema-guadalete.com/ ; comparacolegios.es (ficha del centro) ; BOJA 2020/33 y Resolución 20-02-2023 (Junta d
+fuente_sin_url_exacta_v15,ES-239,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Dardo entre l
+fuente_sin_url_exacta_v15,ES-240,Fuente 2,[url_con_texto_anadido] https://escora.es/ ; xarxajove.info (red GVA)
+fuente_sin_url_exacta_v15,ES-241,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/delegaciones-opus-dei-espana/ · v30: El Temps núm.1851 3/12/2019 (nombra Diemal)
+fuente_sin_url_exacta_v15,ES-245,Fuente 2,[url_con_texto_anadido] https://clubalfabia.es/ ; Páginas Amarillas y cylex (07006)
+fuente_sin_url_exacta_v15,IT-70,Fuente 2,"[dominio_con_nota_sin_url] it.wikipedia.org (artículo propio, contraste independiente)"
+fuente_sin_url_exacta_v15,ES-251,Fuente 2,[url_con_texto_anadido] https://www.lasprovincias.es/valencia-ciudad/iglesia-templaria-centro-valencia-san-juan-del-hospital-20200211215122-nt.h
+fuente_sin_url_exacta_v15,ES-252,Fuente 2,"[url_con_texto_anadido] http://www.parroquiasanjosemaria.org/ · v30: Levante-EMV, 02-07-2007, «El Opus Dei inaugura su iglesia»: la parroquia de"
+fuente_sin_url_exacta_v15,ES-253,Fuente 2,[url_con_texto_anadido] https://iglesiasantacruzzaragoza.org/ · v30: Web propia iglesiasantacruzzaragoza.org (emails exaltacionsantacruz@gmail.c
+fuente_sin_url_exacta_v15,ES-254,Fuente 2,[url_con_texto_anadido] https://www.barcelona.cat/metropolis/es/detall/esglesia-de-santa-maria-de-montalegre_92086000517 ; https://www.montalegr
+fuente_sin_url_exacta_v15,ES-256,Fuente 2,[url_con_texto_anadido] https://www.archimadrid.org/index.php/oficina-de-informacion/noticias-madrid/el-cardenal-celebra-una-misa-en-san-josemar
+fuente_sin_url_exacta_v15,ES-257,Fuente 2,[url_con_texto_anadido] http://www.basilicadesanmiguel.org/ · v30: Web propia basilicadesanmiguel.org (email) + infobae.com 10/04/2025: «Basílic
+fuente_sin_url_exacta_v15,ES-258,Fuente 2,[url_con_texto_anadido] https://www.esmadrid.com/informacion-turistica/real-oratorio-del-caballero-de-gracia ; http://caballerodegracia.org/
+fuente_sin_url_exacta_v15,ES-259,Fuente 2,[url_con_texto_anadido] https://www.parroquiadesanjosemaria.es/ · v30: hispanidad.com 20/06/2023: «la parroquia de san Josemaría -atendida por s
+fuente_sin_url_exacta_v15,ES-260,Fuente 2,[url_con_texto_anadido] https://www.eldiario.es/sociedad/gobierno-quiere-cobrar-arzobispado-madrid-iglesia-csic-le-cedio-2069_1_12756968.html ; 
+fuente_sin_url_exacta_v15,ES-261,Fuente 2,[url_con_texto_anadido] https://www.religiondigital.org/diocesis/Cobo-Vallecas-estrellas-medio-barrio-madrid-arzobispo_0_2578842103.html ; https
+fuente_sin_url_exacta_v15,ES-262,Fuente 2,[url_con_texto_anadido] https://www.abc.es/sevilla/ciudad/san-jose-precisa-reformas-20250322170305-nts.html ; http://www.iglsrsjose.org/
+fuente_sin_url_exacta_v15,ES-263,Fuente 2,[url_con_texto_anadido] https://www.sanantonioalmeria.org/inicio · v30: Web propia sanantonioalmeria.org/contacto (email) + diocesisalmeria.org 
+fuente_sin_url_exacta_v15,ES-264,Fuente 2,[url_con_texto_anadido] https://www.sanildefonso.info/ · v30: Web oficial sanildefonso.info: único número publicado (+34 958 389 454; el supuest
+fuente_sin_url_exacta_v15,ES-265,Fuente 2,"[url_con_texto_anadido] https://www.torreciudad.org/ · v30: Heraldo de Aragón, 12-09-2026: controversia entre la Diócesis de Barbastro-Monzón y "
+fuente_sin_url_exacta_v15,ES-266,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-es/article/iniciativas-apostolicas-espana/ · v30: Web oficial cun.es/sedes/sede-madrid: datos est
+fuente_sin_url_exacta_v15,ES-267,Fuente 2,[url_con_texto_anadido] https://opusdei.org/es-ec/article/cuidados-paliativos-en-madrid/pdf/ · v30: eldiario.es Somos Madrid 2025: Fundación Via
+fuente_sin_url_exacta_v15,DE-24,Fuente 2,[url_con_texto_anadido] https://www.die-tagespost.de/kirche/bistuemer/koeln/st-pantaleon-in-koeln-wiedereroeffnet-art-258412 ; https://sankt-pan
+fuente_sin_url_exacta_v15,AT-19,Fuente 2,[url_con_texto_anadido] https://hpd.de/artikel/opus-dei-oesterreich-17815 ; https://www.peterskirche.at
+fuente_sin_url_exacta_v15,HU-04,Fuente 2,[url_con_texto_anadido] https://www.szentanna5.hu/ · v30: hetedhetorszag.hu: «templomukat 2006-ban hagyta Erdő Péter... a szervezet vezetésére. 
+fuente_sin_url_exacta_v15,US-62,Fuente 2,[url_con_texto_anadido] https://www.fundforsacredplaces.org/participants/st-mary-of-the-angels-chicago/ ; https://www.sma.family/church/
+fuente_sin_url_exacta_v15,US-63,Fuente 2,[url_con_texto_anadido] https://www.ncregister.com/news/faith-and-the-city-opus-dei-assumes-responsibility-for-st-agnes-church ; https://stagnes
+fuente_sin_url_exacta_v15,ES-280,Fuente 2,[url_con_texto_anadido] https://gecoas.com/erain-eskibel/ · v30: eldiario.es 08/03/2023 nombra «Erain de Irún» entre los colegios del Opus; cont
+fuente_sin_url_exacta_v15,ES-281,Fuente 2,[url_con_texto_anadido] https://www.eskibel.com/ · v30: eldiario.es 08/03/2023 nombra «Eskibel de Donostia» entre los colegios del Opus; continu
+fuente_sin_url_exacta_v15,ES-283,Fuente 2,"[url_con_texto_anadido] https://www.colegioalborada.es/ · v30: El País, 07-02-2009, «Aguirre cede suelo al Opus para un centro que separa por se"
+fuente_sin_url_exacta_v15,ES-270,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-almeria/ ; vulka.es (Attendis Colegios, 950559500, Carretera de Alicún km 8, 04740 Roquet"
+fuente_sin_url_exacta_v15,ES-271,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-badajoz/ ; localitybiz.es/23830354 (Av. Vaguadas 44, 06010 Badajoz) ; estudiossolana.es"
+fuente_sin_url_exacta_v15,ES-272,Fuente 2,[url_con_texto_anadido] https://attendis.com/attendis-preschool/ ; guarderiascerca.com/andalucia/cadiz/chiclana-de-la-frontera/el-mayorazgo/ ; c
+fuente_sin_url_exacta_v15,ES-274,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-granada/ ; guiadecolegios.ideal.es (Preschool guardería 0-2, 958806940, C/ Acequia de la "
+fuente_sin_url_exacta_v15,ES-275,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-huelva/ ; localitybiz.es/23295417 (Urb. Dehesa Golf, C. Abeto s/n, 21110)"
+fuente_sin_url_exacta_v15,ES-276,Fuente 2,"[dominio_con_nota_sin_url] horariosytiendas.es (Promotora Social de Centros Privados SA, Ctra. Córdoba s/n Jaén; attendis.com) ; 123emprende (guada"
+fuente_sin_url_exacta_v15,ES-277,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-marbella/ ; mappesp.com (+34952831616, Urb. Las Chapas s/n, 29604)"
+fuente_sin_url_exacta_v15,ES-278,Fuente 2,"[url_con_texto_anadido] https://attendis.com/preschool-malaga/ ; localitybiz.es/23305214 (+34 952 07 06 50, Av. Plutarco 34, 29010) ; cylex"
+geo_perdida,AU-08,Localidad,tenía punto en v14 (6621337) y lo pierde en v15; localidad v15: «Kensington»
