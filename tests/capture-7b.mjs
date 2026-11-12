@@ -16,12 +16,21 @@ const browser = await chromium.launch({ args: ['--no-sandbox'] });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await page.goto(BASE, { waitUntil: 'load' });
 await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
-await page.waitForTimeout(3500);
+await page.waitForTimeout(6500);
 await page.screenshot({ path: join(OUT, 'despues-mundo.png') });
 
+await page.getByRole('button', { name: /Explorar por país/ }).click();
+await page.waitForTimeout(500);
 await page.getByRole('button', { name: /^España/ }).first().click();
 await page.waitForTimeout(2600);
+// Vista de país aprobada: tarjeta del país + tira, sin el inventario abierto
+await page.getByRole('button', { name: /países y categorías/ }).click();
+await page.evaluate(() => { const col = document.querySelector('div[class*="w-[344px]"]'); if (col) col.scrollTop = 0; });
+await page.waitForTimeout(500);
 await page.screenshot({ path: join(OUT, 'despues-pais.png') });
+// Para filtrar hay que reabrir el panel de exploración
+await page.getByRole('button', { name: /Categorías/ }).first().click();
+await page.waitForTimeout(600);
 
 await page.getByRole('checkbox', { name: /Colegios/ }).check();
 await page.waitForTimeout(600);

@@ -170,6 +170,16 @@ try {
     labelInfo.layers.includes('etiquetas-localidades'),
     labelInfo.glyphs);
   await page.screenshot({ path: join(SHOTS, '01-mundo-desktop.png') });
+  check('Inmersivo (7B): el panel de exploración nace cerrado en la portada',
+    (await page.getByRole('button', { name: /^España/ }).count()) === 0, '');
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(600);
+  check('Inmersivo (7B): «Categorías» abre el panel directamente en su sección',
+    await page.getByRole('checkbox', { name: /Colegios/ }).isVisible(), '');
+  await page.getByRole('button', { name: /Explorar por país/ }).click();
+  await page.waitForTimeout(400);
+  const focusPais = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Buscar país');
+  check('Inmersivo (7B): «Explorar por país» abre el panel y enfoca la búsqueda de país', focusPais, '');
 
   // España
   await page.getByRole('button', { name: /^España/ }).first().click();
@@ -192,6 +202,14 @@ try {
   check('Contexto de país: desglose por categoría (Colegios 108)', /Colegios\s+108/.test(ctxText), '');
   check('País (7B): el panel muestra «Sin punto» junto a iniciativas y con ubicación',
     ctxText.includes('Sin punto') && ctxText.includes('272'), '');
+  const brand = await page.evaluate(() => {
+    const h1 = document.querySelector('h1');
+    if (!h1) return { ok: false, detail: 'sin h1' };
+    const r = h1.getBoundingClientRect();
+    const el = document.elementFromPoint(Math.min(r.right - 2, window.innerWidth - 1), r.top + r.height / 2);
+    return { ok: r.left >= 0 && r.right <= window.innerWidth && !!el && (el === h1 || h1.contains(el)), detail: `${Math.round(r.width)}px` };
+  });
+  check('País (7B): la marca completa sigue visible, sin recortes ni solapes', brand.ok, brand.detail);
   await ctx.evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await page.waitForTimeout(500);
   await page.screenshot({ path: join(SHOTS, '12-contexto-pais.png') });
@@ -199,6 +217,9 @@ try {
   // Ficha de Tajamar
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
+  check('Iniciativa (7B): con la ficha abierta no queda panel lateral izquierdo expandido',
+    (await page.locator('section[aria-label="Panel de exploración"]:visible').count()) === 0 &&
+    (await page.locator('section[aria-label="Panel de resultados"]:visible').count()) === 0, '');
   const ficha = await page.getByRole('article').innerText();
   check('Ficha Tajamar: localidad, estados y precisión', ficha.includes('Madrid') && ficha.includes('Confirmado con datos parciales') && ficha.includes('Ubicación aproximada'), '');
   await page.waitForTimeout(1200);
@@ -463,8 +484,11 @@ try {
   await mobile.getByRole('tab', { name: 'resultados' }).click();
   await mobile.waitForTimeout(900);
   await mobile.screenshot({ path: join(SHOTS, '08-movil-resultados.png') });
+  await mobile.evaluate(() => { const el = document.querySelector('#hoja-contenido'); if (el) el.scrollTop = 260; });
   await mobile.getByRole('button', { name: /Colegio Tajamar|Colegio/ }).first().click().catch(() => undefined);
-  await mobile.waitForTimeout(800);
+  await mobile.waitForTimeout(900);
+  const sheetScrollTop = await mobile.evaluate(() => document.querySelector('#hoja-contenido')?.scrollTop ?? -1);
+  check('Móvil (7B): una selección nueva abre la ficha con el scroll a cero', sheetScrollTop === 0, String(sheetScrollTop));
   await mobile.screenshot({ path: join(SHOTS, '09-movil-ficha.png') });
   check('Móvil: panel inferior y navegación por pestañas', true, 'capturas 07-09');
 
@@ -474,6 +498,8 @@ try {
   rm.on('pageerror', (e) => errors.push({ text: `reduced-motion: ${e}`, url: '', frameHost: null, offline: false }));
   await rm.goto(BASE, { waitUntil: 'load' });
   await rm.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
+  await rm.getByRole('button', { name: /Explorar por país/ }).click();
+  await rm.waitForTimeout(400);
   await rm.getByRole('button', { name: /^España/ }).first().click();
   await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/296/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
   const rmCounters = await rm.getByRole('status', { name: 'Contadores' }).first().innerText();

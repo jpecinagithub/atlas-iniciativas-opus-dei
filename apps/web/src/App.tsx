@@ -34,11 +34,16 @@ export default function App() {
   const [mobileTab, setMobileTab] = useState<MobileTab>('resultados');
   const [sheetLevel, setSheetLevel] = useState<SheetLevel>(0);
   const [showMethod, setShowMethod] = useState(false);
-  const [exploreOpen, setExploreOpen] = useState(true);
+  const [exploreOpen, setExploreOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(true);
   const [stripOpen, setStripOpen] = useState(true);
   const [explored, setExplored] = useState(false);
+  const [forcePanels, setForcePanels] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
+  const snapshotRef = useRef<{ explore: boolean; results: boolean } | null>(null);
+  const prevSelectedRef = useRef<string | null>(null);
+  const sheetScrollRef = useRef<HTMLDivElement>(null);
+  const detailScrollRef = useRef<HTMLElement>(null);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -54,7 +59,26 @@ export default function App() {
   }, [status]);
 
   useEffect(() => {
-    if (selectedId) { setMobileTab('ficha'); setSheetLevel(1); }
+    const prev = prevSelectedRef.current;
+    if (selectedId && !prev) {
+      snapshotRef.current = { explore: exploreOpen, results: resultsOpen };
+    }
+    if (!selectedId && prev && snapshotRef.current) {
+      setExploreOpen(snapshotRef.current.explore);
+      setResultsOpen(snapshotRef.current.results);
+      setForcePanels(false);
+      snapshotRef.current = null;
+    }
+    prevSelectedRef.current = selectedId;
+    if (selectedId) {
+      setMobileTab('ficha');
+      setSheetLevel(1);
+      requestAnimationFrame(() => {
+        sheetScrollRef.current?.scrollTo({ top: 0 });
+        detailScrollRef.current?.scrollTo({ top: 0 });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
   // La pista de arrastre se retira en cuanto el usuario explora el globo
@@ -63,6 +87,13 @@ export default function App() {
     window.addEventListener('atlas:explored', onExplored);
     return () => window.removeEventListener('atlas:explored', onExplored);
   }, []);
+
+  // Buscar con una ficha abierta es una intención expresa de seguir
+  // explorando: los paneles vuelven para poder saltar a otro resultado
+  // (la foto/restauración al cerrar la ficha se mantiene).
+  useEffect(() => {
+    if (query.trim()) setForcePanels(true);
+  }, [query]);
 
   // Escape cierra la ficha (el visor gestiona su propio Escape)
   useEffect(() => {
@@ -128,8 +159,8 @@ export default function App() {
 
       {/* Barra superior flotante */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-wrap items-start gap-x-3 gap-y-2 p-3 sm:p-4">
-        <div className="pointer-events-auto min-w-0">
-          <h1 className="text-[13px] font-semibold uppercase leading-tight tracking-[0.18em] text-slate-50">
+        <div className="pointer-events-auto shrink-0">
+          <h1 className="whitespace-nowrap text-[13px] font-semibold uppercase leading-tight tracking-[0.18em] text-slate-50">
             Atlas <span className="hidden min-[480px]:inline">de iniciativas </span><span className="text-[#e8a33d]">·</span> Opus Dei
           </h1>
           <p className="mt-0.5 hidden text-[11px] tracking-wide text-[#8ca3c7] sm:block">Directorio mundial de iniciativas</p>
@@ -154,7 +185,7 @@ export default function App() {
           )}
         </div>
 
-        <div className="order-3 flex w-full justify-center sm:order-none sm:w-auto sm:flex-1">
+        <div className="order-3 flex w-full min-w-0 justify-center sm:order-none sm:w-auto sm:flex-1">
           <div className="pointer-events-auto w-full max-w-xl">
             <label className="sr-only" htmlFor="buscador">Buscar por nombre, localidad, región o entidad titular</label>
             <input
@@ -210,7 +241,7 @@ export default function App() {
       )}
 
       {/* Columna flotante de exploración (escritorio) */}
-      {status === 'ready' && (
+      {status === 'ready' && (!selectedId || forcePanels) && (
         <div className="absolute bottom-[132px] left-4 top-[92px] z-20 hidden w-[344px] flex-col gap-3 overflow-y-auto pr-1 lg:flex" ref={exploreRef}>
           {selectedCountry && (
             <section className="glass shrink-0 rounded-2xl p-4">
@@ -259,7 +290,7 @@ export default function App() {
 
       {/* Ficha flotante (escritorio) */}
       {selectedId && status === 'ready' && (
-        <aside className="glass absolute right-4 top-[92px] z-20 hidden max-h-[calc(100dvh-190px)] w-[min(400px,calc(100vw-2rem))] overflow-y-auto rounded-2xl p-5 lg:block" aria-label="Ficha de la iniciativa">
+        <aside ref={detailScrollRef} className="glass absolute right-4 top-[92px] z-20 hidden max-h-[calc(100dvh-190px)] w-[min(400px,calc(100vw-2rem))] overflow-y-auto rounded-2xl p-5 lg:block" aria-label="Ficha de la iniciativa">
           <DetailPanel />
         </aside>
       )}
@@ -305,7 +336,7 @@ export default function App() {
       )}
 
       {/* Barra inferior: cifras y acciones (escritorio) */}
-      {status === 'ready' && (
+      {status === 'ready' && (!selectedId || forcePanels) && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden items-end justify-between p-4 lg:flex">
           <div className="glass pointer-events-auto rounded-2xl px-5 py-4">
             <StatsBar filtered={filtered} />
@@ -323,6 +354,18 @@ export default function App() {
             </button>
           </div>
         </div>
+      )}
+
+      {status === 'ready' && selectedId && (
+        <button
+          type="button"
+          onClick={() => setForcePanels((v) => !v)}
+          aria-expanded={forcePanels}
+          aria-label={forcePanels ? 'Ocultar filtros y resultados' : 'Mostrar filtros y resultados'}
+          className="glass absolute bottom-4 right-4 z-30 hidden h-11 items-center rounded-full px-4 text-sm text-slate-100 transition hover:border-[#e8a33d]/50 lg:flex"
+        >
+          {forcePanels ? 'Ocultar paneles' : '☰ Filtros'}
+        </button>
       )}
 
       {/* Pista sutil de interacción con el globo */}
@@ -368,7 +411,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
+          <div id="hoja-contenido" ref={sheetScrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
             {sheetLevel > 0 && mobileTab === 'resultados' && (
               <div className="space-y-3">
                 <StatsBar filtered={filtered} />

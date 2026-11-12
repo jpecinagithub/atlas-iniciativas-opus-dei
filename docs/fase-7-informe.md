@@ -82,16 +82,12 @@ con punto + texto.
 
 ## 2. Verificación (build local de producción, sin desplegar)
 
-- Recorrido funcional completo: **49/49 PASS** — las 42
-  comprobaciones heredadas de las fases certificadas más 6
-  dirigidas nuevas: acciones de exploración visibles, ausencia
-  de lista antes de filtrar, figura «Sin punto» en el panel de
-  país, secciones 01/02/03 de la ficha, cierre con Escape, sin
-  desbordamiento horizontal en móvil y funcionamiento con
-  movimiento reducido. Glifos: sin fallos (la comprobación de la
-  Fase 6 sigue activa). PWA offline: pasa.
+- Recorrido funcional completo: **55/55 PASS** — las 42
+  comprobaciones heredadas de las fases certificadas más 13
+  dirigidas nuevas (detalle en §5). Glifos: sin fallos (la
+  comprobación de la Fase 6 sigue activa). PWA offline: pasa.
 - `test:sw`: 3/3. La huella de la nueva compilación local es
-  VERSION `a07a09f3db3e` (solo local; producción no se ha
+  VERSION `2f80dfa3bbe5` (solo local; producción no se ha
   tocado).
 - Auditoría: el endpoint de `npm audit` está bloqueado en esta
   VM; auditoría equivalente por OSV sobre el lockfile:
@@ -114,8 +110,9 @@ regeneró las capturas de `docs/screenshots/` con el nuevo diseño.
 ### Antes / después en una frase por vista
 - **Mundo:** de tres columnas con dos inventarios permanentes a
   globo protagonista con buscador flotante, cifras en cristal y
-  dos acciones; el panel de exploración sigue a un clic (y nace
-  abierto en escritorio, como pedía la batería de historial).
+  dos acciones; el panel de exploración nace cerrado y se abre
+  desde las dos acciones (país con foco en su buscador, o
+  directamente en la sección de categorías).
 - **País:** de columna con relleno amarillo a tarjeta flotante
   con cifras del país (incluido «Sin punto»), chips que filtran
   y tira plegable de primeras iniciativas; España se contornea
@@ -127,9 +124,6 @@ regeneró las capturas de `docs/screenshots/` con el nuevo diseño.
   de tres posiciones cuya posición colapsada es una sola línea.
 
 ## 4. Decisiones tomadas dentro del margen dado
-- Panel «Explorar» abierto por defecto en escritorio: es la
-  acción primaria hecha visible y mantiene intacta la batería
-  certificada (país y categoría se operan sin pasos previos).
 - Documentación desplegada por defecto (ver 7B.3).
 - Serif de sistema (Georgia) en vez de fuente autoalojada: cero
   peso añadido y el mismo carácter editorial de los mockups.
@@ -137,7 +131,49 @@ regeneró las capturas de `docs/screenshots/` con el nuevo diseño.
   (no `text-transform`) para que lectores de pantalla y
   comprobaciones lean el texto real.
 
-## 5. Pendiente
+## 5. Correcciones de la primera revisión de certificación
+
+Codex detuvo la primera certificación de la 7B por composición
+visual; las cinco correcciones aplicadas:
+
+1. **El panel de exploración nace cerrado en escritorio.** La
+   portada es globo + buscador + cifras + dos acciones; solo
+   queda visible la barra de despliegue del panel. «Explorar
+   por país» lo abre y enfoca la búsqueda de país; «Categorías»
+   lo abre directamente en su sección.
+2. **Con una iniciativa abierta solo quedan mapa y ficha** (y la
+   miga de pan): exploración, resultados, cifras y acciones se
+   retiran; un control compacto «Filtros» permite reabrirlos.
+   Al cerrar la ficha se restaura el estado anterior de los
+   paneles; selección e historial no se tocan. Matiz necesario:
+   escribir en el buscador con la ficha abierta reactiva los
+   resultados — es el flujo certificado que salta de una ficha a
+   otra buscando (p. ej., de BR-10 a CL-16) — sin perder la
+   restauración al cerrar.
+3. **Móvil:** al cambiar la iniciativa seleccionada la hoja va a
+   la pestaña Ficha, a posición intermedia y con el contenido
+   con `scrollTop = 0`: la primera vista muestra categoría,
+   nombre, localidad, estados y el comienzo de la sección 01
+   (también tras desplazar mucho la lista o venir de otra ficha,
+   porque el reinicio se hace en cada cambio de selección).
+4. **La marca ya no se recorta.** Causa: el bloque de la marca
+   podía encogerse en la fila flexible y la píldora del buscador
+   tapaba el texto desbordado, cercenando la última letra de
+   «OPUS DEI». La marca es ahora de ancho fijo (no encoge, sin
+   salto de línea) y quien cede espacio es el buscador.
+   Verificado en 1280×720, 1440×900 y 1920×1080.
+5. **Conteos del propio informe corregidos** (eran 42 + 7 = 49
+   en la primera entrega, no «más 6»).
+
+Comprobaciones dirigidas añadidas en esta ronda (6): panel
+cerrado en la portada, apertura por país con foco, apertura por
+categorías, ausencia de panel lateral con la ficha abierta,
+marca completa visible en la vista de país y `scrollTop = 0`
+de la ficha móvil tras una selección nueva. Total de la
+batería: **42 heredadas + 13 dirigidas = 55/55 PASS**. Las
+ocho capturas se han regenerado con la composición corregida.
+
+## 6. Pendiente
 Revisión visual de Jon y certificación de Codex. Solo después,
 redespliegue de la Fase 7B en Oracle con la misma disciplina de
 la Fase 6 (verificación por la ruta pública real, perfil nuevo
