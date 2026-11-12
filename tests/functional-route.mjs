@@ -438,6 +438,183 @@ try {
   check('Ficha (7B): Escape la cierra y limpia la URL',
     (await page.getByRole('article').count()) === 0 && !page.url().includes('sel='), page.url());
 
+  // ===== Hotfix Fase 7 (2026-11-12): clústeres coincidentes =====
+  // Varias iniciativas comparten la coordenada representativa de su
+  // localidad: el clúster nunca se desagrupa por zoom y el antiguo
+  // tope (clusterMaxZoom) lo dejaba en bucle. Ahora: si todas las
+  // hojas comparten coordenada, se abre spiderfy + selector; si no,
+  // un solo easeTo al zoom real de expansión, sin tope.
+  const clickAtLngLat = async (lngLat) => {
+    const pt = await page.evaluate(([lng, lat]) => {
+      const p = window.__atlasMap.project([lng, lat]);
+      return { x: p.x, y: p.y };
+    }, lngLat);
+    await page.mouse.click(pt.x, pt.y);
+    return pt;
+  };
+  const selectorDialog = () => page.getByRole('dialog', { name: /iniciativas en esta ubicación/ });
+  const selectorOpen = async () => page.evaluate(() => !!document.querySelector('div[role="dialog"]'));
+
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.382');
+
+  // --- Las Palmas: España + Asociaciones juveniles, grupo de 2
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /^España/ }).first().click();
+  await waitCounters(page, '296');
+  await page.getByRole('checkbox', { name: /Asociaciones juveniles/ }).check();
+  await waitCounters(page, '60 iniciativas');
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 8, duration: 700 }));
+  await page.waitForTimeout(2800);
+  await clickAtLngLat([-15.41573, 28.10178]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  check('Hotfix clústeres: Las Palmas abre el selector «2 iniciativas en Las Palmas de Gran Canaria»',
+    await selectorDialog().getByText('2 iniciativas en Las Palmas de Gran Canaria').isVisible(), '');
+  check('Hotfix clústeres: el selector lista Club Guayre y Asociación Gara',
+    await selectorDialog().getByRole('button', { name: /Club Guayre/ }).isVisible() &&
+    await selectorDialog().getByRole('button', { name: /Asociación Gara/ }).isVisible(), '');
+  // querySourceFeatures devuelve un feature por tile cargado (con
+  // duplicados): se deduplica por el id de cada punto/línea.
+  const spiderCount = await page.waitForFunction(() => {
+    const map = window.__atlasMap;
+    const uniq = (src) => new Set((map?.querySourceFeatures(src) ?? []).map((f) => f.properties?.id));
+    const pts = uniq('desplegados');
+    const lines = uniq('desplegados-lineas');
+    return pts.size === 2 && pts.has('ES-199') && pts.has('ES-200') && lines.size === 2;
+  }, null, { polling: 100, timeout: 10000 }).then(() => true).catch(() => false);
+  check('Hotfix clústeres: el spiderfy despliega 2 puntos temporales con sus líneas al ancla', spiderCount, '');
+  await page.waitForTimeout(400);
+  const focusInSelector = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? '');
+  check('Hotfix clústeres: el selector recibe el foco al abrir',
+    focusInSelector.includes('iniciativas en esta ubicación'), focusInSelector);
+
+  // Abrir la ficha de Club Guayre desde el selector
+  await selectorDialog().getByRole('button', { name: /Club Guayre/ }).click();
+  await page.getByRole('heading', { name: 'Club Guayre' }).waitFor({ timeout: 10000 });
+  check('Hotfix clústeres: Club Guayre abre su ficha desde el selector (sel=ES-199) y el selector se cierra',
+    page.url().includes('sel=ES-199') && (await selectorDialog().count()) === 0, page.url());
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+
+  // Reabrir y abrir Asociación Gara pulsando su PUNTO DESPLEGADO
+  await clickAtLngLat([-15.41573, 28.10178]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  // La fuente del spiderfy se reprocesa en el worker tras abrir:
+  // se espera a que el punto desplegado de Gara exista y se
+  // proyecta su píxel solo entonces.
+  const garaPx = await page.waitForFunction(() => {
+    const map = window.__atlasMap;
+    const f = (map.querySourceFeatures('desplegados') ?? []).find((x) => x.properties?.id === 'ES-200');
+    if (!f) return null;
+    const p = map.project(f.geometry.coordinates);
+    return { x: p.x, y: p.y };
+  }, null, { polling: 100, timeout: 10000 }).then((h) => h.jsonValue());
+  await page.mouse.click(garaPx.x, garaPx.y);
+  await page.getByRole('heading', { name: 'Asociación Gara' }).waitFor({ timeout: 10000 });
+  check('Hotfix clústeres: el punto desplegado de Asociación Gara abre su ficha (sel=ES-200)',
+    page.url().includes('sel=ES-200'), page.url());
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+
+  // --- Anti-bucle: dos clics consecutivos sobre el mismo clúster
+  // no pueden dejar exactamente el mismo centro, zoom y contenido.
+  const state0 = await page.evaluate(() => ({
+    zoom: window.__atlasMap.getZoom(),
+    center: window.__atlasMap.getCenter().toArray(),
+    selector: !!document.querySelector('div[role="dialog"]'),
+  }));
+  await clickAtLngLat([-15.41573, 28.10178]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  await clickAtLngLat([-15.41573, 28.10178]);
+  await page.waitForTimeout(1000);
+  const state2 = await page.evaluate(() => ({
+    zoom: window.__atlasMap.getZoom(),
+    center: window.__atlasMap.getCenter().toArray(),
+    selector: !!document.querySelector('div[role="dialog"]'),
+  }));
+  check('Hotfix anti-bucle: dos clics sobre el mismo clúster no dejan el mismo estado (se abre el selector)',
+    state0.selector === false && state2.selector === true &&
+    !(state2.zoom === state0.zoom && state2.center.join() === state0.center.join() && !state2.selector),
+    `zoom ${state0.zoom}→${state2.zoom} · selector ${state2.selector}`);
+
+  // --- Cierre al cambiar los filtros (categoría)
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(500);
+  await page.getByRole('checkbox', { name: /Colegios/ }).check();
+  const spiderAfterFilter = await page.waitForFunction(() => {
+    return (window.__atlasMap?.querySourceFeatures('desplegados') ?? []).length === 0;
+  }, null, { polling: 100, timeout: 10000 }).then(() => true).catch(() => false);
+  check('Hotfix clústeres: cambiar la categoría cierra el selector y vacía el spiderfy',
+    (await selectorDialog().count()) === 0 && spiderAfterFilter, '');
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.382');
+
+  // --- Sevilla: 16 iniciativas en la misma coordenada (el encargo
+  // decía 7 por error; la realidad de los datos v14 es 16).
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-5.97317, 37.38283], zoom: 10, duration: 700 }));
+  await page.waitForTimeout(2800);
+  await clickAtLngLat([-5.97317, 37.38283]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  check('Hotfix clústeres: Sevilla muestra «16 iniciativas en Sevilla» (16 reales, no 7)',
+    await selectorDialog().getByText('16 iniciativas en Sevilla').isVisible(), '');
+  const sevillaItems = await selectorDialog().locator('li').count();
+  const sevillaText = await selectorDialog().textContent() ?? '';
+  check('Hotfix clústeres: el selector de Sevilla lista las 16 iniciativas',
+    sevillaItems === 16 && sevillaText.includes('Colegio de Fomento Tabladilla') &&
+    sevillaText.includes('Colegio Mayor Guadaira') && sevillaText.includes('Centro Educativo Altair'),
+    `${sevillaItems} elementos`);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  const focusBack = await page.evaluate(() => document.activeElement?.className ?? '');
+  check('Hotfix clústeres: Escape cierra el selector y el foco vuelve al lienzo del mapa',
+    (await selectorDialog().count()) === 0 && String(focusBack).includes('maplibregl-canvas'), String(focusBack));
+
+  // --- Clúster normal (coordenadas distintas): un clic acerca de
+  // forma efectiva y el clúster se desagrupa.
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-3.7, 40.4], zoom: 5, duration: 700 }));
+  await page.waitForTimeout(2800);
+  const madridCluster = await page.evaluate(() => {
+    const map = window.__atlasMap;
+    const target = map.project([-3.70256, 40.4165]);
+    const feats = map.queryRenderedFeatures({ layers: ['clusters'] }) ?? [];
+    let best = null;
+    for (const f of feats) {
+      const p = map.project(f.geometry.coordinates);
+      const d = Math.hypot(p.x - target.x, p.y - target.y);
+      if (!best || d < best.d) best = { d, x: p.x, y: p.y, count: f.properties.point_count, lngLat: f.geometry.coordinates };
+    }
+    return best;
+  });
+  await page.mouse.click(madridCluster.x, madridCluster.y);
+  const zoomInOk = await page.waitForFunction(
+    (z0) => window.__atlasMap.getZoom() > z0 + 0.4,
+    5, { polling: 100, timeout: 20000 }).then(() => true).catch(() => false);
+  await page.waitForTimeout(1200);
+  const afterSplit = await page.evaluate(([lngLat, count]) => {
+    const map = window.__atlasMap;
+    const p = map.project(lngLat);
+    const feats = map.queryRenderedFeatures([[p.x - 30, p.y - 30], [p.x + 30, p.y + 30]], { layers: ['clusters'] }) ?? [];
+    return { sameCount: feats.some((f) => f.properties.point_count === count), zoom: map.getZoom() };
+  }, [madridCluster.lngLat, madridCluster.count]);
+  check('Hotfix clústeres: un clúster con coordenadas distintas acerca una sola vez y se desagrupa',
+    zoomInOk && !afterSplit.sameCount && !(await selectorOpen()),
+    `zoom 5→${afterSplit.zoom.toFixed(2)} · recuento inicial ${madridCluster.count}`);
+
+  // --- Zoom manual: a zoom 15 la fuente ya no agrupa, pero los dos
+  // puntos de Las Palmas siguen exactamente superpuestos.
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 15, duration: 800 }));
+  await page.waitForTimeout(3000);
+  await clickAtLngLat([-15.41573, 28.10178]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  check('Hotfix clústeres: con zoom manual, el clic sobre puntos coincidentes abre el selector (sin ficha arbitraria)',
+    await selectorDialog().getByText('2 iniciativas en Las Palmas de Gran Canaria').isVisible() &&
+    !page.url().includes('sel='), page.url());
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.382');
+
   // PWA (Fase 5): manifiesto, service worker y carcasa sin conexión
   const manifest = await page.evaluate(async () => {
     const link = document.querySelector('link[rel="manifest"]');
@@ -506,6 +683,30 @@ try {
   check('Móvil (7B): una selección nueva abre la ficha con el scroll a cero', sheetScrollTop === 0, String(sheetScrollTop));
   await mobile.screenshot({ path: join(SHOTS, '09-movil-ficha.png') });
   check('Móvil: panel inferior y navegación por pestañas', true, 'capturas 07-09');
+
+  // Hotfix Fase 7 en móvil: el selector de coincidentes se presenta
+  // como hoja inferior. Se pliega la hoja de exploración a su
+  // posición mínima para dejar el mapa pulsable.
+  await mobile.getByRole('button', { name: 'Cambiar la altura del panel' }).click();
+  await mobile.waitForTimeout(400);
+  await mobile.getByRole('button', { name: 'Cambiar la altura del panel' }).click();
+  await mobile.waitForTimeout(400);
+  await mobile.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 9, duration: 600 }));
+  await mobile.waitForTimeout(2800);
+  const lpMobilePt = await mobile.evaluate(() => {
+    const p = window.__atlasMap.project([-15.41573, 28.10178]);
+    return { x: p.x, y: p.y };
+  });
+  await mobile.touchscreen.tap(lpMobilePt.x, lpMobilePt.y);
+  const mobileDialog = mobile.getByRole('dialog', { name: /iniciativas en esta ubicación/ });
+  await mobileDialog.waitFor({ timeout: 12000 });
+  const mobileBox = await mobileDialog.boundingBox();
+  check('Hotfix móvil: el selector se presenta en la parte inferior de la pantalla',
+    !!mobileBox && mobileBox.y > 844 / 2, mobileBox ? `y=${Math.round(mobileBox.y)}` : 'sin caja');
+  await mobileDialog.getByRole('button', { name: /Asociación Gara/ }).click();
+  await mobile.getByRole('heading', { name: 'Asociación Gara' }).waitFor({ timeout: 10000 });
+  check('Hotfix móvil: Asociación Gara abre su ficha desde el selector (sel=ES-200)',
+    mobile.url().includes('sel=ES-200'), mobile.url());
 
   // Movimiento reducido (7B): sin vuelos animados, todo funciona igual
   const rmContext = await browser.newContext({ reducedMotion: 'reduce', ...contextOptions });

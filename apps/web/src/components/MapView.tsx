@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre GL JS 6 carga su worker desde un módulo aparte que el empaquetado
@@ -83,6 +83,72 @@ export default function MapView() {
   const query = useAtlas((s) => s.query);
   const selectedId = useAtlas((s) => s.selectedId);
   const camera = useAtlas((s) => s.camera);
+  const coincident = useAtlas((s) => s.coincident);
+  // Referencia del spiderfy abierto: zoom y píxel del ancla EN EL
+  // MOMENTO DE ABRIRLO. En 'moveend' se compara contra ella para
+  // decidir si el movimiento cierra el despliegue (umbral) o solo
+  // hay que recolocar el círculo; no se rearma con movimientos
+  // menores, para que la deriva acumulada también cuente.
+  const spiderRef = useRef<{ zoom0: number; pixel0: { x: number; y: number }; anchor: [number, number] } | null>(null);
+
+  /**
+   * Pinta (o limpia) el spiderfy del grupo coincidente: puntos
+   * desplazados en un círculo EN PÍXELES alrededor del ancla
+   * (project/unproject) y una línea fina de cada punto al ancla.
+   * Radio adaptado al número de iniciativas: r = 34 + 3·N px con
+   * tope de 96 px (con 24 iniciativas, la separación entre vecinos
+   * sigue siendo ≈25 px). Los desplazamientos son exclusivamente
+   * visuales y temporales: nunca se escriben en los datos.
+   */
+  const layoutSpiderfy = useCallback((keepReference = false) => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    const pts = map.getSource('desplegados') as maplibregl.GeoJSONSource | undefined;
+    const lines = map.getSource('desplegados-lineas') as maplibregl.GeoJSONSource | undefined;
+    if (!pts || !lines) return;
+    const empty: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
+    const st = useAtlas.getState();
+    const group = st.coincident;
+    if (!group || !st.catalog) {
+      pts.setData(empty);
+      lines.setData(empty);
+      spiderRef.current = null;
+      return;
+    }
+    const [lng, lat] = group.anchor;
+    const center = map.project([lng, lat]);
+    const n = group.ids.length;
+    const radius = Math.min(34 + 3 * n, 96);
+    const features: GeoJSON.Feature[] = [];
+    const lineFeatures: GeoJSON.Feature[] = [];
+    group.ids.forEach((id, idx) => {
+      const rec = st.catalog?.initiatives.find((i) => i.id === id);
+      if (!rec) return;
+      // Con 2 iniciativas el despliegue es horizontal (una a cada
+      // lado); con más, círculo repartido desde arriba.
+      const angle = n === 2
+        ? (idx === 0 ? Math.PI : 0)
+        : -Math.PI / 2 + (idx * 2 * Math.PI) / n;
+      const ll = map.unproject([center.x + radius * Math.cos(angle), center.y + radius * Math.sin(angle)]);
+      features.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [ll.lng, ll.lat] },
+        properties: {
+          id: rec.id, category: rec.category, name: rec.name,
+          locality: rec.locality ?? '', color: categoryColor(rec.category),
+        },
+      });
+      lineFeatures.push({
+        type: 'Feature', properties: { id: rec.id },
+        geometry: { type: 'LineString', coordinates: [[lng, lat], [ll.lng, ll.lat]] },
+      });
+    });
+    pts.setData({ type: 'FeatureCollection', features });
+    lines.setData({ type: 'FeatureCollection', features: lineFeatures });
+    if (!keepReference || !spiderRef.current) {
+      spiderRef.current = { zoom0: map.getZoom(), pixel0: { x: center.x, y: center.y }, anchor: group.anchor };
+    }
+  }, []);
 
   // ---- Creación del mapa (una sola vez)
   useEffect(() => {
@@ -103,6 +169,9 @@ export default function MapView() {
       attributionControl: { compact: true },
     });
     mapRef.current = map;
+    // El lienzo debe poder recibir el foco por programa (volver
+    // desde el selector de coincidentes al cerrarlo con Escape).
+    if (!map.getCanvas().hasAttribute('tabindex')) map.getCanvas().setAttribute('tabindex', '-1');
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
     map.addControl(new maplibregl.GlobeControl(), 'top-right');
 
@@ -250,6 +319,39 @@ export default function MapView() {
         },
       });
 
+      // Spiderfy de iniciativas coincidentes (hotfix Fase 7):
+      // fuentes temporales propias, vacías hasta que se abre un
+      // grupo. Los puntos desplegados se pintan sobre el resto de
+      // capas de puntos para que el hit-test los priorice.
+      map.addSource('desplegados-lineas', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      map.addSource('desplegados', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      map.addLayer({
+        id: 'desplegados-lineas', type: 'line', source: 'desplegados-lineas',
+        paint: { 'line-color': '#f5d9a8', 'line-width': 1, 'line-opacity': 0.55 },
+      });
+      map.addLayer({
+        id: 'desplegados', type: 'circle', source: 'desplegados',
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': 8.5,
+          'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.6,
+          'circle-opacity': 1,
+        },
+      });
+      map.addLayer({
+        id: 'desplegados-nombres', type: 'symbol', source: 'desplegados',
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 11,
+          'text-offset': [0, 1.35],
+          'text-anchor': 'top',
+          'text-max-width': 12,
+          'text-optional': true,
+        },
+        paint: { 'text-color': '#e8eef7', 'text-halo-color': '#04070d', 'text-halo-width': 1.2 },
+      });
+
       const notifyExplored = () => window.dispatchEvent(new Event('atlas:explored'));
       map.once('dragstart', notifyExplored);
       map.once('zoomstart', notifyExplored);
@@ -260,32 +362,134 @@ export default function MapView() {
       readyRef.current = true;
       (window as unknown as { __atlasMap?: maplibregl.Map }).__atlasMap = map;
 
-      // --- Interacciones
-      map.on('click', 'clusters', (e) => {
-        const feature = e.features?.[0];
-        if (!feature) return;
+      // --- Interacciones (hotfix Fase 7)
+      // Un solo manejador de clic con hit-test unificado y
+      // prioridades deterministas: desplegados (spiderfy) >
+      // clusters > puntos > países. Antes cada capa tenía su
+      // propio manejador y un clic sobre un punto también podía
+      // disparar la selección de país que había debajo.
+      const openGroupFor = (records: Initiative[]) => {
+        const first = records[0];
+        if (!first || first.lat === null || first.lng === null) return;
+        useAtlas.getState().openCoincident({
+          anchor: [first.lng, first.lat],
+          ids: records.map((r) => r.id),
+          locality: first.locality ?? first.country,
+        });
+      };
+
+      const onClusterClick = (feature: maplibregl.MapGeoJSONFeature) => {
         const clusterId = (feature.properties as { cluster_id: number }).cluster_id;
+        const center = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
         const source = map.getSource('iniciativas') as maplibregl.GeoJSONSource;
-        source.getClusterExpansionZoom(clusterId).then((zoom) => {
-          const geom = feature.geometry as GeoJSON.Point;
-          map.easeTo({ center: geom.coordinates as [number, number], zoom: Math.min(zoom + 0.5, 13) });
+        Promise.all([
+          source.getClusterExpansionZoom(clusterId),
+          source.getClusterLeaves(clusterId, 10000, 0),
+        ]).then(([expansionZoom, leaves]) => {
+          const st = useAtlas.getState();
+          const recs = leaves
+            .map((leaf) => st.catalog?.initiatives.find((i) => i.id === (leaf.properties as { id?: string }).id))
+            .filter((r): r is Initiative => !!r);
+          const first = recs[0];
+          if (!first) {
+            map.easeTo({ center, zoom: expansionZoom + 0.5 });
+            return;
+          }
+          // Todas las hojas en la MISMA coordenada exacta: la
+          // precisión es de localidad y acercar nunca las
+          // separará. Se abre el spiderfy + selector en vez de
+          // seguir haciendo zoom (el antiguo tope en
+          // clusterMaxZoom dejaba este caso en bucle).
+          if (recs.every((r) => r.lng === first.lng && r.lat === first.lat)) {
+            openGroupFor(recs);
+            return;
+          }
+          // Clúster con coordenadas distintas: UNA sola
+          // aproximación al zoom real de expansión (+0,5 de
+          // margen), sin tope en clusterMaxZoom. El máximo con
+          // zoom actual + 0,5 garantiza que siempre hay progreso.
+          const target = Math.max(expansionZoom + 0.5, map.getZoom() + 0.5);
+          map.easeTo({ center, zoom: target });
         }).catch(() => undefined);
+      };
+
+      const onPointClick = (feature: maplibregl.MapGeoJSONFeature) => {
+        const st = useAtlas.getState();
+        const id = (feature.properties as { id?: string }).id;
+        if (!id) return;
+        const rec = st.catalog?.initiatives.find((i) => i.id === id);
+        if (!st.catalog || !rec || rec.lat === null || rec.lng === null) {
+          st.select(id);
+          return;
+        }
+        // Con zoom manual la fuente ya no agrupa (clusterMaxZoom),
+        // pero varios puntos pueden seguir EXACTAMENTE
+        // superpuestos: se cuentan las iniciativas filtradas en
+        // esa coordenada y, si hay más de una, se abre el
+        // selector en vez de elegir arbitrariamente la primera.
+        const filtered = filterInitiatives(st.catalog.initiatives, st.countryCode, st.categories, st.query);
+        const same = filtered.filter((i) => i.lng === rec.lng && i.lat === rec.lat);
+        if (same.length > 1) openGroupFor(same);
+        else st.select(id);
+      };
+
+      map.on('click', (e) => {
+        const hitLayers = ['desplegados', 'clusters', 'puntos', 'paises-relleno'].filter((l) => map.getLayer(l));
+        const feats = map.queryRenderedFeatures(e.point, { layers: hitLayers });
+        const byLayer = (layerId: string) => feats.find((f) => f.layer.id === layerId);
+        const deployed = byLayer('desplegados');
+        if (deployed) {
+          const id = (deployed.properties as { id?: string }).id;
+          if (id) useAtlas.getState().select(id);
+          return;
+        }
+        const cluster = byLayer('clusters');
+        if (cluster) { onClusterClick(cluster); return; }
+        const point = byLayer('puntos');
+        if (point) { onPointClick(point); return; }
+        // Sin elemento interactivo bajo el clic: es un «clic
+        // fuera» (cierra el selector si estaba abierto) y, si hay
+        // un país del directorio, se selecciona como antes.
+        const st = useAtlas.getState();
+        if (st.coincident) st.closeCoincident();
+        const pais = byLayer('paises-relleno');
+        if (pais) {
+          const props = pais.properties as { code?: string; inDirectory?: boolean };
+          if (props?.code && props.inDirectory) st.setCountry(props.code);
+        }
       });
-      map.on('click', 'puntos', (e) => {
-        const id = e.features?.[0]?.properties?.id as string | undefined;
-        if (id) useAtlas.getState().select(id);
-      });
-      map.on('click', 'paises-relleno', (e) => {
-        const props = e.features?.[0]?.properties as { code?: string; inDirectory?: boolean } | undefined;
-        if (props?.code && props.inDirectory) useAtlas.getState().setCountry(props.code);
-      });
-      for (const layer of ['puntos', 'clusters', 'paises-relleno']) {
+      for (const layer of ['desplegados', 'puntos', 'clusters', 'paises-relleno']) {
         map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
       }
+
+      // Cierre del spiderfy por movimiento significativo del
+      // mapa: |Δzoom| ≥ 0,5 o desplazamiento del ancla en
+      // pantalla ≥ 25 % del lado menor del lienzo, medidos desde
+      // la posición en que se abrió. Con un movimiento menor, el
+      // círculo en píxeles solo se recoloca (sin rearmar la
+      // referencia, para que la deriva acumulada también cuente).
+      map.on('moveend', () => {
+        const st = useAtlas.getState();
+        const open = spiderRef.current;
+        if (!st.coincident || !open) return;
+        const zoomDelta = Math.abs(map.getZoom() - open.zoom0);
+        const p = map.project(open.anchor);
+        const shift = Math.hypot(p.x - open.pixel0.x, p.y - open.pixel0.y);
+        const canvas = map.getCanvas();
+        const threshold = 0.25 * Math.min(canvas.clientWidth, canvas.clientHeight);
+        if (zoomDelta >= 0.5 || shift >= threshold) st.closeCoincident();
+        else layoutSpiderfy(true);
+      });
     });
 
+    // El selector pide devolver el foco al lienzo del mapa al
+    // cerrarse con Escape o con su botón de cierre.
+    const onFocusMap = () => { mapRef.current?.getCanvas().focus({ preventScroll: true }); };
+    window.addEventListener('atlas:focus-map', onFocusMap);
+
     return () => {
+      window.removeEventListener('atlas:focus-map', onFocusMap);
       markerRef.current?.onRemove();
       map.remove();
       mapRef.current = null;
@@ -313,6 +517,18 @@ export default function MapView() {
       return () => clearInterval(t);
     }
   }, [catalog, countryCode, categories, query]);
+
+  // ---- Spiderfy del grupo coincidente: pintar al abrir, limpiar
+  // al cerrar (incluye los cierres por cambio de filtros/país/
+  // búsqueda, que la store ya refleja poniendo coincident a null).
+  useEffect(() => {
+    const apply = () => { if (readyRef.current) layoutSpiderfy(); };
+    if (readyRef.current) apply();
+    else {
+      const t = setInterval(() => { if (readyRef.current) { apply(); clearInterval(t); } }, 250);
+      return () => clearInterval(t);
+    }
+  }, [coincident, catalog, layoutSpiderfy]);
 
   // ---- Marcador 3D + halo del seleccionado
   useEffect(() => {

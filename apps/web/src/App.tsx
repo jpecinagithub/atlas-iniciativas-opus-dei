@@ -3,6 +3,7 @@ import { useAtlas, filterInitiatives, syncUrl, applyStateFromUrl } from './store
 // Carga diferida del motor cartográfico y de Three.js (no bloquean la lista)
 const MapView = lazy(() => import('./components/MapView'));
 import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips, CountryContext } from './components/Panels';
+import { CoincidentSelector } from './components/CoincidentSelector';
 import { WebViewer } from './components/WebViewer';
 import { categoryColor } from './categories';
 import { fmt } from './format';
@@ -405,6 +406,7 @@ export default function App() {
         </section>
       )}
 
+      <CoincidentSelector />
       <WebViewer />
     </div>
   );

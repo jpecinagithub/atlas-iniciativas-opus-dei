@@ -12,6 +12,20 @@ export interface CameraRequest {
   lat?: number;
 }
 
+/**
+ * Grupo de iniciativas que comparten EXACTAMENTE la misma coordenada
+ * representativa de localidad (hotfix Fase 7): el mapa las despliega
+ * visualmente (spiderfy) y este estado alimenta el selector. Es un
+ * estado transitorio de interacción: se limpia al cambiar filtros,
+ * país, búsqueda, selección o al restablecer. Los desplazamientos
+ * del spiderfy son solo visuales; nunca se guardan como coordenadas.
+ */
+export interface CoincidentGroup {
+  anchor: [number, number];
+  ids: string[];
+  locality: string;
+}
+
 interface AtlasState {
   status: LoadStatus;
   error: string | null;
@@ -21,6 +35,10 @@ interface AtlasState {
   query: string;
   selectedId: string | null;
   camera: CameraRequest | null;
+  /** Grupo coincidente abierto (spiderfy + selector), o null. */
+  coincident: CoincidentGroup | null;
+  openCoincident: (group: CoincidentGroup) => void;
+  closeCoincident: () => void;
   /** Fichas completas (Fase 4) cacheadas por ID, desde la API. */
   details: Record<string, InitiativeDetail>;
   detailFailedFor: string | null;
@@ -54,6 +72,9 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   query: '',
   selectedId: null,
   camera: null,
+  coincident: null,
+  openCoincident: (group) => set({ coincident: group }),
+  closeCoincident: () => set({ coincident: null }),
   details: {},
   detailFailedFor: null,
   viewerUrl: null,
@@ -106,26 +127,28 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   },
 
   setCountry: (code, fly = true) =>
-    set((s) => ({ countryCode: code, camera: fly ? (code ? cam('country', { countryCode: code }) : cam('world')) : s.camera })),
+    set((s) => ({ countryCode: code, coincident: null, camera: fly ? (code ? cam('country', { countryCode: code }) : cam('world')) : s.camera })),
   toggleCategory: (category) =>
     set((s) => ({
+      coincident: null,
       categories: s.categories.includes(category)
         ? s.categories.filter((c) => c !== category)
         : [...s.categories, category],
     })),
-  setCategories: (categories) => set({ categories }),
-  setQuery: (query) => set({ query }),
+  setCategories: (categories) => set({ categories, coincident: null }),
+  setQuery: (query) => set({ query, coincident: null }),
   select: (id, fly = false) => {
     const s = get();
     const rec = id ? s.catalog?.initiatives.find((i) => i.id === id) : undefined;
     set({
       selectedId: id,
+      coincident: null,
       camera: fly && rec && rec.lat !== null && rec.lng !== null
         ? cam('point', { lng: rec.lng, lat: rec.lat })
         : s.camera,
     });
   },
-  reset: () => set({ countryCode: null, categories: [], query: '', selectedId: null, camera: cam('world') }),
+  reset: () => set({ countryCode: null, categories: [], query: '', selectedId: null, coincident: null, camera: cam('world') }),
   viewResultsOnMap: () => {
     const s = get();
     if (s.countryCode) set({ camera: cam('country', { countryCode: s.countryCode }) });
@@ -206,6 +229,7 @@ export function applyStateFromUrl() {
     categories,
     query,
     selectedId,
+    coincident: null,
     camera: countryCode ? cam('country', { countryCode }) : cam('world'),
   });
   lastNavKey = navKeyOf(countryCode, categories, selectedId);
