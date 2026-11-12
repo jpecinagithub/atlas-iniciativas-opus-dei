@@ -185,5 +185,8 @@ app.get('/api/sources/:id', async (req, reply) => {
 
 await ensureMigrated();
 const port = parseInt(process.env.PORT ?? '3001', 10);
-await app.listen({ port, host: '127.0.0.1' });
-console.log(`Atlas API en http://127.0.0.1:${port}`);
+// En desarrollo, solo localhost. En el contenedor de producción el
+// compose fija HOST=0.0.0.0 para que el nginx interno pueda llegar.
+const host = process.env.HOST ?? '127.0.0.1';
+await app.listen({ port, host });
+console.log(`Atlas API en http://${host}:${port}`);
