@@ -41,6 +41,30 @@ export interface Initiative {
   reviewStatus: string;
 }
 
+export interface SourceInfo {
+  id: string;
+  domain: string | null;
+  title: string | null;
+  url: string | null;
+  country: string | null;
+  nature: string | null;
+  consultedAt: string | null;
+  notes: string | null;
+}
+
+export interface CatalogedSource {
+  role: 'fuente_1' | 'fuente_2';
+  matchMethod: string;
+  source: SourceInfo;
+}
+
+/** Ficha completa que sirve GET /api/initiatives/:id (Fases 3-4). */
+export interface InitiativeDetail extends Initiative {
+  evidence: string | null;
+  doubleCheck: string | null;
+  catalogedSources: CatalogedSource[];
+}
+
 export interface Country {
   name: string;
   code: string;

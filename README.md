@@ -5,10 +5,12 @@ al Opus Dei en el mundo, a partir del directorio verificado
 `Directorio_Opus_Dei_MUNDIAL_v14.xlsx` (1.382 registros, 70 países o
 territorios, 14 categorías).
 
-Estado: **Fase 3** (datos completos y backend). La web lee el catálogo de
+Estado: **Fase 4** (exploración completa). La web lee el catálogo de
 una API (Fastify) servida desde PostgreSQL, importado del Excel con un
-proceso transaccional e idempotente. Ver `docs/fase-1-informe.md`,
-`docs/fase-2-informe.md` y `docs/fase-3-informe.md`.
+proceso transaccional e idempotente; la ficha es documental (evidencia,
+doble comprobación y fuentes catalogadas), cada país tiene su tarjeta
+de contexto y hay un visor web que solo se abre a petición del usuario.
+Ver los informes de fase en `docs/`.
 
 ## Puesta en marcha
 

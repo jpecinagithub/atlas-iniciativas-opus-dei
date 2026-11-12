@@ -143,6 +143,17 @@ try {
   check('España + Colegios: 108 iniciativas', true, 'contadores');
   await page.screenshot({ path: join(SHOTS, '03-espana-colegios-desktop.png') });
 
+  // Contexto de país (Fase 4). Existe en el panel de escritorio y en el
+  // móvil (este último, oculto en esta ventana): se toma el primero.
+  const ctx = page.getByLabel('Contexto de España').first();
+  await ctx.waitFor({ timeout: 10000 });
+  const ctxText = await ctx.innerText();
+  check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('296'), '');
+  check('Contexto de país: desglose por categoría (Colegios 108)', /Colegios\s+108/.test(ctxText), '');
+  await ctx.evaluate((el) => el.scrollIntoView({ block: 'start' }));
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: join(SHOTS, '12-contexto-pais.png') });
+
   // Ficha de Tajamar
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
@@ -150,6 +161,27 @@ try {
   check('Ficha Tajamar: localidad, estados y precisión', ficha.includes('Madrid') && ficha.includes('Confirmado con datos parciales') && ficha.includes('Ubicación aproximada'), '');
   await page.waitForTimeout(1200);
   await page.screenshot({ path: join(SHOTS, '04-ficha-tajamar-desktop.png') });
+
+  // Documentación completa (Fase 4): llega del detalle de la API.
+  // textContent, no innerText: los títulos van en mayúsculas por CSS e
+  // innerText devuelve el texto ya transformado.
+  await page.getByRole('heading', { name: 'Evidencia de vinculación' }).waitFor({ timeout: 10000 });
+  const fichaDoc = await page.getByRole('article').textContent() ?? '';
+  check('Ficha documental: evidencia y doble comprobación', fichaDoc.includes('Evidencia de vinculación') && fichaDoc.includes('Doble comprobación'), '');
+  check('Ficha documental: fuentes catalogadas relacionadas', /Fuentes catalogadas \(2\)/.test(fichaDoc), '');
+  await page.screenshot({ path: join(SHOTS, '10-ficha-documental-desktop.png') });
+
+  // Visor web (Fase 4): solo se abre tras una acción del usuario
+  await page.getByRole('button', { name: 'Ver en el visor' }).first().click();
+  const dialog = page.getByRole('dialog');
+  await dialog.waitFor({ timeout: 10000 });
+  const frameSrc = await dialog.locator('iframe').getAttribute('src');
+  check('Visor web: se abre con la fuente cargada en un iframe', !!frameSrc && frameSrc.startsWith('http'), frameSrc ?? '');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: join(SHOTS, '11-visor-web.png') });
+  await page.getByRole('button', { name: 'Cerrar visor' }).click();
+  await page.waitForTimeout(400);
+  check('Visor web: se cierra', (await page.getByRole('dialog').count()) === 0, '');
 
   // Acercar: valida el marcador Three.js con coordenada real validada
   await page.getByRole('button', { name: 'Acercar a esta iniciativa' }).click();

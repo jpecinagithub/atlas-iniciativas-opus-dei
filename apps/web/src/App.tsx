@@ -2,7 +2,8 @@ import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { useAtlas, filterInitiatives, syncUrl, applyStateFromUrl } from './store';
 // Carga diferida del motor cartográfico y de Three.js (no bloquean la lista)
 const MapView = lazy(() => import('./components/MapView'));
-import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips } from './components/Panels';
+import { FiltersPanel, ResultsList, DetailPanel, StatsBar, ActiveChips, CountryContext } from './components/Panels';
+import { WebViewer } from './components/WebViewer';
 import { fmt } from './format';
 
 type MobileTab = 'resultados' | 'filtros' | 'ficha';
@@ -118,6 +119,7 @@ export default function App() {
         <aside className="z-10 hidden w-[330px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-slate-800 bg-[#0d1526] p-4 lg:flex" aria-label="Filtros y resultados">
           <StatsBar filtered={filtered} />
           <ActiveChips />
+          <CountryContext />
           <FiltersPanel />
           <div className="border-t border-slate-800 pt-3">
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Resultados</h3>
@@ -194,6 +196,7 @@ export default function App() {
                 <div className="space-y-3">
                   <StatsBar filtered={filtered} />
                   <ActiveChips />
+                  <CountryContext />
                   <ResultsList onPick={() => setMobileTab('ficha')} />
                 </div>
               )}
@@ -211,6 +214,7 @@ export default function App() {
       <footer className="z-10 hidden border-t border-slate-800 bg-[#0d1526] px-4 py-1.5 text-[11px] text-slate-500 sm:block">
         Datos: Directorio Opus Dei MUNDIAL v14 (consulta 2026-11-08 a 2026-11-11) · Ubicaciones: GeoNames (CC BY 4.0), punto representativo de localidad · Límites: Natural Earth · Sin clave CARTO: base local limitada a países, sin detalle de calles.
       </footer>
+      <WebViewer />
     </div>
   );
 }

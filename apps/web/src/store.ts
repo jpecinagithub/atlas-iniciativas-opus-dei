@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Catalog, Initiative } from './types';
+import type { Catalog, Initiative, InitiativeDetail } from './types';
 
 export type LoadStatus = 'loading' | 'ready' | 'error';
 
@@ -20,6 +20,14 @@ interface AtlasState {
   query: string;
   selectedId: string | null;
   camera: CameraRequest | null;
+  /** Fichas completas (Fase 4) cacheadas por ID, desde la API. */
+  details: Record<string, InitiativeDetail>;
+  detailFailedFor: string | null;
+  loadDetail: (id: string) => Promise<void>;
+  /** Visor web (Fase 4): URL abierta en el visor, o null. */
+  viewerUrl: string | null;
+  openViewer: (url: string) => void;
+  closeViewer: () => void;
   load: () => Promise<void>;
   setCountry: (code: string | null, fly?: boolean) => void;
   toggleCategory: (category: string) => void;
@@ -45,6 +53,24 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   query: '',
   selectedId: null,
   camera: null,
+  details: {},
+  detailFailedFor: null,
+  viewerUrl: null,
+
+  loadDetail: async (id) => {
+    if (get().details[id]) return;
+    try {
+      const base = import.meta.env.BASE_URL || '/';
+      const res = await fetch(`${base}api/initiatives/${encodeURIComponent(id)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const detail = (await res.json()) as InitiativeDetail;
+      set((s) => ({ details: { ...s.details, [id]: detail }, detailFailedFor: null }));
+    } catch {
+      set({ detailFailedFor: id });
+    }
+  },
+  openViewer: (url) => set({ viewerUrl: url }),
+  closeViewer: () => set({ viewerUrl: null }),
 
   load: async () => {
     try {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtlas, filterInitiatives } from '../store';
 import { categoryColor, RECIPIENT_LABELS } from '../categories';
 import type { Initiative } from '../types';
@@ -208,6 +208,13 @@ export function DetailPanel() {
   const catalog = useAtlas((s) => s.catalog);
   const selectedId = useAtlas((s) => s.selectedId);
   const select = useAtlas((s) => s.select);
+  const detail = useAtlas((s) => (selectedId ? s.details[selectedId] : undefined));
+  const detailFailedFor = useAtlas((s) => s.detailFailedFor);
+  const loadDetail = useAtlas((s) => s.loadDetail);
+  const openViewer = useAtlas((s) => s.openViewer);
+  useEffect(() => {
+    if (selectedId) void loadDetail(selectedId);
+  }, [selectedId, loadDetail]);
   if (!catalog || !selectedId) return null;
   const rec = catalog.initiatives.find((i) => i.id === selectedId);
   if (!rec) return null;
@@ -288,6 +295,11 @@ export function DetailPanel() {
             <dt className="text-xs uppercase tracking-wide text-slate-500">Contacto publicado</dt>
             <dd className="space-y-0.5 text-slate-200">
               {rec.web && <a className="block truncate text-sky-300 hover:underline" href={rec.web} target="_blank" rel="noreferrer">{rec.web}</a>}
+              {rec.web && (
+                <button type="button" onClick={() => openViewer(rec.web!)} className="text-xs font-medium text-sky-300 hover:underline">
+                  Ver la web en el visor
+                </button>
+              )}
               {rec.phone && <span className="block">{rec.phone}</span>}
               {rec.email && <span className="block">{rec.email}</span>}
             </dd>
@@ -309,6 +321,62 @@ export function DetailPanel() {
           </div>
         )}
       </dl>
+
+      {/* Documentación completa (Fase 4): llega del detalle de la API. La
+          ficha básica de arriba es la del catálogo y se ve al instante. */}
+      {!detail && detailFailedFor !== rec.id && (
+        <p className="text-xs text-slate-500" role="status">Cargando la documentación completa…</p>
+      )}
+      {!detail && detailFailedFor === rec.id && (
+        <p className="text-xs text-slate-500">La documentación completa no está disponible ahora; la ficha básica es la del catálogo.</p>
+      )}
+      {detail?.evidence && (
+        <section aria-label="Evidencia de vinculación">
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Evidencia de vinculación</h3>
+          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-300">{detail.evidence}</p>
+        </section>
+      )}
+      {detail?.doubleCheck && (
+        <section aria-label="Doble comprobación">
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Doble comprobación</h3>
+          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-300">{detail.doubleCheck}</p>
+        </section>
+      )}
+      {detail && detail.catalogedSources.length > 0 && (
+        <section aria-label="Fuentes catalogadas">
+          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Fuentes catalogadas ({detail.catalogedSources.length})
+          </h3>
+          <ul className="space-y-2">
+            {detail.catalogedSources.map((cs) => (
+              <li key={cs.role} className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2.5">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  {cs.role === 'fuente_1' ? 'Fuente 1' : 'Fuente 2'} · coincidencia exacta de URL
+                </p>
+                <p className="mt-0.5 truncate text-sm font-medium text-slate-100" title={cs.source.title ?? undefined}>
+                  {cs.source.title ?? cs.source.domain ?? cs.source.id}
+                </p>
+                <p className="truncate text-xs text-slate-400">
+                  {[cs.source.domain, cs.source.nature].filter(Boolean).join(' · ')}
+                </p>
+                {cs.source.consultedAt && (
+                  <p className="text-xs text-slate-500">Consultada el {cs.source.consultedAt} · {cs.source.id}</p>
+                )}
+                {cs.source.url && (
+                  <p className="mt-1.5 flex gap-3 text-xs font-medium">
+                    <button type="button" onClick={() => openViewer(cs.source.url!)} className="text-sky-300 hover:underline">
+                      Ver en el visor
+                    </button>
+                    <a href={cs.source.url} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
+                      Abrir en pestaña nueva ↗
+                    </a>
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {rec.lat !== null && (
         <button
@@ -340,6 +408,127 @@ export function DetailPanel() {
         </section>
       )}
     </article>
+  );
+}
+
+/**
+ * Contexto del país seleccionado (Fase 4): lo que la hoja Países declara
+ * y lo que el Directorio contiene, sin mezclarlos. Los desgloses se
+ * calculan de las iniciativas del país en el catálogo (D6), ignorando
+ * los demás filtros activos.
+ */
+export function CountryContext() {
+  const catalog = useAtlas((s) => s.catalog);
+  const countryCode = useAtlas((s) => s.countryCode);
+  const openViewer = useAtlas((s) => s.openViewer);
+  const [showNote, setShowNote] = useState(false);
+  const [showEvidence, setShowEvidence] = useState(false);
+  useEffect(() => { setShowNote(false); setShowEvidence(false); }, [countryCode]);
+
+  const country = catalog?.countries.find((c) => c.code === countryCode);
+  const byCategory = useMemo(() => {
+    if (!catalog || !country) return [];
+    const counts = new Map<string, number>();
+    for (const i of catalog.initiatives) {
+      if (i.countryCode === country.code) counts.set(i.category, (counts.get(i.category) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [catalog, country]);
+
+  if (!catalog || !country) return null;
+  let declaredSum: number | null = null;
+  if (country.declaredBreakdown) {
+    declaredSum = 0;
+    for (const v of Object.values(country.declaredBreakdown)) {
+      if (typeof v === 'number') declaredSum += v;
+    }
+  }
+
+  return (
+    <section aria-label={`Contexto de ${country.name}`} className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/50 p-3.5">
+      <header>
+        <h3 className="text-base font-semibold text-slate-50">{country.name}</h3>
+        <p className="text-xs text-slate-400">
+          {country.continent}
+          {country.circumscription ? ` · Circunscripción: ${country.circumscription}` : ''}
+        </p>
+      </header>
+
+      <p className="text-sm text-slate-300">
+        <strong className="text-slate-50">{fmt(country.computedTotal)}</strong> registros en el directorio ·{' '}
+        <strong className="text-slate-50">{fmt(country.computedLocated)}</strong> con ubicación
+      </p>
+      {country.declaredTotal !== null && (
+        <p className="text-xs text-slate-400">
+          {country.declaredTotal === country.computedTotal
+            ? `Coincide con lo declarado en la hoja Países (${fmt(country.declaredTotal)}).`
+            : `La hoja Países declara ${fmt(country.declaredTotal)}${declaredSum !== null && declaredSum !== country.declaredTotal ? `, aunque su desglose por estados suma ${fmt(declaredSum)}` : ''}; el Directorio contiene ${fmt(country.computedTotal)}, que es la cifra que manda.`}
+        </p>
+      )}
+
+      <div className="flex flex-wrap gap-1.5" aria-label="Estados de verificación en el país">
+        {Object.entries(country.computedVerification).map(([state, n]) => (
+          <span key={state} className="inline-flex items-center gap-1.5">
+            {verificationBadge(state)}
+            <span className="text-xs text-slate-400">{n}</span>
+          </span>
+        ))}
+      </div>
+
+      {byCategory.length > 0 && (
+        <div>
+          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Por categoría</h4>
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs text-slate-300">
+            {byCategory.map(([cat, n]) => (
+              <li key={cat} className="flex items-center gap-1.5">
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
+                <span className="flex-1 truncate" title={cat}>{cat}</span>
+                <span className="text-slate-500">{n}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {country.presenceEvidence && (
+        <div>
+          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Evidencia de presencia</h4>
+          <p className={`whitespace-pre-line text-xs leading-relaxed text-slate-300 ${showEvidence ? '' : 'line-clamp-3'}`}>
+            {country.presenceEvidence}
+          </p>
+          {country.presenceEvidence.length > 220 && (
+            <button type="button" onClick={() => setShowEvidence((v) => !v)} className="mt-0.5 text-xs font-medium text-sky-300 hover:underline">
+              {showEvidence ? 'Leer menos' : 'Leer más'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {country.mainSource && (
+        <p className="flex gap-3 text-xs font-medium">
+          <button type="button" onClick={() => openViewer(country.mainSource!)} className="text-sky-300 hover:underline">
+            Fuente principal del país en el visor
+          </button>
+          <a href={country.mainSource} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline">
+            Abrir ↗
+          </a>
+        </p>
+      )}
+
+      {country.note && (
+        <div>
+          <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Nota del directorio</h4>
+          <div className={`whitespace-pre-line text-xs leading-relaxed text-slate-400 ${showNote ? 'max-h-64 overflow-y-auto pr-1' : 'line-clamp-3'}`}>
+            {country.note}
+          </div>
+          {country.note.length > 220 && (
+            <button type="button" onClick={() => setShowNote((v) => !v)} className="mt-0.5 text-xs font-medium text-sky-300 hover:underline">
+              {showNote ? 'Leer menos' : 'Leer más'}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 
