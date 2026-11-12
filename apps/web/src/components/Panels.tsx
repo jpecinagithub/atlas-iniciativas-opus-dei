@@ -211,34 +211,28 @@ export function ResultsList({ onPick }: { onPick?: () => void }) {
 /**
  * Ficha híbrida (Fase 7B): tarjeta inmersiva de la propuesta B con el
  * interior editorial de la A — resumen esencial primero y secciones
- * numeradas 01/02/03; la documentación (03) nace desplegada porque es
- * el rasgo distintivo del Atlas, y puede plegarse.
+ * numeradas 01/02. La antigua sección 03 «Evidencia y fuentes» se
+ * retiró el 2026-11-12 por decisión de Jon («no aporta nada» en la
+ * ficha); la documentación sigue existiendo en los datos y en la
+ * API, pero ya no se muestra ni se descarga en la ficha.
  */
 export function DetailPanel() {
   const catalog = useAtlas((s) => s.catalog);
   const selectedId = useAtlas((s) => s.selectedId);
   const select = useAtlas((s) => s.select);
-  const detail = useAtlas((s) => (selectedId ? s.details[selectedId] : undefined));
-  const detailFailedFor = useAtlas((s) => s.detailFailedFor);
-  const loadDetail = useAtlas((s) => s.loadDetail);
   const openViewer = useAtlas((s) => s.openViewer);
-  const [docOpen, setDocOpen] = useState(true);
   const articleRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (selectedId) {
-      void loadDetail(selectedId);
-      setDocOpen(true);
       articleRef.current?.focus({ preventScroll: true });
     }
-  }, [selectedId, loadDetail]);
+  }, [selectedId]);
   if (!catalog || !selectedId) return null;
   const rec = catalog.initiatives.find((i) => i.id === selectedId);
   if (!rec) return null;
   const colocated = rec.lat !== null && rec.lng !== null
     ? catalog.initiatives.filter((i) => i.id !== rec.id && i.lat === rec.lat && i.lng === rec.lng)
     : [];
-  const catalogedCount = detail?.catalogedSources.length ?? 0;
-
   const field = (label: string, value: React.ReactNode) => (
     <div>
       <dt className="text-[11px] uppercase tracking-[0.14em] text-[#8ca3c7]">{label}</dt>
@@ -341,93 +335,6 @@ export function DetailPanel() {
             </div>
           )}
         </dl>
-      </section>
-
-      <section aria-label="Evidencia y fuentes" className="rounded-xl border border-white/12 bg-white/[0.03] p-3.5">
-        <button
-          type="button"
-          onClick={() => setDocOpen((v) => !v)}
-          aria-expanded={docOpen}
-          className="flex w-full items-baseline justify-between gap-2 text-left"
-        >
-          <span className="flex items-baseline gap-2">
-            <span className="font-display text-sm italic text-[#e8a33d]">03</span>
-            <span className={SECTION_TITLE}>Evidencia y fuentes</span>
-          </span>
-          <span className="text-xs text-[#f5d9a8]">
-            {detail ? `${catalogedCount} catalogada${catalogedCount === 1 ? '' : 's'} ${docOpen ? '· Plegar ↑' : '· Expandir ↓'}` : docOpen ? 'Plegar ↑' : 'Expandir ↓'}
-          </span>
-        </button>
-        {docOpen && (
-          <div className="mt-3 space-y-4">
-            {(rec.source1 || rec.source2) && (
-              <div>
-                <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Fuentes del directorio</h4>
-                <div className="space-y-1 text-sm">
-                  {rec.source1 && (normalizeExternalUrl(rec.source1)
-                    ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.source1)!} target="_blank" rel="noreferrer">Fuente 1</a>
-                    : <span className="block text-xs leading-relaxed text-slate-300"><span className="text-[#8ca3c7]">Fuente 1 (sin enlace válido): </span>{rec.source1}</span>)}
-                  {rec.source2 && (normalizeExternalUrl(rec.source2)
-                    ? <a className="block truncate text-[#f5d9a8] hover:underline" href={normalizeExternalUrl(rec.source2)!} target="_blank" rel="noreferrer">Fuente 2</a>
-                    : <span className="block text-xs leading-relaxed text-slate-300"><span className="text-[#8ca3c7]">Fuente 2 (sin enlace válido): </span>{rec.source2}</span>)}
-                </div>
-              </div>
-            )}
-            {!detail && detailFailedFor !== rec.id && (
-              <p className="text-xs text-[#8ca3c7]" role="status">Cargando la documentación completa…</p>
-            )}
-            {!detail && detailFailedFor === rec.id && (
-              <p className="text-xs text-[#8ca3c7]">La documentación completa no está disponible ahora; la ficha básica es la del catálogo.</p>
-            )}
-            {detail?.evidence && (
-              <div>
-                <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Evidencia de vinculación</h3>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200">{detail.evidence}</p>
-              </div>
-            )}
-            {detail?.doubleCheck && (
-              <div>
-                <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">Doble comprobación</h3>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200">{detail.doubleCheck}</p>
-              </div>
-            )}
-            {detail && detail.catalogedSources.length > 0 && (
-              <div>
-                <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ca3c7]">
-                  Fuentes catalogadas ({detail.catalogedSources.length})
-                </h3>
-                <ul className="space-y-2">
-                  {detail.catalogedSources.map((cs) => (
-                    <li key={cs.role} className="rounded-lg border border-white/10 bg-black/20 px-3 py-2.5">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#8ca3c7]">
-                        {cs.role === 'fuente_1' ? 'Fuente 1' : 'Fuente 2'} · coincidencia exacta de URL
-                      </p>
-                      <p className="mt-0.5 truncate text-sm font-medium text-slate-50" title={cs.source.title ?? undefined}>
-                        {cs.source.title ?? cs.source.domain ?? cs.source.id}
-                      </p>
-                      <p className="truncate text-xs text-[#8ca3c7]">
-                        {[cs.source.domain, cs.source.nature].filter(Boolean).join(' · ')}
-                      </p>
-                      {cs.source.consultedAt && (
-                        <p className="text-xs text-[#71809c]">Consultada el {cs.source.consultedAt} · {cs.source.id}</p>
-                      )}
-                      {cs.source.url && normalizeExternalUrl(cs.source.url) && (
-                        <p className="mt-1.5 flex gap-3 text-xs font-medium">
-                          <button type="button" onClick={() => openViewer(cs.source.url!)} className="text-[#f5d9a8] hover:underline">
-                            Ver en el visor
-                          </button>
-                          <a href={normalizeExternalUrl(cs.source.url)!} target="_blank" rel="noreferrer" className="text-[#f5d9a8] hover:underline">
-                            Abrir en pestaña nueva ↗
-                          </a>
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
       </section>
 
       {rec.lat !== null && (

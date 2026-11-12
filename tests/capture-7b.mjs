@@ -1,5 +1,5 @@
 // Capturas de entrega de la Fase 7B (no forma parte de la batería):
-// escritorio (mundo, país, iniciativa, documentación desplegada, visor)
+// escritorio (mundo, país, iniciativa, visor)
 // y móvil (mundo colapsado, resultados, iniciativa) contra el preview
 // local de producción. Salida: docs/fase-7b/.
 //
@@ -75,24 +75,10 @@ await page.getByRole('checkbox', { name: /Colegios/ }).check();
 await page.waitForTimeout(600);
 await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
 await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
-await page.getByRole('heading', { name: 'Evidencia de vinculación' }).waitFor({ timeout: 10000 });
 await page.waitForTimeout(1200);
 await snap(page, 'iniciativa');
 
-// Documentación: se desplaza SOLO el contenedor de la ficha (aside),
-// calculando la diferencia de posición de la sección dentro de él.
-// El documento y el viewport no se tocan (verificado por guardScroll).
-await page.evaluate(() => {
-  const aside = document.querySelector('aside[aria-label="Ficha de la iniciativa"]');
-  const section = aside?.querySelector('section[aria-label="Evidencia y fuentes"]');
-  if (!aside || !section) throw new Error('Falta el aside o la sección documental');
-  const delta = section.getBoundingClientRect().top - aside.getBoundingClientRect().top;
-  aside.scrollTop += delta - 12;
-});
-await page.waitForTimeout(600);
-await snap(page, 'documentacion');
-
-await page.getByRole('button', { name: 'Ver en el visor' }).first().click();
+await page.getByRole('button', { name: 'Ver la web en el visor' }).first().click();
 await page.getByRole('dialog').waitFor({ timeout: 10000 });
 await page.waitForTimeout(2500);
 await page.screenshot({ path: join(OUT, 'despues-visor.png') });

@@ -33,7 +33,6 @@ export default function App() {
   const setCountry = useAtlas((s) => s.setCountry);
   const [mobileTab, setMobileTab] = useState<MobileTab>('resultados');
   const [sheetLevel, setSheetLevel] = useState<SheetLevel>(0);
-  const [showMethod, setShowMethod] = useState(false);
   const [exploreOpen, setExploreOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(true);
   const [stripOpen, setStripOpen] = useState(true);
@@ -213,39 +212,8 @@ export default function App() {
           >
             Restablecer
           </button>
-          <button
-            type="button"
-            onClick={() => setShowMethod((v) => !v)}
-            className={PILL}
-            aria-expanded={showMethod}
-          >
-            Método
-          </button>
         </div>
       </div>
-
-      {/* Panel de método */}
-      {showMethod && catalog && (
-        <div className="glass absolute right-3 top-[76px] z-30 max-h-[70dvh] w-[min(430px,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl p-4 text-sm leading-relaxed text-slate-200 sm:right-4" role="note">
-          <p>
-            <strong className="text-slate-50">Qué muestra este atlas:</strong> los {fmt(catalog.meta.totalInitiatives)} registros
-            del directorio v14 ({catalog.meta.totalCountries} países o territorios, 14 categorías), tal como constan en el archivo,
-            con sus estados de verificación originales. Las ubicaciones son <em>puntos representativos de la localidad</em> resueltos
-            con GeoNames (CC BY 4.0) con reglas conservadoras: {fmt(catalog.meta.located)} registros tienen punto;
-            el resto sigue en la lista y en los recuentos sin dibujarse. Una iniciativa vinculada no es necesariamente propiedad
-            del Opus Dei: la ficha distingue entidad titular, tipo de vinculación y evidencia. Límites de países: Natural Earth.
-            Las etiquetas del mapa usan glifos generados desde Noto Sans (licencia OFL 1.1) y servidos desde la propia app, sin
-            servicios externos. La app es instalable (PWA): sin conexión conserva la carcasa y la última información consultada.
-          </p>
-          <p className="mt-2 text-xs text-[#8ca3c7]">
-            Datos: Directorio Opus Dei MUNDIAL v14 (consulta 2026-11-08 a 2026-11-11) · Ubicaciones: GeoNames (CC BY 4.0), punto
-            representativo de localidad · Límites: Natural Earth · Sin clave CARTO: base local limitada a países, sin detalle de calles.
-          </p>
-          <button type="button" onClick={() => setShowMethod(false)} className="mt-3 rounded-full border border-white/15 px-3 py-1.5 text-xs text-slate-100 hover:bg-white/5">
-            Cerrar
-          </button>
-        </div>
-      )}
 
       {/* Columna flotante de exploración (escritorio) */}
       {status === 'ready' && (!selectedId || forcePanels) && (

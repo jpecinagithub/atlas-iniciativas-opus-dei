@@ -234,18 +234,22 @@ try {
   await page.waitForTimeout(1200);
   await page.screenshot({ path: join(SHOTS, '04-ficha-tajamar-desktop.png') });
 
-  // Documentación completa (Fase 4): llega del detalle de la API.
-  // textContent, no innerText: los títulos van en mayúsculas por CSS e
-  // innerText devuelve el texto ya transformado.
-  await page.getByRole('heading', { name: 'Evidencia de vinculación' }).waitFor({ timeout: 10000 });
+  // La sección «Evidencia y fuentes» de la ficha se retiró el
+  // 2026-11-12 por decisión de Jon: la ficha ya no la muestra ni
+  // descarga el detalle documental. textContent, no innerText:
+  // los títulos van en mayúsculas por CSS.
   const fichaDoc = await page.getByRole('article').textContent() ?? '';
-  check('Ficha documental: evidencia y doble comprobación', fichaDoc.includes('Evidencia de vinculación') && fichaDoc.includes('Doble comprobación'), '');
-  check('Ficha documental: fuentes catalogadas relacionadas', /Fuentes catalogadas \(2\)/.test(fichaDoc), '');
-  await page.screenshot({ path: join(SHOTS, '10-ficha-documental-desktop.png') });
+  check('Ficha: sin sección de evidencia y fuentes (retirada 2026-11-12)',
+    !fichaDoc.includes('Evidencia y fuentes') && !fichaDoc.includes('Evidencia de vinculación') && !fichaDoc.includes('Fuentes catalogadas'), '');
+  await page.screenshot({ path: join(SHOTS, '10-ficha-desktop.png') });
 
-  // Visor web (Fase 4): solo se abre tras una acción del usuario
-  expectedFrameHost = 'opusdei.org';
-  await page.getByRole('button', { name: 'Ver en el visor' }).first().click();
+  // Visor web (Fase 4): solo se abre tras una acción del usuario;
+  // en la ficha queda la entrada de la web propia de la entidad
+  // (sección 02). La entrada por las fuentes catalogadas se fue
+  // con la sección 03; el visor sigue cubierto también por la
+  // fuente principal del país (flujo de Puerto Rico, más abajo).
+  expectedFrameHost = 'tajamar.es';
+  await page.getByRole('button', { name: 'Ver la web en el visor' }).first().click();
   const dialog = page.getByRole('dialog');
   await dialog.waitFor({ timeout: 10000 });
   const frameSrc = await dialog.locator('iframe').getAttribute('src');
@@ -323,28 +327,30 @@ try {
   check('URLs: el texto documental no se convierte en URL y la https válida pasa intacta',
     normCases[4] === null && normCases[5] === 'https://www.tajamar.es/', JSON.stringify(normCases));
 
-  // BR-10: su Fuente 2 es un texto documental completo, no un enlace
+  // BR-10 y CL-16: sus Fuente 2 son textos documentales. Antes se
+  // comprobaba que la sección 03 los mostraba como texto y no como
+  // enlace; esa sección se retiró el 2026-11-12, así que ahora se
+  // comprueba que la ficha ya no muestra las fuentes del directorio
+  // de ninguna forma (ni enlace ni texto «sin enlace válido»).
   await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Marumbi');
   await page.waitForTimeout(700);
   await page.getByRole('button', { name: /Marumbi/ }).first().click();
   await page.getByRole('heading', { name: /Marumbi/ }).waitFor({ timeout: 10000 });
   await page.waitForTimeout(600);
   const fichaBR = await page.getByRole('article').textContent() ?? '';
-  check('BR-10: el texto documental de Fuente 2 se muestra como texto',
-    fichaBR.includes('gazetadopovo.com.br') && fichaBR.includes('sin enlace válido'), '');
-  check('BR-10: Fuente 2 no es un enlace y Fuente 1 sí',
-    (await page.getByRole('article').getByRole('link', { name: 'Fuente 2' }).count()) === 0 &&
-    (await page.getByRole('article').getByRole('link', { name: 'Fuente 1' }).count()) === 1, '');
+  check('BR-10: la ficha ya no muestra las fuentes del directorio (sección retirada)',
+    !fichaBR.includes('sin enlace válido') &&
+    (await page.getByRole('article').getByRole('link', { name: 'Fuente 1' }).count()) === 0 &&
+    (await page.getByRole('article').getByRole('link', { name: 'Fuente 2' }).count()) === 0, '');
 
-  // CL-16: mismo caso en su Fuente 2
   await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Huinganal');
   await page.waitForTimeout(700);
   await page.getByRole('button', { name: /Huinganal/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Huinganal' }).waitFor({ timeout: 10000 });
   await page.waitForTimeout(600);
   const fichaCL = await page.getByRole('article').textContent() ?? '';
-  check('CL-16: el texto documental de Fuente 2 se muestra como texto, sin enlace',
-    fichaCL.includes('correos.cl oficial') &&
+  check('CL-16: la ficha ya no muestra las fuentes del directorio (sección retirada)',
+    !fichaCL.includes('correos.cl oficial') &&
     (await page.getByRole('article').getByRole('link', { name: 'Fuente 2' }).count()) === 0, '');
 
   // Restablecer
@@ -425,8 +431,8 @@ try {
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
   const ficha7b = await page.getByRole('article').textContent() ?? '';
-  check('Ficha (7B): secciones 01 La iniciativa, 02 Ubicación y contacto, 03 Evidencia y fuentes',
-    ficha7b.includes('La iniciativa') && ficha7b.includes('Ubicación y contacto') && ficha7b.includes('Evidencia y fuentes'), '');
+  check('Ficha (7B): secciones 01 La iniciativa y 02 Ubicación y contacto; sin 03 (retirada 2026-11-12)',
+    ficha7b.includes('La iniciativa') && ficha7b.includes('Ubicación y contacto') && !ficha7b.includes('Evidencia y fuentes'), '');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   check('Ficha (7B): Escape la cierra y limpia la URL',
