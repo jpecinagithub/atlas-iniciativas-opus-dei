@@ -47,6 +47,24 @@ Variables: `DATABASE_URL` y `PORT` para la API (defectos de desarrollo
 en `apps/api/.env.example`). La ruta base es configurable para un
 despliegue en subruta: `VITE_BASE_PATH=/subruta/ npm run build`.
 
+## Producción (Fase 6)
+
+Desplegado en el servidor Oracle, en
+**https://jpecina.duckdns.org/atlas/**, con `docker-compose.prod.yml`
+(decisión D7: PostgreSQL propio del stack, como los demás proyectos
+del servidor; ver `docs/fase-6-informe.md`):
+
+```bash
+# En el servidor, en /opt/atlas (.env con ATLAS_DB_PASSWORD, 0600)
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml run --rm api node dist/import.js
+/opt/atlas/backup.sh   # copia de la base (cron: domingos 04:30)
+```
+
+El nginx del host redirige `/atlas/` a `127.0.0.1:8180` (contenedor
+web), que sirve la SPA compilada con `VITE_BASE_PATH=/atlas/` y
+redirige `/api/` al contenedor de la API.
+
 Comprobaciones: `npm run test:api` (humo de la API, 13 comprobaciones),
 `npm run test:integrity` (el importador rechaza artefactos que no
 proceden del Excel presente, sin registrar la corrida) y

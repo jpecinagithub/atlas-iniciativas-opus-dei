@@ -1,6 +1,6 @@
 # Pendientes — Atlas de iniciativas · Opus Dei
 
-Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fase 5 entregada para revisión).
+Documento único de pendientes. Actualizado: 2026-11-12 (Fase 5 CERTIFICADA; Fase 6 desplegada en https://jpecina.duckdns.org/atlas/, entregada para revisión).
 
 ## Revisión de la Fase 2 (2026-11-11) — CERTIFICADA
 - [x] MapLibre GL JS actualizado a 6.17.0 (GHSA-jrc7-96c5-q579) con la URL del worker fijada; auditoría contrastada en OSV: 0 vulnerabilidades en el lockfile.
@@ -25,11 +25,11 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fas
 - [x] Bloqueo del visor corregido: `normalizeExternalUrl` única (85 valores sin esquema de 6.205: dominios desnudos, comillas tipográficas y 2 textos documentales); el original se muestra como texto sin enlace si no normaliza; defensa en `openViewer`/`WebViewer` y `sandbox` en el iframe. Recorrido ampliado a 34/34 PASS (Puerto Rico abre https://www.paloblanco.org/; BR-10 y CL-16 sin enlace; `javascript:`/`data:` rechazados).
 - [x] Clasificación de errores del recorrido corregida: solo se aceptan como esperados los del iframe externo (opusdei.org/paloblanco.org, incluido su X-Frame-Options); los de la app/API/mapa siguen fallando. 34/34 reproducible.
 - [x] Clasificación portable a Windows: el 403 del iframe puede venir atribuido a `chrome-error://chromewebdata/`; solo es esperado con el contexto del visor activo (host externo guardado junto a cada mensaje, activado antes de abrir y desactivado al cerrar). Sin contexto, sigue siendo fallo.
-- [ ] Certificación de la Fase 4 por la revisión. La Fase 5 no comienza hasta entonces.
+- [x] Fase 4 certificada por la revisión (2026-11-12, clon de c6c3473, recorrido 34/34 en Windows).
 
 ## Decisiones
 - [x] D1–D6 aprobadas y aplicadas. D1: Fuente 1/2 visibles en ficha aunque no haya coincidencia catalogada.
-- [ ] **D7 provisional:** en Fase 6, comprobar primero base + usuario propios en el PostgreSQL existente antes de decidir otro contenedor. Servidor por reverificar. Ruta base ya configurable (`VITE_BASE_PATH`).
+- [x] **D7 RESUELTA (Fase 6):** servidor reverificado — no existe un PostgreSQL compartido; cada proyecto corre el suyo en su stack (josemaria y josemaria-rag con pgvector, NEXUS con postgres:16-alpine), sin puertos publicados. El Atlas sigue el patrón de la casa: su propio postgres:16 en su stack, red interna, volumen y copias propios. Sin PostgreSQL nuevo en el host.
 
 ## Dependencias externas
 - [ ] Clave **CARTO** (API key con restricción de dominio) si se adopta su mapa base. Sin ella: base local Natural Earth en oscuro, sin calles ni etiquetas de texto en el mapa.
@@ -49,7 +49,14 @@ Documento único de pendientes. Actualizado: 2026-11-12 (Fase 4 CERTIFICADA; Fas
 - [x] Corrección de la revisión: propiedad `locality` en los puntos (las etiquetas no podían mostrar texto) con prueba de renderizado real a zoom 14; OFL.txt de Noto en tools/fonts; prueba offline con datos cacheados (1.382) en flujo de segunda visita; worker .mjs de MapLibre incluido en la precarga. Recorrido: 41/41 PASS.
 - [x] Segunda corrección (cadena de dependencias): vite-plugin-pwa/workbox eliminados por sus 6 vulnerabilidades sin arreglo compatible (deepmerge sin fix; glob/minimatch exigen mayores incompatibles); service worker propio generado por un plugin local de Vite + manifiesto estático. Desde clon limpio: npm ci, auditoría OSV 0 avisos (297 paquetes), build, integridad OK, API 13/13, recorrido 41/41.
 - [x] Tercera corrección (huella de versión): VERSION del SW = SHA-256 de los bytes reales de cada recurso precargado, incluidos los de public/ (antes nombre:tamaño, con la longitud del nombre para los públicos). Prueba reproducible `npm run test:sw` (cambio sin cambio de tamaño → cambia VERSION; restauración → vuelve). Batería repetida: todo verde.
-- [ ] Recertificación de la Fase 5 por la revisión. La Fase 6 no comienza hasta entonces.
+- [x] Fase 5 certificada por la revisión (2026-11-12, clon de 5e38b8d: auditoría limpia, test:sw 3/3, recorrido 41/41).
 
-## Fases siguientes (no anticipar)
-- [ ] Fase 6: despliegue en Oracle (reverificar servidor; decisión D7).
+## Fase 6 (2026-11-12) — desplegada, entregada para revisión
+- [x] Servidor reverificado; D7 resuelta (ver Decisiones).
+- [x] Paquete de despliegue en el repo: docker-compose.prod.yml, Dockerfiles de API y web, nginx interno, .dockerignore.
+- [x] Arreglo exigido por el despliegue: la API escucha en HOST configurable (defecto 127.0.0.1; el compose fija 0.0.0.0 en la red interna). Humo local 13/13 sin regresión.
+- [x] Segundo arreglo: el nginx interno servía el worker .mjs de MapLibre como octet-stream y el mapa quedaba en blanco en producción; default_type application/javascript para .mjs en deploy/nginx-web.conf. Reverificado contra la URL pública: 0 errores, mapa renderizado.
+- [x] Stack en /opt/atlas (db + api + web en 127.0.0.1:8180), nginx del host con /atlas (copia previa en ~/nginx-backups/), importación completa (1.382/942/70/2.626/2.164).
+- [x] Verificación por la ruta pública real: salud y humo de API 13/13 contra https://jpecina.duckdns.org/atlas, sw.js con la huella de la compilación certificada, persistencia tras down/up, vecinos intactos.
+- [x] Copias: backup.sh + cron semanal (domingos 04:30, retención 30 días); primera copia restaurada a modo de prueba (1.382/2.164).
+- [ ] Certificación de la Fase 6 por la revisión.
