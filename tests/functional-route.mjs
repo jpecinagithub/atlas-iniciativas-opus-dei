@@ -130,6 +130,18 @@ try {
   page.on('console', (m) => {
     if (m.type() === 'error') errors.push({ text: m.text(), url: m.location()?.url ?? '', frameHost: expectedFrameHost, offline: offlineDrill });
   });
+  // Los fallos de glifos de MapLibre llegan como AVISOS de consola
+  // («Unable to load glyph range», «mismatched image size»), no como
+  // errores, y la interfaz los enmascara renderizando el texto
+  // localmente. Se capturan aparte y tienen su propia comprobación:
+  // con glifos autoalojados rotos, el recorrido DEBE fallar.
+  const glyphErrors = [];
+  page.on('console', (m) => {
+    if ((m.type() === 'warning' || m.type() === 'error') &&
+        /Unable to load glyph range|mismatched image size/.test(m.text())) {
+      glyphErrors.push(m.text());
+    }
+  });
 
   await page.goto(BASE, { waitUntil: 'load' });
   await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
@@ -458,6 +470,8 @@ try {
     (e.offline && /\/api\//.test(e.url) && /ERR_FAILED/.test(e.text));
   const expectedBlocked = errors.filter(isExpectedExternal);
   const unexpected = errors.filter((e) => !isExpectedExternal(e));
+  check('Glifos autoalojados: sin fallos de carga ni de tamaño', glyphErrors.length === 0,
+    glyphErrors.slice(0, 2).join(' | '));
   check('Sin errores de página', unexpected.length === 0,
     unexpected.slice(0, 3).map((e) => `${e.url} ${e.text}`).join(' | ') ||
     (expectedBlocked.length

@@ -12,6 +12,21 @@
  * Salida: apps/web/public/glyphs/<Fontstack>/<inicio>-<fin>.pbf
  * Uso: node tools/fonts/build_glyphs.mjs   (requiere la fuente en
  * tools/fonts/NotoSans-Regular.ttf y Playwright instalado).
+ *
+ * CONTRATO DEL FORMATO (verificado contra el parser de MapLibre y
+ * contra glifos de referencia de fontnik): en el PBF, `width` y
+ * `height` son la caja de tinta del glifo, SIN el margen SDF; el
+ * bitmap es la imagen SDF completa, (width+6) × (height+6), con la
+ * tinta a 3 px del borde. MapLibre construye el AlphaImage como
+ * (width+6)×(height+6) y lanza «mismatched image size» si el bitmap
+ * no mide exactamente eso. `left` es el bearing izquierdo de la
+ * tinta (sin restar el margen) y `top` es la distancia de la tinta
+ * a la línea del ascendente de la fuente, con signo (fontnik la
+ * emite negativa para las mayúsculas: top = bearingTop − ascendente,
+ * donde el ascendente a 24 px se lee de fontBoundingBoxAscent).
+ * La primera versión de este generador guardaba width/height CON el
+ * margen y MapLibre rechazaba todos los rangos; la interfaz lo
+ * enmascaraba renderizando las etiquetas localmente.
  */
 import { chromium } from 'playwright';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -72,6 +87,10 @@ const glyphData = await page.evaluate(async ({ fontB64, ranges }) => {
   const SIZE = 24, BUFFER = 3, RADIUS = 8, CUTOFF = 0.75;
   const canvas = document.getElementById('c');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.font = `${SIZE}px "Noto Sans"`;
+  // Ascendente de la fuente a este tamaño (26 en Noto Sans a 24 px):
+  // es la línea de referencia del campo `top` en el formato.
+  const ASCENT = Math.round(ctx.measureText('A').fontBoundingBoxAscent);
 
   // Transformada de distancia euclídea al cuadrado (Felzenszwalb), 1D.
   function edt1d(f, d, n) {
@@ -122,6 +141,7 @@ const glyphData = await page.evaluate(async ({ fontB64, ranges }) => {
       }
     }
     if (maxX < 0) return { id: cp, width: 0, height: 0, left: 0, top: 0, advance, bitmap: null };
+    // iw/ih = caja de tinta. El bitmap SDF mide (iw+6) × (ih+6).
     const iw = maxX - minX + 1, ih = maxY - minY + 1;
     const w = iw + BUFFER * 2, h = ih + BUFFER * 2;
     // Rejillas de distancia: fuera (a la tinta) y dentro (al fondo)
@@ -141,9 +161,9 @@ const glyphData = await page.evaluate(async ({ fontB64, ranges }) => {
       bmp[i] = Math.max(0, Math.min(255, Math.round(255 * (CUTOFF + 0.5 * dist / RADIUS))));
     }
     return {
-      id: cp, width: w, height: h,
-      left: (minX - PAD) - BUFFER,
-      top: (PAD - minY) + BUFFER,
+      id: cp, width: iw, height: ih,
+      left: minX - PAD,
+      top: (PAD - minY) - ASCENT,
       advance,
       bitmap: Array.from(bmp),
     };
@@ -161,8 +181,22 @@ await browser.close();
 
 mkdirSync(OUT_DIR, { recursive: true });
 for (const [label, glyphs] of Object.entries(glyphData)) {
+  // Validación del contrato ANTES de escribir: para cada glifo con
+  // tinta, el bitmap debe medir (width+6) × (height+6); sin tinta,
+  // width y height deben ser 0 y no hay bitmap. Si esto falla, el
+  // fichero no se escribe: MapLibre rechazaría el rango entero.
+  for (const g of glyphs) {
+    if (g.bitmap) {
+      const expected = (g.width + 6) * (g.height + 6);
+      if (g.bitmap.length !== expected) {
+        throw new Error(`Glifo ${g.id} (${label}): bitmap ${g.bitmap.length} != (${g.width}+6)×(${g.height}+6)=${expected}`);
+      }
+    } else if (g.width !== 0 || g.height !== 0) {
+      throw new Error(`Glifo ${g.id} (${label}): sin bitmap pero width/height no nulos`);
+    }
+  }
   const pbf = encodeRange(FONTSTACK, label, glyphs.map((g) => ({ ...g, bitmap: g.bitmap ? Buffer.from(g.bitmap) : null })));
   writeFileSync(join(OUT_DIR, `${label}.pbf`), pbf);
-  console.log(`${label}.pbf: ${glyphs.length} glifos, ${pbf.length} bytes`);
+  console.log(`${label}.pbf: ${glyphs.length} glifos, ${pbf.length} bytes — contrato validado`);
 }
 console.log('Glifos generados en', OUT_DIR);

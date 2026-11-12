@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join, sep } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -27,6 +27,10 @@ function serviceWorkerSource(version: string, precache: string[]): string {
   return `// Service worker del Atlas — generado en la compilación.
 const VERSION = '${version}';
 const SHELL = 'atlas-shell-' + VERSION;
+// Los glifos también van versionados: son CacheFirst, así que con un
+// nombre fijo una corrección de los PBF nunca llegaría a quien ya
+// visitó el Atlas (pasó con los glifos defectuosos de la Fase 5).
+const GLYPHS = 'atlas-glifos-' + VERSION;
 const PRECACHE = ${JSON.stringify(precache)};
 
 self.addEventListener('install', (event) => {
@@ -37,7 +41,10 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('atlas-shell-') && k !== SHELL).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) =>
+        (k.startsWith('atlas-shell-') && k !== SHELL) ||
+        (k.startsWith('atlas-glifos') && k !== GLYPHS),
+      ).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -79,7 +86,7 @@ self.addEventListener('fetch', (event) => {
   }
   if (/^glyphs\\/.+\\.pbf$/.test(path)) {
     event.respondWith(
-      caches.open('atlas-glifos').then(async (cache) => {
+      caches.open(GLYPHS).then(async (cache) => {
         const cached = await cache.match(request, { ignoreSearch: true, ignoreVary: true });
         if (cached) return cached;
         const res = await fetch(request);
@@ -125,6 +132,29 @@ function atlasServiceWorker(): Plugin {
         hash.update('\0');
         hash.update(typeof bytes === 'string' ? Buffer.from(bytes) : bytes);
         hash.update('\0');
+      }
+      // Los PBF de glifos no van en la precarga (se cachean en
+      // ejecución), pero su caché SÍ se nombra con VERSION: sus
+      // bytes deben entrar en la huella o una corrección de glifos
+      // no cambiaría el nombre de la caché y nunca llegaría a quien
+      // ya visitó el Atlas.
+      const glyphRoot = join(publicDir, 'glyphs');
+      if (existsSync(glyphRoot)) {
+        const glyphFiles: string[] = [];
+        const walk = (dir: string) => {
+          for (const entry of readdirSync(dir, { withFileTypes: true })) {
+            const p = join(dir, entry.name);
+            if (entry.isDirectory()) walk(p);
+            else glyphFiles.push(p);
+          }
+        };
+        walk(glyphRoot);
+        for (const abs of glyphFiles.sort()) {
+          hash.update(abs.slice(publicDir.length + 1).split(sep).join('/'));
+          hash.update('\0');
+          hash.update(readFileSync(abs));
+          hash.update('\0');
+        }
       }
       const version = hash.digest('hex').slice(0, 12);
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: serviceWorkerSource(version, precache) });
