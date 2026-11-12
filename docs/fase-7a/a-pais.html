@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>A · País</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1440px; height:900px; overflow:hidden; background:#0B1322; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; color:#14213A; }
+  .serif { font-family:Georgia,"Times New Roman",serif; }
+  .map { position:absolute; left:392px; top:64px; width:1048px; height:836px; object-fit:cover; }
+  .masthead { position:absolute; left:0; top:0; width:1440px; height:64px; background:#F4EFE3; display:flex; align-items:center; padding:0 28px; gap:28px; border-bottom:3px double #14213A; }
+  .masthead .brand { font-size:25px; } .masthead .brand span { color:#8A6D2F; }
+  .crumb { margin-left:8px; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#5A6577; }
+  .crumb b { color:#14213A; }
+  .masthead .search { margin-left:auto; display:flex; gap:10px; align-items:center; }
+  .masthead .box { width:320px; height:36px; border:1px solid #B9B09A; background:#FFFDF6; padding:0 14px; font-size:13.5px; color:#5A6577; display:flex; align-items:center; }
+  .masthead .method { font-size:12px; letter-spacing:.14em; text-transform:uppercase; border:1px solid #14213A; padding:9px 14px; }
+  .panel { position:absolute; left:0; top:64px; width:392px; height:836px; background:#F4EFE3; padding:30px 30px 0 32px; }
+  .panel .kick { font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#8A6D2F; font-weight:700; }
+  .panel h1 { font-size:52px; font-weight:400; margin:8px 0 4px; }
+  .panel .sub { font-size:15px; color:#5A6577; font-style:italic; }
+  .panel .nums { display:flex; gap:34px; margin:22px 0 6px; border-top:1px solid #14213A; border-bottom:1px solid #DDD5BF; padding:14px 0; }
+  .panel .nums .f { font-size:30px; } .panel .nums .l { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#7A7462; margin-top:4px; }
+  .panel h3 { font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#8A6D2F; margin:22px 0 6px; }
+  .cat { display:flex; justify-content:space-between; padding:6.5px 0; border-bottom:1px solid #E4DCC8; font-size:15.5px; }
+  .cat .n { color:#7A7462; font-size:12.5px; }
+  .cat .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:9px; }
+  .item { padding:10px 0; border-bottom:1px solid #E4DCC8; }
+  .item .t { font-size:17px; } .item .s { font-size:12.5px; color:#7A7462; margin-top:2px; }
+  .pin { position:absolute; width:15px; height:15px; border-radius:50%; background:#E8C87E; border:2.5px solid #0B1322; box-shadow:0 0 0 5px rgba(232,200,126,.3); }
+  .lbl { position:absolute; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#C9D4E8; }
+  .note { position:absolute; right:24px; bottom:20px; width:300px; background:rgba(244,239,227,.94); padding:12px 16px; font-size:12.5px; line-height:1.5; color:#44506A; }
+</style></head>
+<body>
+  <img class="map" src="espana-a.svg" alt="">
+  <div class="masthead">
+    <div class="brand serif"><b>Atlas</b> de iniciativas <span>· Opus Dei</span></div>
+    <div class="crumb">Mundo &nbsp;›&nbsp; <b>España</b></div>
+    <div class="search"><div class="box">Buscar en España…</div><div class="method">Método</div></div>
+  </div>
+  <section class="panel">
+    <div class="kick">País · Europa</div>
+    <h1 class="serif">España</h1>
+    <p class="sub serif">Circunscripción documentada en el directorio v14.</p>
+    <div class="nums">
+      <div><div class="f serif">296</div><div class="l">Iniciativas</div></div>
+      <div><div class="f serif">272</div><div class="l">Con ubicación</div></div>
+      <div><div class="f serif">14</div><div class="l">Categorías</div></div>
+    </div>
+    <h3>Por categoría</h3>
+    <div class="cat"><span><span class="dot" style="background:#C9973F"></span>Colegios</span><span class="n">108</span></div>
+    <div class="cat"><span><span class="dot" style="background:#A86B7C"></span>Centros de mujeres</span><span class="n">60</span></div>
+    <div class="cat"><span><span class="dot" style="background:#7C9CC4"></span>Asociaciones juveniles</span><span class="n">60</span></div>
+    <div class="cat"><span><span class="dot" style="background:#6FA287"></span>Casa de retiros</span><span class="n">44</span></div>
+    <div class="cat"><span><span class="dot" style="background:#C97B4A"></span>Escuelas de formación técnica</span><span class="n">30</span></div>
+    <h3>Destacadas</h3>
+    <div class="item"><div class="t serif">Universidad de Navarra</div><div class="s">Universidades · Pamplona</div></div>
+    <div class="item"><div class="t serif">Colegio Tajamar</div><div class="s">Colegios · Madrid</div></div>
+    <div class="item"><div class="t serif">Colegio Gaztelueta</div><div class="s">Colegios · Leioa</div></div>
+  </section>
+  <div class="pin" style="left:1024px; top:392px;"></div>
+  <div class="lbl" style="left:1050px; top:390px;">Madrid · 41</div>
+  <div class="pin" style="left:1086px; top:300px; width:11px; height:11px;"></div>
+  <div class="lbl" style="left:1106px; top:296px;">Pamplona</div>
+  <div class="note">272 de las 296 iniciativas tienen punto en el mapa (ubicación aproximada por localidad). Las 24 restantes constan en el listado completo del país.</div>
+</body></html>

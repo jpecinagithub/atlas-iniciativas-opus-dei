@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>B · Iniciativa</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1440px; height:900px; overflow:hidden; background:#04070D; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; color:#EAF0FA; }
+  .map { position:absolute; inset:0; width:1440px; height:900px; object-fit:cover; opacity:.75; }
+  .word { position:absolute; left:30px; top:24px; font-size:13px; letter-spacing:.26em; text-transform:uppercase; color:#B9C9E2; }
+  .word span { color:#E8A33D; }
+  .back { position:absolute; left:30px; top:64px; font-size:12.5px; color:#8CA3C7; letter-spacing:.08em; }
+  .back b { color:#EAF0FA; font-weight:600; }
+  .pin { position:absolute; left:600px; top:400px; width:16px; height:16px; border-radius:50%; background:#E8A33D; box-shadow:0 0 0 7px rgba(232,163,61,.25), 0 0 30px rgba(232,163,61,.7); }
+  .pinlab { position:absolute; left:630px; top:402px; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#DCE7F7; }
+  .card { position:absolute; right:26px; top:88px; width:408px; border-radius:20px; overflow:hidden; background:rgba(8,13,25,.72); border:1px solid rgba(255,255,255,.13); backdrop-filter:blur(14px); box-shadow:0 24px 60px rgba(0,0,0,.55); }
+  .card .band { height:6px; background:linear-gradient(90deg, #E8A33D, #C97B4A); }
+  .card .in { padding:22px 24px 20px; }
+  .card .kick { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#E8A33D; display:flex; justify-content:space-between; }
+  .card .kick .x { color:#8CA3C7; font-size:14px; }
+  .card h1 { font-size:31px; font-weight:350; line-height:1.15; margin:9px 0 4px; }
+  .card .place { font-size:14px; color:#8CA3C7; }
+  .card .badges { display:flex; gap:7px; margin:14px 0 2px; }
+  .badge { font-size:10.5px; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:5px 10px; color:#C9D6EE; }
+  .badge.ok { border-color:rgba(232,163,61,.7); color:#E8C87E; }
+  .card h3 { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#7E93B5; margin:20px 0 8px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:11px 18px; font-size:13.5px; }
+  .grid b { display:block; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:#62769A; font-weight:600; margin-bottom:2px; }
+  .doc { margin-top:20px; border:1px solid rgba(255,255,255,.16); border-radius:14px; padding:13px 15px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.04); }
+  .doc .t { font-size:13.5px; } .doc .s { font-size:11.5px; color:#8CA3C7; margin-top:2px; }
+  .doc .open { color:#E8A33D; font-size:12px; }
+  .web { margin-top:14px; font-size:12.5px; color:#8CA3C7; }
+  .web a { color:#E8C87E; }
+</style></head>
+<body>
+  <img class="map" src="espana-b.svg" alt="">
+  <div class="word">Atlas<span> · </span>Opus Dei</div>
+  <div class="back">← Mundo &nbsp;/&nbsp; España &nbsp;/&nbsp; <b>Colegio Tajamar</b></div>
+  <div class="pin"></div><div class="pinlab">Madrid · ubicación aproximada</div>
+  <article class="card">
+    <div class="band"></div>
+    <div class="in">
+      <div class="kick"><span>● Colegios · ES-06</span><span class="x">✕</span></div>
+      <h1>Colegio Tajamar</h1>
+      <p class="place">Madrid, Madrid, España</p>
+      <div class="badges"><span class="badge ok">Confirmado con datos parciales</span><span class="badge">Activo</span></div>
+      <h3>La iniciativa</h3>
+      <div class="grid">
+        <div><b>Destinatarios</b>Masculino</div>
+        <div><b>Entidad titular</b>Colegio Tajamar</div>
+        <div><b>Vinculación</b>Obra de apostolado corporativo</div>
+        <div><b>Consulta</b>2026-11-08</div>
+      </div>
+      <h3>Ubicación y contacto</h3>
+      <div class="grid">
+        <div><b>Dirección</b>C/ Pío Felipe, 12, 28038 Madrid</div>
+        <div><b>En el mapa</b>Aproximada (localidad)</div>
+        <div><b>Teléfono</b>+34 91 757 00 97</div>
+        <div><b>Correo</b>info@tajamar.es</div>
+      </div>
+      <p class="web"><a>www.tajamar.es</a> · <a>Ver en el visor</a> · <a>Abrir en pestaña nueva ↗</a></p>
+      <div class="doc"><div><div class="t">Documentación</div><div class="s">Evidencia, doble comprobación y 2 fuentes</div></div><div class="open">Expandir ↓</div></div>
+    </div>
+  </article>
+</body></html>

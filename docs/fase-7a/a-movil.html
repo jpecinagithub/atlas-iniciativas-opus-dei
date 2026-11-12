@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>A · Móvil</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:390px; height:844px; overflow:hidden; background:#0B1322; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; color:#14213A; }
+  .serif { font-family:Georgia,"Times New Roman",serif; }
+  .map { position:absolute; left:0; top:56px; width:390px; height:470px; object-fit:cover; }
+  .mast { position:absolute; left:0; top:0; width:390px; height:56px; background:#F4EFE3; display:flex; align-items:center; padding:0 16px; gap:12px; border-bottom:3px double #14213A; }
+  .mast .brand { font-size:19px; } .mast .brand span { color:#8A6D2F; }
+  .mast .m { margin-left:auto; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; border:1px solid #14213A; padding:6px 9px; }
+  .stats { position:absolute; left:0; top:442px; width:390px; background:rgba(244,239,227,.96); display:flex; justify-content:space-around; padding:12px 6px 10px; border-top:1px solid #14213A; }
+  .stats .f { font-size:24px; text-align:center; } .stats .l { font-size:8.5px; letter-spacing:.16em; text-transform:uppercase; color:#7A7462; text-align:center; margin-top:2px; }
+  .sheet { position:absolute; left:0; top:526px; width:390px; height:318px; background:#F4EFE3; border-radius:16px 16px 0 0; padding:10px 20px 0; box-shadow:0 -10px 30px rgba(0,0,0,.4); }
+  .sheet .grab { width:42px; height:4.5px; border-radius:3px; background:#C9C0A8; margin:0 auto 12px; }
+  .sheet h2 { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:#8A6D2F; }
+  .sheet .box { margin:10px 0 6px; border:1px solid #B9B09A; background:#FFFDF6; height:38px; display:flex; align-items:center; padding:0 12px; font-size:13px; color:#5A6577; }
+  .row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #DDD5BF; font-size:16px; }
+  .row .n { font-size:12px; color:#7A7462; }
+  .cl { position:absolute; border:1.5px solid rgba(232,200,126,.85); background:rgba(11,19,34,.55); color:#F4EFE3; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; }
+</style></head>
+<body>
+  <img class="map" src="mundo-a.svg" alt="">
+  <div class="mast"><div class="brand serif"><b>Atlas</b> de iniciativas <span>· Opus Dei</span></div><div class="m">Método</div></div>
+  <div class="cl" style="left:196px; top:238px; width:46px; height:46px;">311</div>
+  <div class="cl" style="left:252px; top:222px; width:38px; height:38px;">225</div>
+  <div class="cl" style="left:96px; top:330px; width:34px; height:34px;">117</div>
+  <div class="stats">
+    <div><div class="f serif">1.382</div><div class="l">Iniciativas</div></div>
+    <div><div class="f serif">70</div><div class="l">Países</div></div>
+    <div><div class="f serif">942</div><div class="l">Con ubicación</div></div>
+  </div>
+  <section class="sheet">
+    <div class="grab"></div>
+    <h2>Explorar por país</h2>
+    <div class="box">Buscar nombre, localidad, entidad…</div>
+    <div class="row serif"><span>España</span><span class="n">296</span></div>
+    <div class="row serif"><span>Estados Unidos</span><span class="n">64</span></div>
+    <div class="row serif"><span>Brasil</span><span class="n">56</span></div>
+    <div class="row serif"><span>Argentina</span><span class="n">51</span></div>
+  </section>
+</body></html>

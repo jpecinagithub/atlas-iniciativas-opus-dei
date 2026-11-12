@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>A · Mundo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1440px; height:900px; overflow:hidden; background:#0B1322; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; color:#E9E2D0; }
+  .serif { font-family:Georgia,"Times New Roman",serif; }
+  .map { position:absolute; left:264px; top:64px; width:1176px; height:836px; object-fit:cover; opacity:.96; }
+  /* Cabecera tipo cabecera de publicación */
+  .masthead { position:absolute; left:0; top:0; width:1440px; height:64px; background:#F4EFE3; color:#14213A; display:flex; align-items:center; padding:0 28px; gap:28px; border-bottom:3px double #14213A; }
+  .masthead .brand { font-size:25px; letter-spacing:.01em; }
+  .masthead .brand b { font-weight:700; }
+  .masthead .brand span { color:#8A6D2F; }
+  .masthead .kicker { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:#5A6577; border-left:1px solid #C9C0A8; padding-left:28px; line-height:1.5; }
+  .masthead .search { margin-left:auto; display:flex; gap:10px; align-items:center; }
+  .masthead .search .box { width:340px; height:36px; border:1px solid #B9B09A; background:#FFFDF6; padding:0 14px; font-size:13.5px; color:#5A6577; display:flex; align-items:center; }
+  .masthead .method { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#14213A; border:1px solid #14213A; padding:9px 14px; }
+  /* Índice lateral en papel */
+  .index { position:absolute; left:0; top:64px; width:264px; height:836px; background:#F4EFE3; color:#14213A; padding:22px 22px 0 26px; }
+  .index h2 { font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#8A6D2F; font-weight:700; margin-bottom:6px; }
+  .index .rule { border-top:1px solid #14213A; margin:8px 0 4px; }
+  .index .row { display:flex; justify-content:space-between; align-items:baseline; padding:7.5px 2px; border-bottom:1px solid #DDD5BF; font-size:16.5px; }
+  .index .row .n { font-size:12px; color:#7A7462; }
+  .index .row.sel { box-shadow:inset 3px 0 0 #B98A2F; padding-left:8px; margin-left:-8px; font-weight:700; }
+  .index .more { margin-top:12px; font-size:12.5px; color:#8A6D2F; letter-spacing:.08em; text-transform:uppercase; }
+  .index .foot { position:absolute; bottom:16px; left:26px; right:22px; font-size:11px; color:#7A7462; border-top:1px solid #DDD5BF; padding-top:10px; line-height:1.55; }
+  /* Cifras de portada sobre el mapa */
+  .stats { position:absolute; left:308px; top:104px; display:flex; gap:52px; }
+  .stats .fig { font-size:52px; line-height:1; color:#F4EFE3; font-weight:400; }
+  .stats .lab { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:#9FB2CC; margin-top:8px; }
+  .lede { position:absolute; left:308px; top:238px; width:430px; font-size:19px; font-style:italic; line-height:1.45; color:#C9D4E8; }
+  .lede b { color:#E8C87E; font-weight:400; }
+  /* Agrupaciones sobrias */
+  .cl { position:absolute; border:1.5px solid rgba(232,200,126,.85); background:rgba(11,19,34,.55); color:#F4EFE3; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .cap { position:absolute; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:#8FA5C4; }
+  .hint { position:absolute; right:28px; bottom:24px; font-size:12px; color:#9FB2CC; letter-spacing:.06em; }
+  .hint b { color:#E8C87E; font-weight:600; }
+</style></head>
+<body>
+  <img class="map" src="mundo-a.svg" alt="">
+  <div class="masthead">
+    <div class="brand serif"><b>Atlas</b> de iniciativas <span>· Opus Dei</span></div>
+    <div class="kicker">Directorio mundial<br>Edición v14 · 2026</div>
+    <div class="search"><div class="box">Buscar nombre, localidad, región, entidad…</div><div class="method">Método</div></div>
+  </div>
+  <aside class="index">
+    <h2>Índice de países</h2>
+    <div class="rule"></div>
+    <div class="row sel serif"><span>España</span><span class="n">296</span></div>
+    <div class="row serif"><span>Estados Unidos</span><span class="n">64</span></div>
+    <div class="row serif"><span>Brasil</span><span class="n">56</span></div>
+    <div class="row serif"><span>Argentina</span><span class="n">51</span></div>
+    <div class="row serif"><span>México</span><span class="n">48</span></div>
+    <div class="row serif"><span>Italia</span><span class="n">46</span></div>
+    <div class="row serif"><span>Filipinas</span><span class="n">37</span></div>
+    <div class="row serif"><span>Chile</span><span class="n">35</span></div>
+    <div class="row serif"><span>Colombia</span><span class="n">33</span></div>
+    <div class="row serif"><span>Polonia</span><span class="n">29</span></div>
+    <div class="more">Ver los 70 países ↓</div>
+    <div class="foot">Cada entrada está documentada con sus fuentes. Las cifras se calculan del directorio vigente.</div>
+  </aside>
+  <div class="stats">
+    <div><div class="fig serif">1.382</div><div class="lab">Iniciativas</div></div>
+    <div><div class="fig serif">70</div><div class="lab">Países o territorios</div></div>
+    <div><div class="fig serif">942</div><div class="lab">Con ubicación</div></div>
+  </div>
+  <p class="lede serif">Un directorio verificado, <b>país a país</b>, de las iniciativas vinculadas documentadas en el mundo.</p>
+  <div class="cl" style="left:872px; top:308px; width:64px; height:64px;">311</div>
+  <div class="cl" style="left:958px; top:286px; width:54px; height:54px;">225</div>
+  <div class="cl" style="left:700px; top:560px; width:50px; height:50px;">117</div>
+  <div class="cl" style="left:560px; top:330px; width:40px; height:40px;">35</div>
+  <div class="cap" style="left:906px; top:262px;">Europa</div>
+  <div class="cap" style="left:688px; top:530px;">América del Sur</div>
+  <div class="hint">Elige un país del índice o <b>explora el mapa</b> →</div>
+</body></html>
