@@ -146,6 +146,45 @@ aparecen cuando se les llama. Cada nivel se siente como acercarse.
 - **Móvil:** globo a pantalla completa, buscador flotante y hoja
   de cristal colapsada a una frase («1.382 iniciativas en 70
   países») con chips; sube solo cuando se explora.
-- **Ventajas:** impacto inmediato y sensación de producto
-  «v
-...[truncated 2086 chars]
+- **Ventajas:** impacto inmediato y sensación de producto «vivo»;
+  el mapa por fin es el protagonista; los controles progresivos
+  reducen la densidad percibida a casi cero; la navegación por
+  niveles se entiende sin explicación.
+- **Inconvenientes:** el cristal (blur + translucidez) exige
+  disciplina para no perder contraste ni rendimiento; la
+  información densa (contexto documental de país, listas largas)
+  encaja peor flotando que en una columna; mayor superficie de
+  fallos visuales nuevos (solapes, paneles sobre el mapa).
+- **Coste estimado:** alto. Reestructura el layout (de columnas
+  fijas a capas flotantes), rehace los patrones móviles y exige
+  más comprobaciones dirigidas nuevas.
+- **Componentes:** se conserva la lógica (store, URL, API, SW) y
+  el visor (re-estilado); cambian cabecera (a flotante), StatsBar
+  (a tarjeta de cristal), paneles de país y ficha (a tarjetas
+  flotantes) y la hoja móvil (a tres posiciones con colapsado
+  mínimo); se eliminan las columnas permanentes.
+
+## 5. Comparación y recomendación
+
+| | A · Editorial | B · Inmersiva |
+|---|---|---|
+| Primera impresión | Portada de revista geográfica | Globo cinematográfico |
+| Legibilidad documental | Máxima | Buena si el cristal se disciplina |
+| Riesgo de implementación | Bajo-medio | Medio-alto |
+| Coste | Medio | Alto |
+| Carácter | Institucional, sereno | Descubrimiento, memorable |
+
+**Mi recomendación, si hay que elegir una:** para este directorio
+—documental, verificable, institucional— la **A** es la dirección
+más segura y la que mejor envejece; la **B** gana si el objetivo
+principal pasa a ser la difusión y el impacto en quien llega por
+primera vez. Una vía híbrida razonable (B como estructura con las
+fichas de A) es posible, pero conviene decidirla como dirección
+única, no como mezcla al 50 %.
+
+## 6. Qué se pide ahora
+
+Elección de dirección por parte de Jon (A, B o la híbrida
+delimitada) y revisión de Codex. La Fase 7B no comienza sin esa
+elección, y nada se desplegará sin visto bueno y certificación,
+según la regla de trabajo.
