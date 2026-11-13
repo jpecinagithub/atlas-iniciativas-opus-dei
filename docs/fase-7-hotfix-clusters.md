@@ -250,3 +250,24 @@ transparentaban a través del selector.
   **69/69** (los 68 anteriores + la comprobación de opacidad).
 
 **Sin desplegar**: a la espera de la certificación final.
+
+## 9. Despliegue (2026-11-13)
+
+Certificado por Jon el 2026-11-13 tras su comprobación independiente
+(producción sin visor, selector opaco verificado, build y test:sw en
+su máquina), que autorizó desplegar únicamente el hotfix.
+
+- Desplegado desde `main` (`9018481`): VERSION de producción
+  `ba80db8482f2` → **`16f503b787ab`**. Datos v14 intactos, sin
+  reimportar.
+- Verificación en el camino real, sin errores de consola:
+  - Migración de la PWA: un cliente con la versión anterior pasa a
+    la nueva sin errores (`verify-public migrate`).
+  - Recorrido público completo (`verify-public fresh`): limpio.
+  - **Escenario de Las Palmas en producción**: clic en el punto
+    compartido → selector «2 iniciativas en Las Palmas de Gran
+    Canaria» → Asociación Gara abre su ficha (sel=ES-200).
+    Captura: `docs/fase-7b/prod-laspalmas-gara.png`.
+- Con esto el defecto P1 queda cerrado en producción. Siguiente
+  paso, cuando Jon lo ordene: revisión formal del resultado de la
+  Fase 8A ya existente; la Fase 8B sigue sin iniciar.
