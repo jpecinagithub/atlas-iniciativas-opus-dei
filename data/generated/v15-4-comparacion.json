@@ -1,0 +1,539 @@
+{
+ "verificacion_trial": {
+  "registros": 1411,
+  "ids_unicos": true,
+  "con_punto": 1315,
+  "sin_punto": 96,
+  "errores_punto_exhaustivo": [],
+  "sin_resolver_con_punto": [],
+  "localidad_sin_punto": [],
+  "ids_no_encontrados": [],
+  "ids_distintos_declarados": 515,
+  "relaciones": {
+   "created": 2167,
+   "ambiguousUrl": 8,
+   "unmatchedFuente1": 128,
+   "unmatchedFuente2": 204
+  },
+  "relaciones_prod": {
+   "created": 2164,
+   "ambiguousUrl": 3,
+   "unmatchedFuente1": 102,
+   "unmatchedFuente2": 134
+  },
+  "fuentes_trial": 2724,
+  "fuentes_prod": 2626,
+  "estados_verificacion": {
+   "Confirmado con datos parciales": 1311,
+   "Pendiente": 36,
+   "Confirmado y contrastado": 49,
+   "Histórico": 11,
+   "Confirmado": 4
+  },
+  "categorias": {
+   "Centros de varones": 165,
+   "Residencias universitarias": 160,
+   "Centros de mujeres": 209,
+   "Colegios": 397,
+   "Casa de retiros": 130,
+   "Universidades": 41,
+   "Escuelas de formación Técnica": 81,
+   "Asociaciones juveniles": 103,
+   "Centros culturales": 24,
+   "Oficinas de Información": 21,
+   "Centros Médicos": 13,
+   "Iglesias": 45,
+   "Centros de promoción social": 8,
+   "Otros": 6,
+   "Clubes juveniles": 4,
+   "Escuelas de hostelería": 2,
+   "Residencia de estudiantes": 1,
+   "Club juvenil": 1
+  },
+  "sexo_valores_distintos": 104,
+  "paises_total": 70,
+  "paises_con_registros": 69,
+  "paises_discrepancias": [
+   {
+    "code": "ES",
+    "name": "España",
+    "problemas": [
+     "declaredTotal 296 != computedTotal 299",
+     "desglose declarado suma 296 != estados derivados 299 ({'Confirmado y contrastado': 5, 'Confirmado con datos parciales': 292, 'Pendiente': 1, 'Histórico': 1})"
+    ]
+   },
+   {
+    "code": "PH",
+    "name": "Filipinas",
+    "problemas": [
+     "declaredTotal 66 != computedTotal 70",
+     "desglose declarado suma 66 != estados derivados 70 ({'Confirmado con datos parciales': 68, 'Confirmado y contrastado': 2})"
+    ]
+   },
+   {
+    "code": "AR",
+    "name": "Argentina",
+    "problemas": [
+     "declaredTotal 51 != computedTotal 56",
+     "desglose declarado suma 51 != estados derivados 56 ({'Confirmado y contrastado': 5, 'Confirmado con datos parciales': 48, 'Pendiente': 3})"
+    ]
+   },
+   {
+    "code": "CL",
+    "name": "Chile",
+    "problemas": [
+     "declaredTotal 35 != computedTotal 36",
+     "desglose declarado suma 35 != estados derivados 36 ({'Confirmado y contrastado': 3, 'Confirmado con datos parciales': 32, 'Pendiente': 1})"
+    ]
+   },
+   {
+    "code": "GT",
+    "name": "Guatemala",
+    "problemas": [
+     "declaredTotal 21 != computedTotal 22",
+     "desglose declarado suma 21 != estados derivados 22 ({'Confirmado y contrastado': 1, 'Confirmado con datos parciales': 20, 'Histórico': 1})"
+    ]
+   },
+   {
+    "code": "HN",
+    "name": "Honduras",
+    "problemas": [
+     "declaredTotal 9 != computedTotal 10",
+     "desglose declarado suma 9 != estados derivados 10 ({'Confirmado con datos parciales': 10})"
+    ]
+   },
+   {
+    "code": "JP",
+    "name": "Japón",
+    "problemas": [
+     "declaredTotal 6 != computedTotal 11",
+     "desglose declarado suma 6 != estados derivados 11 ({'Confirmado con datos parciales': 10, 'Histórico': 1})"
+    ]
+   },
+   {
+    "code": "LB",
+    "name": "Líbano",
+    "problemas": [
+     "declaredTotal 3 != computedTotal 5",
+     "desglose declarado suma 3 != estados derivados 5 ({'Confirmado con datos parciales': 5})"
+    ]
+   },
+   {
+    "code": "NG",
+    "name": "Nigeria",
+    "problemas": [
+     "declaredTotal 32 != computedTotal 33",
+     "desglose declarado suma 32 != estados derivados 33 ({'Confirmado con datos parciales': 31, 'Confirmado y contrastado': 2})"
+    ]
+   },
+   {
+    "code": "PL",
+    "name": "Polonia",
+    "problemas": [
+     "declaredTotal 32 != computedTotal 35",
+     "desglose declarado suma 32 != estados derivados 35 ({'Confirmado con datos parciales': 32, 'Confirmado': 3})"
+    ]
+   },
+   {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "problemas": [
+     "desglose declarado suma 5 != estados derivados 6 ({'Confirmado con datos parciales': 5, 'Confirmado': 1})"
+    ]
+   },
+   {
+    "code": "VE",
+    "name": "Venezuela",
+    "problemas": [
+     "declaredTotal 19 != computedTotal 22",
+     "desglose declarado suma 19 != estados derivados 22 ({'Confirmado y contrastado': 1, 'Confirmado con datos parciales': 16, 'Pendiente': 5})"
+    ]
+   }
+  ]
+ },
+ "comparacion": {
+  "altas": [
+   "AR-52",
+   "AR-53",
+   "AR-54",
+   "AR-55",
+   "AR-56",
+   "CL-36",
+   "ES-297",
+   "ES-298",
+   "ES-299",
+   "ES-300",
+   "GT-22",
+   "HN-10",
+   "IT-73",
+   "JP-07",
+   "JP-08",
+   "JP-09",
+   "JP-10",
+   "JP-11",
+   "LB-04",
+   "LB-05",
+   "MX-45",
+   "MX-46",
+   "MX-47",
+   "NG-33",
+   "PH-067",
+   "PH-068",
+   "PH-069",
+   "PH-070",
+   "PL-33",
+   "PL-34",
+   "PL-35",
+   "VE-20",
+   "VE-21",
+   "VE-22"
+  ],
+  "bajas": [
+   "CH-06",
+   "DO-01",
+   "ES-236",
+   "TW-01",
+   "TW-02"
+  ],
+  "altas_con_punto": 32,
+  "altas_sin_punto": [
+   "MX-47",
+   "VE-21"
+  ],
+  "puntos_ganados": 365,
+  "puntos_perdidos": [
+   "AR-13",
+   "AU-02",
+   "PE-03",
+   "PE-05",
+   "PE-06",
+   "PE-07",
+   "PE-08",
+   "PE-09",
+   "PE-14",
+   "PE-15",
+   "PE-17",
+   "PE-21",
+   "PH-001",
+   "PH-007",
+   "PH-008",
+   "PH-032",
+   "PH-058",
+   "PH-061",
+   "VE-05"
+  ],
+  "desplazados_total": 4,
+  "desplazados_mas_25km": [
+   {
+    "id": "IE-12",
+    "name": "Lismullin Conference Centre",
+    "country": "Irlanda",
+    "lat_v14": 53.32667,
+    "lng_v14": -7.55417,
+    "lat_v15": 52.86472,
+    "lng_v15": -8.76056,
+    "geonameId_v14": 3313991,
+    "geonameId_v15": 2961096,
+    "km": 95.53
+   }
+  ],
+  "cambios_categoria": [
+   {
+    "id": "ES-294",
+    "de": "Colegios",
+    "a": "Otros"
+   },
+   {
+    "id": "PH-064",
+    "de": "Universidades",
+    "a": "Otros"
+   }
+  ],
+  "cambios_estado": [
+   {
+    "id": "AR-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "AR-02",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "AR-03",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "AR-04",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "AR-05",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "AT-11",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "BO-05",
+    "de": "Pendiente",
+    "a": "Confirmado con datos parciales"
+   },
+   {
+    "id": "CL-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "CL-31",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "CO-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "CO-02",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "CO-19",
+    "de": "Pendiente",
+    "a": "Confirmado con datos parciales"
+   },
+   {
+    "id": "DE-19",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "EC-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "EC-03",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "ES-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "ES-03",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "ES-04",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "GT-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "IT-05",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "IT-06",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-02",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-03",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-04",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-05",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-07",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "MX-08",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "NG-014",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "PE-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "PE-02",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "PH-014",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "PL-09",
+    "de": "Pendiente",
+    "a": "Confirmado con datos parciales"
+   },
+   {
+    "id": "PL-10",
+    "de": "Pendiente",
+    "a": "Confirmado con datos parciales"
+   },
+   {
+    "id": "US-26",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "UY-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   },
+   {
+    "id": "VE-01",
+    "de": "Confirmado con datos parciales",
+    "a": "Confirmado y contrastado"
+   }
+  ],
+  "relaciones_delta": 3
+ },
+ "desplazados": [
+  {
+   "id": "IE-12",
+   "name": "Lismullin Conference Centre",
+   "country": "Irlanda",
+   "lat_v14": 53.32667,
+   "lng_v14": -7.55417,
+   "lat_v15": 52.86472,
+   "lng_v15": -8.76056,
+   "geonameId_v14": 3313991,
+   "geonameId_v15": 2961096,
+   "km": 95.53
+  },
+  {
+   "id": "BE-01",
+   "name": "Bureau d'information de la Prélature de l'Opus Dei en Belgique / Informatiebureau van de Prelatuur van het Opus Dei in België",
+   "country": "Bélgica",
+   "lat_v14": 50.80225,
+   "lng_v14": 4.33943,
+   "lat_v15": 50.85045,
+   "lng_v15": 4.34878,
+   "geonameId_v14": 2785123,
+   "geonameId_v15": 2800866,
+   "km": 5.4
+  },
+  {
+   "id": "HU-02",
+   "name": "Orbánhegy Kollégium (Orbánhegyi Kollégium)",
+   "country": "Hungría",
+   "lat_v14": 47.49192,
+   "lng_v14": 19.01493,
+   "lat_v15": 47.49835,
+   "lng_v15": 19.04045,
+   "geonameId_v14": 7284823,
+   "geonameId_v15": 3054643,
+   "km": 2.05
+  },
+  {
+   "id": "AU-08",
+   "name": "Yarraton",
+   "country": "Australia",
+   "lat_v14": -33.92399,
+   "lng_v14": 151.22749,
+   "lat_v15": -33.92019,
+   "lng_v15": 151.22241,
+   "geonameId_v14": 6621337,
+   "geonameId_v15": 2161608,
+   "km": 0.63
+  }
+ ],
+ "clasificacion_96": {
+  "cruce": {
+   "Conflicto de jerarquía administrativa": 28,
+   "Conflicto de país": 3,
+   "Dirección contradictoria": 2,
+   "Localidad múltiple o contradictoria": 14,
+   "Otros casos manuales": 5,
+   "Sin coincidencia GeoNames": 16,
+   "Sin localidad o sin nota explicativa": 5,
+   "Varios candidatos GeoNames": 23
+  },
+  "previa": {
+   "Conflicto de jerarquía administrativa": 28,
+   "Varios candidatos GeoNames": 23,
+   "Sin coincidencia GeoNames": 16,
+   "Localidad múltiple o contradictoria": 14,
+   "Sin localidad o sin nota explicativa": 5,
+   "Conflicto de país": 3,
+   "Dirección contradictoria": 2,
+   "Otros casos manuales": 5
+  },
+  "diferencias": {}
+ },
+ "ids_no_encontrados": [],
+ "es_218_219": {
+  "ES-218": {
+   "localidad": "No localizado",
+   "direccion": "Carretera BV-1212, s/n, 08296 Castellbell i el Vilar, Barcelona",
+   "precision": "sin resolver",
+   "geonames_id": null,
+   "ciudad_canonica": null,
+   "nota": null,
+   "motivo_clasificado": "Sin localidad o sin nota explicativa",
+   "punto_en_trial": false,
+   "punto_en_v14": false
+  },
+  "ES-219": {
+   "localidad": "No localizado",
+   "direccion": "Parque de Collserola, s/n, 08172 Sant Cugat del Vallès, Barcelona",
+   "precision": "sin resolver",
+   "geonames_id": null,
+   "ciudad_canonica": null,
+   "nota": null,
+   "motivo_clasificado": "Sin localidad o sin nota explicativa",
+   "punto_en_trial": false,
+   "punto_en_v14": false
+  }
+ }
+}

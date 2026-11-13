@@ -1,0 +1,682 @@
+{
+ "bateria": {
+  "1_ids": {
+   "registros": 1411,
+   "unicos": 1411,
+   "ok": true
+  },
+  "2_categorias": {
+   "canonicas_14": [
+    "Asociaciones juveniles",
+    "Casa de retiros",
+    "Centros Médicos",
+    "Centros culturales",
+    "Centros de mujeres",
+    "Centros de promoción social",
+    "Centros de varones",
+    "Clubes juveniles",
+    "Colegios",
+    "Escuelas de formación Técnica",
+    "Iglesias",
+    "Oficinas de Información",
+    "Residencias universitarias",
+    "Universidades"
+   ],
+   "conteo_v15_5": {
+    "Centros de varones": 165,
+    "Residencias universitarias": 162,
+    "Centros de mujeres": 209,
+    "Colegios": 397,
+    "Casa de retiros": 130,
+    "Universidades": 41,
+    "Escuelas de formación Técnica": 84,
+    "Asociaciones juveniles": 103,
+    "Centros culturales": 26,
+    "Oficinas de Información": 21,
+    "Centros Médicos": 13,
+    "Iglesias": 45,
+    "Centros de promoción social": 10,
+    "Clubes juveniles": 5
+   },
+   "fuera_de_paleta": {},
+   "delta_vs_v15_4": {
+    "Clubes juveniles": [
+     4,
+     5
+    ],
+    "Escuelas de formación Técnica": [
+     81,
+     84
+    ],
+    "Centros de promoción social": [
+     8,
+     10
+    ],
+    "Escuelas de hostelería": [
+     2,
+     0
+    ],
+    "Club juvenil": [
+     1,
+     0
+    ],
+    "Otros": [
+     6,
+     0
+    ],
+    "Residencia de estudiantes": [
+     1,
+     0
+    ],
+    "Centros culturales": [
+     24,
+     26
+    ],
+    "Residencias universitarias": [
+     160,
+     162
+    ]
+   },
+   "ok": true
+  },
+  "3_puntos": {
+   "con_punto": 1317,
+   "sin_punto": 94,
+   "ok": true,
+   "ES-218": {
+    "geonameId": 8379312,
+    "lat": 41.63395,
+    "lng": 1.86394,
+    "esperado": [
+     41.63395,
+     1.86394
+    ],
+    "ok": true
+   },
+   "ES-219": {
+    "geonameId": 3110718,
+    "lat": 41.47063,
+    "lng": 2.08611,
+    "esperado": [
+     41.47063,
+     2.08611
+    ],
+    "ok": true
+   }
+  },
+  "7_exhaustivo_extracto": {
+   "errores": [],
+   "ids_no_encontrados": [],
+   "sin_resolver_con_punto": [],
+   "localidad_sin_punto": [],
+   "ids_distintos": 516,
+   "ok": true
+  },
+  "4_paises": {
+   "con_registros": 69,
+   "filas_en_catalogo": 70,
+   "ok": true
+  },
+  "5_estados": {
+   "conteo": {
+    "Confirmado con datos parciales": 1311,
+    "Pendiente": 36,
+    "Confirmado y contrastado": 52,
+    "Histórico": 11,
+    "Confirmado": 1
+   },
+   "esperado": {
+    "Confirmado con datos parciales": 1311,
+    "Confirmado y contrastado": 52,
+    "Pendiente": 36,
+    "Histórico": 11,
+    "Confirmado": 1
+   },
+   "confirmado_suelto": [
+    "PR-06"
+   ],
+   "ok": true
+  },
+  "6_relaciones": {
+   "v15_5": {
+    "created": 2167,
+    "ambiguousUrl": 8,
+    "unmatchedFuente1": 128,
+    "unmatchedFuente2": 204
+   },
+   "v15_4": {
+    "created": 2167,
+    "ambiguousUrl": 8,
+    "unmatchedFuente1": 128,
+    "unmatchedFuente2": 204
+   },
+   "mismo_conjunto_que_v15_4": true,
+   "fuentes_total_v15_5": 2724,
+   "fuentes_total_v15_4": 2724,
+   "fuentes_identicas": true,
+   "ok": true
+  },
+  "8_hoja_paises": {
+   "paises_comprobados": 70,
+   "problemas": [],
+   "suma_total_hoja": 1411,
+   "ok": true
+  },
+  "9_regresion_v14": {
+   "diferencias_iniciativas": [],
+   "paises_distintos": [],
+   "geojson_byte_a_byte": true,
+   "fuentes_identicas": true,
+   "meta_difiere_solo_en": [],
+   "ok": true
+  },
+  "10_vs_v15_4": {
+   "registros_con_diferencias": [
+    "ES-218",
+    "ES-219",
+    "ES-294",
+    "ES-299",
+    "JP-09",
+    "JP-11",
+    "LB-04",
+    "LB-05",
+    "NG-33",
+    "PH-064",
+    "PL-33",
+    "PL-34",
+    "PL-35",
+    "VE-20",
+    "VE-21"
+   ],
+   "diferencias_por_campo": {
+    "geo": 2,
+    "geocodingProvider": 2,
+    "geonameId": 2,
+    "lat": 2,
+    "lng": 2,
+    "precision": 2,
+    "queryUsed": 2,
+    "reviewStatus": 2,
+    "category": 10,
+    "verificationState": 3
+   },
+   "categorias": {
+    "ES-294": [
+     "Otros",
+     "Escuelas de formación Técnica"
+    ],
+    "ES-299": [
+     "Otros",
+     "Residencias universitarias"
+    ],
+    "JP-09": [
+     "Otros",
+     "Centros culturales"
+    ],
+    "JP-11": [
+     "Escuelas de hostelería",
+     "Escuelas de formación Técnica"
+    ],
+    "LB-04": [
+     "Residencia de estudiantes",
+     "Residencias universitarias"
+    ],
+    "LB-05": [
+     "Club juvenil",
+     "Clubes juveniles"
+    ],
+    "NG-33": [
+     "Escuelas de hostelería",
+     "Escuelas de formación Técnica"
+    ],
+    "PH-064": [
+     "Otros",
+     "Centros culturales"
+    ],
+    "VE-20": [
+     "Otros",
+     "Centros de promoción social"
+    ],
+    "VE-21": [
+     "Otros",
+     "Centros de promoción social"
+    ]
+   },
+   "categorias_ok": true,
+   "estados": {
+    "PL-33": [
+     "Confirmado",
+     "Confirmado y contrastado"
+    ],
+    "PL-34": [
+     "Confirmado",
+     "Confirmado y contrastado"
+    ],
+    "PL-35": [
+     "Confirmado",
+     "Confirmado y contrastado"
+    ]
+   },
+   "estados_ok": true,
+   "paises_con_diferencias": [
+    {
+     "code": "ES",
+     "campos": [
+      "computedLocated",
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "IT",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "MX",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "PH",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "DE",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "AR",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "AT",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "BO",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "CL",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "CO",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "EC",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "US",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "GT",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "HN",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "JP",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "LB",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "NG",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "PE",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "PL",
+     "campos": [
+      "computedVerification",
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    },
+    {
+     "code": "UY",
+     "campos": [
+      "declaredBreakdown"
+     ]
+    },
+    {
+     "code": "VE",
+     "campos": [
+      "declaredBreakdown",
+      "declaredTotal"
+     ]
+    }
+   ],
+   "meta_distinta": {
+    "sourceSha256": [
+     "5fca50bbd4bda7e686ce264198c6b49f419ba059a952f26cb2836b3bfcc0a4f8",
+     "088655db8d0d3bffd38cc1f4f23454ad61df413ff34b1cb7bc01e1f62811cef5"
+    ],
+    "categories": [
+     "['Asociaciones juveniles', 'Casa de retiros', 'Centros Médicos', 'Centros cultur",
+     "['Asociaciones juveniles', 'Casa de retiros', 'Centros Médicos', 'Centros cultur"
+    ],
+    "geoStats": [
+     "{'resolved_by_id': 1315, 'id_from_cities1000.txt': 1250, 'id_from_geonames_count",
+     "{'resolved_by_id': 1317, 'id_from_cities1000.txt': 1251, 'id_from_geonames_count"
+    ],
+    "sourceFile": [
+     "Directorio_Opus_Dei_MUNDIAL_v15-4.xlsx",
+     "Directorio_Opus_Dei_MUNDIAL_v15-5.xlsx"
+    ],
+    "located": [
+     "1315",
+     "1317"
+    ]
+   },
+   "detalle": [
+    {
+     "id": "ES-218",
+     "campos": {
+      "geo": [
+       {
+        "localityOriginal": "No localizado",
+        "canonicalCity": null,
+        "district": null,
+        "province": null,
+        "countryIso": "ES",
+        "geonamesIdDeclared": null,
+        "precisionDeclared": "sin resolver",
+        "source": "revisión manual (pendiente)",
+        "notes": null
+       },
+       {
+        "localityOriginal": "No localizado",
+        "canonicalCity": "Castellbell i el Vilar",
+        "district": null,
+        "province": "Barcelona",
+        "countryIso": "ES",
+        "geonamesIdDeclared": 8379312,
+        "precisionDeclared": "localidad",
+        "source": "GeoNames / revisión manual",
+        "notes": "Resolución manual (decisión de Jon, 2026-11-13): la dirección (Carretera BV-1212, s/n, 08296 Castellbell i el Vilar, Barcelona) y el código postal 08296 coinciden con el lugar poblado oficial de GeoNames (geonameid 8379312, Castellbell i el Vilar). Se asignan la ciudad canónica y el GeoNames ID; el libro no lleva coordenadas: el punto del catálogo sale del extracto GeoNames por ID."
+       }
+      ],
+      "geocodingProvider": [
+       null,
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       null,
+       8379312
+      ],
+      "lat": [
+       null,
+       41.63395
+      ],
+      "lng": [
+       null,
+       1.86394
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       null,
+       "geonames-id|8379312"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-219",
+     "campos": {
+      "geo": [
+       {
+        "localityOriginal": "No localizado",
+        "canonicalCity": null,
+        "district": null,
+        "province": null,
+        "countryIso": "ES",
+        "geonamesIdDeclared": null,
+        "precisionDeclared": "sin resolver",
+        "source": "revisión manual (pendiente)",
+        "notes": null
+       },
+       {
+        "localityOriginal": "No localizado",
+        "canonicalCity": "Sant Cugat del Vallès",
+        "district": null,
+        "province": "Barcelona",
+        "countryIso": "ES",
+        "geonamesIdDeclared": 3110718,
+        "precisionDeclared": "localidad",
+        "source": "GeoNames / revisión manual",
+        "notes": "Resolución manual (decisión de Jon, 2026-11-13): la dirección (Parque de Collserola, s/n, 08172 Sant Cugat del Vallès, Barcelona) y el código postal 08172 coinciden con el lugar poblado oficial de GeoNames (geonameid 3110718, Sant Cugat del Vallès). Se asignan la ciudad canónica y el GeoNames ID; el libro no lleva coordenadas: el punto del catálogo sale del extracto GeoNames por ID."
+       }
+      ],
+      "geocodingProvider": [
+       null,
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       null,
+       3110718
+      ],
+      "lat": [
+       null,
+       41.47063
+      ],
+      "lng": [
+       null,
+       2.08611
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       null,
+       "geonames-id|3110718"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-294",
+     "campos": {
+      "category": [
+       "Otros",
+       "Escuelas de formación Técnica"
+      ]
+     }
+    },
+    {
+     "id": "ES-299",
+     "campos": {
+      "category": [
+       "Otros",
+       "Residencias universitarias"
+      ]
+     }
+    },
+    {
+     "id": "JP-09",
+     "campos": {
+      "category": [
+       "Otros",
+       "Centros culturales"
+      ]
+     }
+    },
+    {
+     "id": "JP-11",
+     "campos": {
+      "category": [
+       "Escuelas de hostelería",
+       "Escuelas de formación Técnica"
+      ]
+     }
+    },
+    {
+     "id": "LB-04",
+     "campos": {
+      "category": [
+       "Residencia de estudiantes",
+       "Residencias universitarias"
+      ]
+     }
+    },
+    {
+     "id": "LB-05",
+     "campos": {
+      "category": [
+       "Club juvenil",
+       "Clubes juveniles"
+      ]
+     }
+    },
+    {
+     "id": "NG-33",
+     "campos": {
+      "category": [
+       "Escuelas de hostelería",
+       "Escuelas de formación Técnica"
+      ]
+     }
+    },
+    {
+     "id": "PH-064",
+     "campos": {
+      "category": [
+       "Otros",
+       "Centros culturales"
+      ]
+     }
+    },
+    {
+     "id": "PL-33",
+     "campos": {
+      "verificationState": [
+       "Confirmado",
+       "Confirmado y contrastado"
+      ]
+     }
+    },
+    {
+     "id": "PL-34",
+     "campos": {
+      "verificationState": [
+       "Confirmado",
+       "Confirmado y contrastado"
+      ]
+     }
+    },
+    {
+     "id": "PL-35",
+     "campos": {
+      "verificationState": [
+       "Confirmado",
+       "Confirmado y contrastado"
+      ]
+     }
+    },
+    {
+     "id": "VE-20",
+     "campos": {
+      "category": [
+       "Otros",
+       "Centros de promoción social"
+      ]
+     }
+    },
+    {
+     "id": "VE-21",
+     "campos": {
+      "category": [
+       "Otros",
+       "Centros de promoción social"
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "clasificacion_94": {
+  "cruce": {
+   "Conflicto de jerarquía administrativa": 28,
+   "Conflicto de país": 3,
+   "Dirección contradictoria": 2,
+   "Localidad múltiple o contradictoria": 14,
+   "Otros casos manuales": 5,
+   "Sin coincidencia GeoNames": 16,
+   "Sin localidad o sin nota explicativa": 3,
+   "Varios candidatos GeoNames": 23
+  },
+  "esperada": {
+   "Conflicto de jerarquía administrativa": 28,
+   "Varios candidatos GeoNames": 23,
+   "Sin coincidencia GeoNames": 16,
+   "Localidad múltiple o contradictoria": 14,
+   "Sin localidad o sin nota explicativa": 3,
+   "Conflicto de país": 3,
+   "Dirección contradictoria": 2,
+   "Otros casos manuales": 5
+  },
+  "ok": true
+ }
+}
