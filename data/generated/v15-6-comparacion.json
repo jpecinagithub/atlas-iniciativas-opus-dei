@@ -40,14 +40,6 @@
    },
    "fuera_de_paleta": {},
    "delta_vs_v15_5": {
-    "Casa de retiros": [
-     130,
-     126
-    ],
-    "Centros de mujeres": [
-     209,
-     210
-    ],
     "Colegios": [
      397,
      399
@@ -55,6 +47,14 @@
     "Centros culturales": [
      26,
      25
+    ],
+    "Casa de retiros": [
+     130,
+     126
+    ],
+    "Centros de mujeres": [
+     209,
+     210
     ]
    },
    "ok": true

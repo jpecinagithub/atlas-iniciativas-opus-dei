@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T13:06:41Z",
+ "generatedAt": "2026-11-13T14:38:55Z",
  "geoMode": "geonames-id",
  "geoStats": {
   "resolved_by_id": 1387,
@@ -18,7 +18,7 @@
   "id_from_geonames_countries/FR.txt": 2,
   "id_from_geonames_countries/IN.txt": 1,
   "id_from_geonames_countries/IE.txt": 1,
-  "iso_differs_from_country_code": 2,
+  "iso_differs_from_country_code_exception": 2,
   "id_from_geonames_countries/IT.txt": 1,
   "id_from_geonames_countries/KE.txt": 3,
   "id_from_geonames_countries/LB.txt": 2,
@@ -41,14 +41,14 @@
   {
    "id": "IE-15",
    "geonameId": 2655984,
-   "reason": "iso_differs_from_country_code",
-   "detail": "País ISO «GB» != Código país «IE» (separación documentada en el libro; el punto se resuelve por ID si el extracto coincide con el País ISO)"
+   "reason": "iso_differs_from_country_code_exception",
+   "detail": "País ISO «GB» != Código país «IE»: combinación exacta incluida en la lista cerrada de excepciones geográficas (directorio IE, geografía GB); el punto se resuelve por ID si el extracto coincide con el País ISO"
   },
   {
    "id": "IE-16",
    "geonameId": 2655984,
-   "reason": "iso_differs_from_country_code",
-   "detail": "País ISO «GB» != Código país «IE» (separación documentada en el libro; el punto se resuelve por ID si el extracto coincide con el País ISO)"
+   "reason": "iso_differs_from_country_code_exception",
+   "detail": "País ISO «GB» != Código país «IE»: combinación exacta incluida en la lista cerrada de excepciones geográficas (directorio IE, geografía GB); el punto se resuelve por ID si el extracto coincide con el País ISO"
   }
  ],
  "ambiguousGroups": [],

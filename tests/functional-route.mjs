@@ -460,6 +460,21 @@ try {
   check('Taxonomía (8C): conteos por familia en el mundo (Educación 524 · Centros y residencias 562 · Juventud 108)',
     famCounts['Educación'] === '524' && famCounts['Centros y residencias'] === '562' && famCounts['Juventud'] === '108',
     JSON.stringify(famCounts));
+  // Corrección 4 (revisión 8C): el nombre principal de cada familia
+  // debe mostrarse COMPLETO al ancho real del panel (puede envolver
+  // a dos líneas; la elipsis solo se admite en la descripción). Un
+  // nombre truncado desborda horizontalmente su caja
+  // (scrollWidth > clientWidth); uno envuelto, no.
+  const FAMILY_LABELS = ['Educación', 'Centros y residencias', 'Juventud', 'Acción social y salud',
+    'Espiritualidad y convivencia', 'Información institucional'];
+  const famNamesDesktop = await page.evaluate(([rootSel, labels]) =>
+    [...document.querySelectorAll(`${rootSel} span`)]
+      .filter((s) => labels.includes(s.textContent ?? ''))
+      .map((el) => ({ label: el.textContent, fits: el.scrollWidth <= el.clientWidth + 1 })),
+  ['#panel-categorias', FAMILY_LABELS]);
+  check('Taxonomía (8C, corrección 4): ningún nombre de familia se trunca en el panel de escritorio',
+    famNamesDesktop.length === 6 && famNamesDesktop.every((f) => f.fits),
+    famNamesDesktop.map((f) => `${f.label}:${f.fits ? 'ok' : 'TRUNCADO'}`).join(' · '));
   const ariaExp = await page.evaluate(() => {
     const b = [...document.querySelectorAll('button')].find((x) => x.getAttribute('aria-label') === 'Mostrar subcategorías de Educación');
     return b?.getAttribute('aria-expanded');
@@ -1038,6 +1053,28 @@ try {
   await mobile.screenshot({ path: join(SHOTS, '07-movil-mundo.png') });
   const mobileOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check('Móvil (7B): sin desbordamiento horizontal con la hoja colapsada', mobileOverflow <= 0, String(mobileOverflow));
+  // Corrección 3 (revisión 8C): la cabecera de la hoja móvil ya no
+  // cita ninguna versión del directorio.
+  const mobileSheetText = await mobile.evaluate(() =>
+    [...document.querySelectorAll('[role="status"]')].map((n) => n.textContent ?? '').join(' '));
+  check('Móvil (8C, corrección 3): la hoja dice «Directorio actualizado y verificado» y no cita versiones',
+    mobileSheetText.includes('Directorio actualizado y verificado') && !/Directorio v\d/.test(mobileSheetText),
+    mobileSheetText.replace(/\s+/g, ' ').slice(0, 140));
+  // Corrección 4 en móvil: los seis nombres de familia completos en
+  // la pestaña Filtros de la hoja (se vuelve a Resultados después).
+  await mobile.getByRole('tab', { name: 'filtros' }).click();
+  await mobile.waitForTimeout(700);
+  const famNamesMobile = await mobile.evaluate((labels) =>
+    [...document.querySelectorAll('#hoja-contenido span')]
+      .filter((s) => labels.includes(s.textContent ?? '') && s.getClientRects().length > 0)
+      .map((el) => ({ label: el.textContent, fits: el.scrollWidth <= el.clientWidth + 1 })),
+  ['Educación', 'Centros y residencias', 'Juventud', 'Acción social y salud',
+    'Espiritualidad y convivencia', 'Información institucional']);
+  check('Móvil (8C, corrección 4): ningún nombre de familia se trunca en la hoja',
+    famNamesMobile.length === 6 && famNamesMobile.every((f) => f.fits),
+    famNamesMobile.map((f) => `${f.label}:${f.fits ? 'ok' : 'TRUNCADO'}`).join(' · '));
+  await mobile.getByRole('tab', { name: 'resultados' }).click();
+  await mobile.waitForTimeout(500);
   await mobile.getByRole('tab', { name: 'resultados' }).click();
   await mobile.waitForTimeout(900);
   await mobile.screenshot({ path: join(SHOTS, '08-movil-resultados.png') });

@@ -287,3 +287,150 @@ taxonomía. La API no se ha tocado.
 - `c0da83a` — batería y pruebas adaptadas/ampliadas.
 - El commit de capturas y registro que contiene este documento y la
   actualización de `PENDIENTES.md`.
+
+## 12. Correcciones exigidas por Jon (2026-11-13) — aplicadas y re-verificadas
+
+Jon no certificó las Fases 1–5: aprobó la propuesta de seis familias
+pero exigió dos correcciones P1 y dos P2 antes de autorizar
+producción. Las cuatro están aplicadas y toda la verificación se ha
+repetido. El despliegue sigue SIN ejecutar.
+
+### 12.1 (P1) La excepción geográfica queda como lista cerrada exacta
+
+Antes: cualquier diferencia «País ISO» ≠ «Código país» pasaba a
+observación no bloqueante en `tools/data/build_catalog.py`. Ahora
+existe la constante `GEO_COUNTRY_EXCEPTIONS` con las únicas dos
+combinaciones exactas (ID, Código país, País ISO, GeoNames ID)
+toleradas: **IE-15 / IE / GB / 2655984** e **IE-16 / IE / GB /
+2655984** (Belfast: directorio IE, geografía GB). Esas dos se
+registran como observación (`iso_differs_from_country_code_exception`)
+y su punto se resuelve por ID contra el País ISO. **Cualquier otra
+discrepancia bloquea el punto** y consta como anomalía
+(`iso_differs_from_country_code`) en el informe de resolución.
+
+Prueba negativa nueva, permanente:
+`tools/data/test_geo_country_exceptions.py` genera un libro ficticio
+(copia temporal del v15-6 con ES-01, Pamplona, ID 3114472, con el
+«País ISO» cambiado de ES a PT) y regenera contra salidas temporales:
+ES-01 queda sin punto, es la única anomalía del informe, el total
+baja a 1.386 y, como control positivo en la misma corrida, IE-15 e
+IE-16 conservan el punto de Belfast (54.59682, −5.92541) como
+observaciones de excepción. **8/8 checks en verde.**
+
+El catálogo de prueba v15-6 se ha regenerado con el generador
+corregido: las 1.409 iniciativas y los países son **idénticos** a los
+de la corrida anterior (la única diferencia es la clave de geoStats
+en la meta, que ahora distingue excepción de bloqueo, y la redacción
+del informe de resolución). Totales intactos: **1.409 / 1.387 / 22**,
+IE-15 e IE-16 con punto. Análisis completo repetido: **11/11**, con
+las regresiones del generador sobre v14 y v15-5 limpias (directorios
+de regresión reconstruidos para la ocasión, pues `/tmp` se perdió en
+el reprovisado de la VM durante la fase).
+
+### 12.2 (P1) La prueba permanente de poda cubre el multi-manifiesto v15-6
+
+`tests/import-prune.mjs` reescrita (la anterior quedó como escenario
+histórico de la 8B). Sobre bases temporales y con los artefactos del
+árbol restaurados byte a byte al final (verificado por SHA-256),
+cubre, con **61 checks en verde**:
+
+- selección automática del manifiesto v15-5 por SHA para construir
+  la base v15-5 de partida (poda 5 / 5 relaciones) y del **manifiesto
+  v15-6** para la migración (poda exacta de CO-32, ES-153, ES-219,
+  ES-230 y MX-47 con **7 relaciones eliminadas**; relaciones creadas
+  2.159; totales 1.409 · 1.387 · 22 · 69 · 2.728 · 2.159);
+- **rechazo del manifiesto v15-5**: forzado con
+  `PRUNE_MANIFEST_PATH` contra el libro v15-6, la importación aborta
+  por no coincidencia de SHA y la base queda intacta (totales y
+  número de corridas sin cambios);
+- **aborto ante una sexta baja** (ES-01 retirada solo del catálogo
+  intercambiado): la importación aborta nombrándola y la base queda
+  exactamente en su estado v15-5;
+- **idempotencia**: segunda importación v15-6 con poda = 0 altas,
+  0 actualizaciones, 0 borrados;
+- guardas de arranque: hashes certificados de los artefactos del
+  árbol y SHA declarados por ambos catálogos contra sus manifiestos.
+
+La prueba se ha ejecutado tres veces seguidas con el mismo
+resultado (es ella misma repetible: deja el árbol y las bases como
+los encontró).
+
+### 12.3 (P2) Fuera la etiqueta «Directorio v14 verificado»
+
+La cabecera de la hoja móvil dice ahora **«Directorio actualizado y
+verificado»** (`App.tsx`), texto independiente de versiones. La
+búsqueda exhaustiva de menciones visibles a «v14» encontró y corrigió
+además otras tres: «Presencia documentada en el directorio v14» del
+contexto de país (`Panels.tsx` → «Presencia documentada en el
+directorio»), la meta descripción de `apps/web/index.html` y la
+descripción de `apps/web/public/manifest.webmanifest`. No queda
+ninguna mención a «v14» en el código de la web ni en los textos de
+la PWA (los datos del catálogo no son textos de interfaz).
+
+### 12.4 (P2) Los nombres de familia ya no se truncan
+
+En `Panels.tsx`, el nombre principal de la familia deja de usar
+`truncate`: puede envolver a dos líneas (`leading-snug`) dentro de su
+columna, con el conteo y el chevrón fuera de ella. Las descripciones
+secundarias conservan la elipsis, como se autorizó. Verificado con
+un check dirigido nuevo en la batería (el nombre no desborda su
+caja: `scrollWidth ≤ clientWidth`) para las seis familias, en el
+panel de escritorio y en la hoja móvil, y visualmente en las
+capturas regeneradas: «Espiritualidad y convivencia» se lee entera
+en ambas plataformas (en escritorio ocupa dos líneas; en móvil, una).
+
+### 12.5 Re-verificación completa tras las correcciones
+
+- Análisis del catálogo de prueba: **11/11** (ver §12.1).
+- Prueba de poda multi-manifiesto: **61/61** (ver §12.2).
+- `npm ci` desde limpio; tipos y build de web y API en verde.
+  VERSION local resultante: **`1f4d85389cc3`** (la de la 8C era
+  `cbc45c1941d1`; cambia porque cambia el código web, no los datos).
+- `test:integrity` OK · `test:api` **13/13** · `test:sw` OK (huella
+  determinista).
+- **Batería funcional completa: 114/114** (las 111 de la fase más 3
+  checks nuevos: nombre de familia sin truncar en escritorio, texto
+  de cabecera móvil sin versión y nombre de familia sin truncar en
+  móvil). Cero errores y cero advertencias propias.
+- OSV no se ha repetido: las correcciones no tocan dependencias
+  (mismo `package-lock.json`; el `npm ci` reinstala lo ya auditado
+  en la fase: 297 paquetes, 0 vulnerabilidades).
+- Capturas regeneradas de sus recorridos reales: **01, 02, 03, 04,
+  07 y 08** de `docs/fase-8c/` (02 y 04 también cambian: muestran el
+  mismo panel de familias con el nombre antes truncado) y las del
+  recorrido funcional en `docs/screenshots/`. Las capturas **05 y 06
+  han salido byte-idénticas** (ni la ficha ni el spiderfy de Piura
+  incluyen el panel ni la cabecera corregidos) y no se han tocado.
+  Revisión visual de las regeneradas: nombres completos en las seis
+  familias, jerarquía y legibilidad correctas, sin solapamientos ni
+  scroll horizontal.
+- Incidencia de procedimiento, detectada y corregida dentro de esta
+  misma re-verificación: la primera importación de la base local de
+  la batería se lanzó con `npm run import -- --prune-missing` y el
+  flag no atravesó los dos niveles de `npm run` (el health de la API
+  devolvió 1.414 iniciativas en vez de 1.409, la señal de alarma).
+  La base local se restauró desde la copia previa y se reimportó
+  invocando el importador directamente (tsx, como hace la prueba de
+  poda), quedando exacta en 1.409/1.387/2.728/2.159 con la poda
+  registrada. La prueba permanente de poda no se vio afectada: ella
+  siempre invocó el importador por la vía directa. Solo afectó a la
+  base local de desarrollo, nunca a producción.
+- Al terminar: servidores locales detenidos; artefactos del árbol
+  restaurados a los certificados v15-5 (`dfbf5c76…` / `257e8536…`,
+  verificado por hash) y la base local también (desde su copia
+  previa: 1.411/1.317). Producción no se ha tocado en ningún momento
+  (sigue en VERSION `5722ebd12b04` con el v15-5).
+
+### 12.6 Commits locales de las correcciones
+
+- `f6360b8` — corrección 1 (lista cerrada de excepciones, prueba
+  negativa, trial regenerado y análisis 11/11).
+- `4cf08c2` — correcciones 2, 3 y 4 (prueba de poda multi-manifiesto;
+  etiqueta sin versión; nombre de familia sin truncar).
+- `525a8db` — re-verificación (batería 114/114 con los checks nuevos
+  y capturas regeneradas).
+- El commit de registro que contiene esta adenda y la actualización
+  de `PENDIENTES.md`.
+
+**Estado: correcciones aplicadas y verificadas. El despliegue (Fase
+6) continúa pendiente de la certificación de Jon y de Codex.**

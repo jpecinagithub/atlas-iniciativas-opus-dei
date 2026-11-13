@@ -369,7 +369,7 @@ export default function App() {
             <p className="shrink-0 px-5 pb-1 text-[15px] leading-snug text-slate-100" role="status">
               <strong className="font-semibold text-[#e8a33d]">{fmt(filtered.length)}</strong> iniciativas en{' '}
               <strong className="font-semibold text-[#e8a33d]">{fmt(filteredCountries)}</strong> países
-              <span className="block text-xs text-[#8ca3c7]">{fmt(filteredLocated)} con ubicación en el mapa · Directorio v14 verificado</span>
+              <span className="block text-xs text-[#8ca3c7]">{fmt(filteredLocated)} con ubicación en el mapa · Directorio actualizado y verificado</span>
             </p>
           )}
           <div className="flex shrink-0 gap-1 px-3 pb-2" role="tablist" aria-label="Secciones del panel">

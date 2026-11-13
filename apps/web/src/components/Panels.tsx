@@ -189,7 +189,7 @@ export function FiltersPanel() {
                     />
                     <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: fam.color }} aria-hidden />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate">{fam.label}</span>
+                      <span className="block leading-snug">{fam.label}</span>
                       <span className="block truncate text-[11px] font-normal text-[#8ca3c7]">{fam.description}</span>
                     </span>
                     <span className="text-xs text-[#8ca3c7]">{famCount}</span>
@@ -495,7 +495,7 @@ export function CountryContext() {
         </p>
         <h3 className="font-display mt-1 text-[30px] font-normal leading-none text-slate-50">{country.name}</h3>
         <p className="mt-1.5 text-xs text-[#8ca3c7]">
-          {country.circumscription ? `Circunscripción: ${country.circumscription} · ` : ''}Presencia documentada en el directorio v14
+          {country.circumscription ? `Circunscripción: ${country.circumscription} · ` : ''}Presencia documentada en el directorio
         </p>
       </header>
 
