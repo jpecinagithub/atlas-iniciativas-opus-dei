@@ -544,3 +544,179 @@ Totales verificados en esa base tras la corrida: 1.409 ·
 **Estado: bloqueo operativo corregido y verificado. Pendiente
 únicamente la certificación de Jon y de Codex para desplegar
 (Fase 6).**
+
+## 14. Fase 6 — Despliegue (2026-11-13)
+
+Certificación previa: Jon y Codex (sin bloqueos por parte de
+Codex). Producción de partida: VERSION `5722ebd12b04`, datos
+v15-5 (1.411 · 1.317 · 2.724 · 2.167, última importación =
+corrida 2).
+
+### 14.1 Copia previa y restauración comprobada
+
+- `/opt/atlas/backups/pre-v15-6-20261113-163755/`:
+  `atlas-pre-v15-6.sql.gz` (845.028 bytes, pg_dump de
+  producción) y `web-public-data-v15-5/` con los artefactos
+  v15-5 servidos.
+- Restauración comprobada en la base temporal
+  `atlas_restore_test` del mismo PostgreSQL: **1.411
+  iniciativas · 1.317 con punto · 94 sin punto · 69 países con
+  registros · 2.724 fuentes · 2.167 relaciones**, última
+  corrida 2. Base temporal eliminada tras la prueba.
+
+### 14.2 Promoción de los artefactos certificados
+
+Commit local `c0125bf`. Copias byte a byte desde
+`data/generated/v15-6-trial/` (SHA-256 verificados contra el
+trial): `catalog.json` `f068fc46…` y `sources.json`
+`95835bfd…` a `apps/web/public/data/` y a
+`data/generated/sources.json` (la ruta que lee el importador);
+`countries.geojson` `be0296a5…` (idéntico al del v15-5: la
+geometría de países no cambia) y los informes de geocodificación.
+`countries-labels.geojson` NO se toca: el trial no certifica
+uno nuevo y el fichero solo contiene código y nombre de país
+(70 países, sin cambios). `chmod -R a+rX apps/web/public`
+antes del rsync.
+
+### 14.3 Despliegue
+
+rsync sin `--delete` con las exclusiones de siempre (el diff
+contra el árbol desplegado del Hotfix 2 no contiene ningún
+fichero borrado: solo modificaciones y el nuevo
+`taxonomy.ts`); en el servidor, los artefactos quedaron
+byte-idénticos (catálogo `f068fc46…`, fuentes `95835bfd…`,
+el propio libro v15-6 `603b9270…59c`). Reconstruidos api y
+web con `docker-compose.prod.yml`. **VERSION:
+`5722ebd12b04` → `fde98e4c304f`.**
+
+### 14.4 Incidencia: la imagen de la API no contenía el manifiesto v15-6
+
+El primer intento de importación por la vía fijada abortó
+**sin escribir**, con su propio mensaje: «ningún manifiesto
+de poda corresponde al SHA-256 del Excel entrante
+(603b9270…); manifiestos conocidos: 088655db…
+(prune-manifest.v15-5.json)». Causa: la etapa final del
+Dockerfile de la API copiaba el manifiesto **por nombre**
+(`COPY apps/api/prune-manifest.v15-5.json …`), línea de la
+época del v15-5 que nadie actualizó al crearse el manifiesto
+v15-6; el importador, en cambio, ya escaneaba todos los
+`prune-manifest.*.json` presentes. Corrección mínima y
+definitiva: `COPY apps/api/prune-manifest.*.json apps/api/`
+(commit local posterior a `c0125bf`), reconstruida solo la
+api y verificado que la imagen contiene ambos manifiestos
+antes de reintentar. La vía de importación no cambió en
+ningún momento.
+
+### 14.5 Importación en producción (vía exclusiva)
+
+`docker compose -f docker-compose.prod.yml run --rm api node dist/import.js --prune-missing`
+— corrida **3**, salida literal en lo esencial:
+
+```json
+{
+ "importRunId": "3",
+ "file": "Directorio_Opus_Dei_MUNDIAL_v15-6.xlsx",
+ "fileSha256": "603b927056ccaefe86108f59c584d84869be3d7d3a79f3868b7fa5d72095359c",
+ "countries": { "inserted": 0, "updated": 2, "unchanged": 68, "missingReported": [] },
+ "sources": { "inserted": 4, "updated": 0, "unchanged": 2724, "missingReported": [] },
+ "initiatives": { "inserted": 3, "updated": 1396, "unchanged": 10,
+   "missingReported": ["ES-153", "CO-32", "ES-230", "ES-219", "MX-47"] },
+ "relations": { "created": 2159, "ambiguousUrl": 8, "unmatchedFuente1": 130, "unmatchedFuente2": 210 },
+ "prune": {
+   "manifest": "/app/apps/api/prune-manifest.v15-6.json",
+   "deleted": 5,
+   "ids": ["CO-32", "ES-153", "ES-219", "ES-230", "MX-47"],
+   "relationsDeleted": 7
+ },
+ "located": 1387,
+ "unlocated": 22
+}
+```
+
+### 14.6 Verificación en base y sondas
+
+SQL directo sobre producción: **1.409 iniciativas · 1.387
+con punto · 22 sin punto · 69 países con registros · 70
+filas de país · 2.728 fuentes · 2.159 relaciones · 14
+categorías**; estados **1.309 parciales · 52 contrastados ·
+36 Pendiente · 11 Histórico · 1 Confirmado**; bajas
+presentes: **0**; altas presentes con punto: CO-37, ES-301,
+ES-302; **ES-218 y ES-240 sin punto** (pérdidas
+intencionadas); **IE-15 e IE-16 con punto en Belfast**
+(54.59682, −5.92541; GeoNames ID 2655984). Health: las
+mismas cifras, última importación = corrida 3. Sondas en el
+puerto del servidor, todas **200**: índice, `sw.js` (VERSION
+`fde98e4c304f`), `data/catalog.json` (meta v15-6, 1.409),
+`countries.geojson`, `countries-labels.geojson`,
+`sources.json`, glyphs, manifest y `api/health`/`api/catalog`.
+
+### 14.7 Verificación pública
+
+**Perfil heredado reconstruido con honestidad**: el perfil
+de `/tmp` se perdió con un reprovisado de la VM, así que la
+ruta de actualización se reescenificó sembrándolo con el SW
+anterior genuino: el árbol `a2064ba` (el desplegado del
+Hotfix 2) se reconstruyó en local y el build resultó
+determinista — su `sw.js` declara VERSION `5722ebd12b04`,
+idéntica a la que producción servía —; ese build se sirvió
+localmente por HTTPS bajo el mismo origen y el SW antiguo
+quedó **activado y controlando** el perfil antes de migrar.
+
+- `verify-public.mjs migrate` (titular `1.409 iniciativas`):
+  VERSION servida y activa tras la recarga `fde98e4c304f`,
+  aplicación viva con el titular nuevo. **Observación**: la
+  primera carga (bajo control del SW antiguo) registró 2
+  errores de consola «Worker failed to load» (worker de
+  MapLibre); tras la recarga bajo el SW nuevo, ninguno, y
+  una sonda posterior sobre el mismo perfil migrado cargó
+  el mapa y ejercitó zoom con **errores []**. En el perfil
+  nuevo de `fresh` no aparece en ningún momento.
+- `verify-public.mjs fresh`: **errores []**, VERSION
+  `fde98e4c304f`, counts 1.409/1.387/2.728/2.159, recorrido
+  mundo → España → Colegios → ficha de Tajamar y móvil. El
+  flujo del script se adaptó a la UI certificada: ahora
+  despliega la familia Educación antes de marcar Colegios
+  (las aserciones no cambian).
+- **Recorrido funcional de producción** (script de un solo
+  uso, retirado tras la corrida): **24/24** — titulares
+  1.409/1.387; las **seis familias visibles y sin truncar**
+  (medido: `scrollWidth ≤ clientWidth`, incluida
+  «Espiritualidad y convivencia»); seleccionar **Educación
+  filtra 524** en el mundo y desmarcarla vuelve a 1.409;
+  **Piura**: selector «3 iniciativas en Piura», ficha de
+  Turicará con el spiderfy persistente (PE-01/PE-12/PE-13,
+  3 líneas), Turicará resaltado, sin marcador 3D, y al
+  cerrar la ficha vuelve el selector con el grupo intacto;
+  **Las Palmas**: España 298 → Asociaciones juveniles 59 →
+  selector «2 iniciativas en Las Palmas de Gran Canaria» con
+  Guayre y Gara; búsqueda de la baja ES-219 («Mas del
+  Bosc»): **0 iniciativas**; consola y red sin errores en
+  todo el recorrido. Nota de procedimiento: la presentación
+  inicial del globo sobrescribe los `flyTo` programáticos
+  hasta la primera interacción, así que el recorrido la da
+  por explorada con un arrastre, como haría un usuario (sin
+  cambios en la aplicación).
+- Capturas de los recorridos reales de producción:
+  `docs/fase-8c/prod-v15-6-mundo-familias.png` (panel con las
+  seis familias completas y contadores 1.409 · 69 · 1.387) y
+  `docs/fase-8c/prod-v15-6-piura.png` (ficha de Turicará con
+  cabecera «EDUCACIÓN · COLEGIOS · PE-12», spiderfy ámbar
+  desplegado y anillo en Turicará, sin marcador 3D).
+
+**Estado: Fase 8C DESPLEGADA y CERRADA tras la verificación
+por la URL pública. Producción: VERSION `fde98e4c304f`,
+datos v15-6 (1.409 · 1.387 · 2.728 · 2.159).**
+
+**Limitación conocida (registrada el 2026-11-13 a petición de Jon):**
+la transición de la PWA entre VERSIONES no fue una primera carga
+completamente limpia. En el perfil heredado reescenificado (el
+original se perdió con un reprovisado de la VM; el SW sembrado era
+el genuino `5722ebd12b04` del build determinista), la primera carga
+bajo el service worker antiguo registró 2 errores «Worker failed
+to load» (worker de MapLibre); tras la recarga bajo el SW nuevo no
+hubo ninguno, y una sonda posterior sobre el mismo perfil migrado
+dio errores []. Los perfiles nuevos no presentan el problema. No
+exige reversión. Queda un P2 en `PENDIENTES.md` para estudiar una
+recarga controlada al cambiar el service worker si el problema
+aparece en usuarios reales. Certificación operativa de Jon
+(2026-11-13): despliegue certificado, sin reversión.

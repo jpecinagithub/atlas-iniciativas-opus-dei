@@ -95,6 +95,10 @@ if (mode === 'seed' || mode === 'migrate') {
   await page.screenshot({ path: join(OUT, 'publica-pais.png') });
   await page.getByRole('button', { name: /Categorías/ }).first().click();
   await page.waitForTimeout(600);
+  // Fase 8C: las categorías viven dentro de familias plegadas; hay que
+  // desplegar Educación para alcanzar el checkbox de Colegios.
+  await page.getByRole('button', { name: 'Mostrar subcategorías de Educación' }).click();
+  await page.waitForTimeout(400);
   await page.getByRole('checkbox', { name: /Colegios/ }).check();
   await page.waitForTimeout(600);
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
