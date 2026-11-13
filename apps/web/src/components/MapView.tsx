@@ -129,13 +129,20 @@ export default function MapView() {
       const angle = n === 2
         ? (idx === 0 ? Math.PI : 0)
         : -Math.PI / 2 + (idx * 2 * Math.PI) / n;
-      const ll = map.unproject([center.x + radius * Math.cos(angle), center.y + radius * Math.sin(angle)]);
+      const dx = Math.cos(angle);
+      const dy = Math.sin(angle);
+      const ll = map.unproject([center.x + radius * dx, center.y + radius * dy]);
+      // Lado dominante del despliegue: la etiqueta del punto se
+      // ancla hacia FUERA (lejos del ancla) según ese lado, para que
+      // los nombres no se amontonen sobre el centro del spiderfy
+      // (corrección pedida por Jon, 2026-11-13).
+      const side = Math.abs(dy) >= Math.abs(dx) ? (dy < 0 ? 't' : 'b') : (dx < 0 ? 'l' : 'r');
       features.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [ll.lng, ll.lat] },
         properties: {
           id: rec.id, category: rec.category, name: rec.name,
-          locality: rec.locality ?? '', color: categoryColor(rec.category),
+          locality: rec.locality ?? '', color: categoryColor(rec.category), side,
         },
       });
       lineFeatures.push({
@@ -338,18 +345,39 @@ export default function MapView() {
           'circle-opacity': 1,
         },
       });
+      // Etiquetas de los puntos desplegados: una capa por lado
+      // dominante, cada una anclada hacia fuera del ancla (la
+      // propiedad `side` la calcula layoutSpiderfy). Así ningún
+      // nombre se pinta sobre el centro del despliegue.
+      const labelPaint = { 'text-color': '#e8eef7', 'text-halo-color': '#04070d', 'text-halo-width': 1.2 };
+      const labelLayout = (anchor: string, offset: [number, number]) => ({
+        'text-field': ['get', 'name'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 11,
+        'text-offset': offset,
+        'text-anchor': anchor,
+        'text-max-width': 12,
+        'text-optional': true,
+      });
       map.addLayer({
-        id: 'desplegados-nombres', type: 'symbol', source: 'desplegados',
-        layout: {
-          'text-field': ['get', 'name'],
-          'text-font': ['Noto Sans Regular'],
-          'text-size': 11,
-          'text-offset': [0, 1.35],
-          'text-anchor': 'top',
-          'text-max-width': 12,
-          'text-optional': true,
-        },
-        paint: { 'text-color': '#e8eef7', 'text-halo-color': '#04070d', 'text-halo-width': 1.2 },
+        id: 'desplegados-nombres-t', type: 'symbol', source: 'desplegados',
+        filter: ['==', ['get', 'side'], 't'],
+        layout: labelLayout('bottom', [0, -1.05]) as never, paint: labelPaint as never,
+      });
+      map.addLayer({
+        id: 'desplegados-nombres-b', type: 'symbol', source: 'desplegados',
+        filter: ['==', ['get', 'side'], 'b'],
+        layout: labelLayout('top', [0, 1.35]) as never, paint: labelPaint as never,
+      });
+      map.addLayer({
+        id: 'desplegados-nombres-l', type: 'symbol', source: 'desplegados',
+        filter: ['==', ['get', 'side'], 'l'],
+        layout: labelLayout('right', [-1.05, 0]) as never, paint: labelPaint as never,
+      });
+      map.addLayer({
+        id: 'desplegados-nombres-r', type: 'symbol', source: 'desplegados',
+        filter: ['==', ['get', 'side'], 'r'],
+        layout: labelLayout('left', [1.05, 0]) as never, paint: labelPaint as never,
       });
 
       const notifyExplored = () => window.dispatchEvent(new Event('atlas:explored'));
@@ -450,8 +478,18 @@ export default function MapView() {
         // Sin elemento interactivo bajo el clic: es un «clic
         // fuera» (cierra el selector si estaba abierto) y, si hay
         // un país del directorio, se selecciona como antes.
+        // Excepción: con el grupo abierto, un clic dentro del área
+        // del despliegue se traga — las iniciativas del grupo han
+        // salido de la fuente base y el centro vacío no debe
+        // atravesar hasta el país (cerraría el selector que el
+        // propio usuario está usando).
         const st = useAtlas.getState();
-        if (st.coincident) st.closeCoincident();
+        if (st.coincident) {
+          const ap = map.project(st.coincident.anchor as [number, number]);
+          const radio = Math.min(34 + 3 * st.coincident.ids.length, 96) + 16;
+          if (Math.hypot(e.point.x - ap.x, e.point.y - ap.y) <= radio) return;
+          st.closeCoincident();
+        }
         const pais = byLayer('paises-relleno');
         if (pais) {
           const props = pais.properties as { code?: string; inDirectory?: boolean };
@@ -505,8 +543,16 @@ export default function MapView() {
     const apply = () => {
       if (!readyRef.current) return;
       const filtered = filterInitiatives(catalog.initiatives, countryCode, categories, query);
+      // Con el grupo coincidente abierto, sus iniciativas salen de
+      // la fuente base: ya las representa el spiderfy y en el ancla
+      // no debe quedar ningún círculo (el clúster, el punto apilado
+      // ni el halo del seleccionado) tapando el despliegue
+      // (corrección pedida por Jon, 2026-11-13: «ese círculo fuera»).
+      const visible = coincident
+        ? filtered.filter((i) => !coincident.ids.includes(i.id))
+        : filtered;
       const source = map.getSource('iniciativas') as maplibregl.GeoJSONSource | undefined;
-      source?.setData(toFeatureCollection(filtered));
+      source?.setData(toFeatureCollection(visible));
       for (const layerId of ['pais-seleccionado', 'pais-seleccionado-relleno']) {
         if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get', 'code'], countryCode ?? '']);
       }
@@ -516,7 +562,7 @@ export default function MapView() {
       const t = setInterval(() => { if (readyRef.current) { apply(); clearInterval(t); } }, 250);
       return () => clearInterval(t);
     }
-  }, [catalog, countryCode, categories, query]);
+  }, [catalog, countryCode, categories, query, coincident]);
 
   // ---- Spiderfy del grupo coincidente: pintar al abrir, limpiar
   // al cerrar (incluye los cierres por cambio de filtros/país/
@@ -540,11 +586,19 @@ export default function MapView() {
       if (map.getLayer('punto-seleccionado')) {
         map.setFilter('punto-seleccionado', ['==', ['get', 'id'], selectedId ?? '']);
       }
+      if (coincident) {
+        // Grupo coincidente abierto: el marcador 3D del seleccionado
+        // se retira del ancla mientras dure el despliegue (tapaba el
+        // centro del spiderfy); vuelve al cerrar el grupo.
+        markerRef.current?.clearTarget();
+        return;
+      }
       if (rec && rec.lat !== null && rec.lng !== null) {
         const targetId = rec.id;
         void ensureMarker().then((marker) => {
-          // Solo aplica si la selección no ha cambiado mientras cargaba.
-          if (marker && useAtlas.getState().selectedId === targetId) {
+          // Solo aplica si la selección no ha cambiado mientras cargaba
+          // y no se ha abierto un grupo coincidente entretanto.
+          if (marker && useAtlas.getState().selectedId === targetId && !useAtlas.getState().coincident) {
             marker.setTarget(rec.lng!, rec.lat!, categoryColor(rec.category));
           }
         });
@@ -557,7 +611,7 @@ export default function MapView() {
       const t = setInterval(() => { if (readyRef.current) { apply(); clearInterval(t); } }, 250);
       return () => clearInterval(t);
     }
-  }, [catalog, selectedId]);
+  }, [catalog, selectedId, coincident]);
 
   // ---- Cámara
   useEffect(() => {

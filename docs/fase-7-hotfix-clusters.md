@@ -271,3 +271,25 @@ su máquina), que autorizó desplegar únicamente el hotfix.
 - Con esto el defecto P1 queda cerrado en producción. Siguiente
   paso, cuando Jon lo ordene: revisión formal del resultado de la
   Fase 8A ya existente; la Fase 8B sigue sin iniciar.
+
+## 10. Corrección posterior al despliegue: el círculo central (2026-11-13)
+
+Jon, probando el despliegue, señaló que al desplegar un grupo
+«aparece un círculo en el centro que tapa todo» y que las etiquetas
+se amontonaban sobre el centro (capturas de Las Palmas y de
+Santiago de Surco). Corrección aplicada el mismo día:
+
+- Con el grupo abierto, sus iniciativas **salen de la fuente base**
+  del mapa: en el ancla ya no se pinta el clúster, ni el punto
+  apilado, ni el halo del seleccionado.
+- El **marcador 3D** del seleccionado se retira mientras el grupo
+  está abierto y vuelve al cerrarlo.
+- Las **etiquetas** del spiderfy se anclan **hacia fuera** según el
+  lado dominante de cada punto (capas por lado: arriba, abajo,
+  izquierda, derecha); ningún nombre cae sobre el centro.
+- Un clic en el centro vacío del despliegue ya no atraviesa hasta
+  la capa de países (la batería lo detectó como regresión: cerraba
+  el selector); el área del despliegue absorbe el clic.
+- Dos comprobaciones dirigidas nuevas: ancla libre con el grupo
+  abierto y anclajes de etiqueta hacia fuera. Batería: **71/71**,
+  build limpio y `test:sw` OK. Capturas del hotfix regeneradas.

@@ -470,6 +470,29 @@ try {
     return pts.size === 2 && pts.has('ES-199') && pts.has('ES-200') && lines.size === 2;
   }, null, { polling: 100, timeout: 10000 }).then(() => true).catch(() => false);
   check('Hotfix clústeres: el spiderfy despliega 2 puntos temporales con sus líneas al ancla', spiderCount, '');
+  // Centro libre (corrección de Jon, 2026-11-13: «ese círculo
+  // fuera»): con el grupo abierto, la fuente base ya no contiene
+  // las iniciativas del grupo (sin clúster, punto apilado ni halo
+  // en el ancla) y las etiquetas se anclan hacia fuera (lados l/r).
+  const centroLibre = await page.evaluate(() => {
+    const map = window.__atlasMap;
+    const base = map.getSource('iniciativas').serialize().data;
+    const baseIds = new Set(base.features.map((f) => f.properties?.id).filter(Boolean));
+    const dep = map.getSource('desplegados').serialize().data;
+    const sides = Object.fromEntries(dep.features.map((f) => [f.properties.id, f.properties.side]));
+    return {
+      fueraDeLaBase: !baseIds.has('ES-199') && !baseIds.has('ES-200'),
+      sides,
+      anchorL: map.getLayoutProperty('desplegados-nombres-l', 'text-anchor'),
+      anchorR: map.getLayoutProperty('desplegados-nombres-r', 'text-anchor'),
+    };
+  });
+  check('Hotfix clústeres: con el grupo abierto, el ancla queda libre (las iniciativas salen de la fuente base)',
+    centroLibre.fueraDeLaBase, JSON.stringify(centroLibre.sides));
+  check('Hotfix clústeres: las etiquetas del spiderfy se anclan hacia fuera (izquierda/derecha)',
+    centroLibre.sides['ES-199'] === 'l' && centroLibre.sides['ES-200'] === 'r'
+      && centroLibre.anchorL === 'right' && centroLibre.anchorR === 'left',
+    JSON.stringify(centroLibre));
   await page.waitForTimeout(400);
   const focusInSelector = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? '');
   check('Hotfix clústeres: el selector recibe el foco al abrir',
