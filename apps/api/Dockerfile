@@ -21,6 +21,7 @@ COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/apps/api/dist apps/api/dist
+COPY apps/api/prune-manifest.v15-5.json apps/api/prune-manifest.v15-5.json
 COPY db db
 COPY apps/web/public/data/catalog.json apps/web/public/data/catalog.json
 COPY data/generated/sources.json data/generated/sources.json

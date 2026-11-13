@@ -293,3 +293,106 @@ Santiago de Surco). Corrección aplicada el mismo día:
 - Dos comprobaciones dirigidas nuevas: ancla libre con el grupo
   abierto y anclajes de etiqueta hacia fuera. Batería: **71/71**,
   build limpio y `test:sw` OK. Capturas del hotfix regeneradas.
+
+## 11. Hotfix 2 — el grupo permanece desplegado al consultar fichas (2026-11-13)
+
+**Diagnóstico (de Jon, verificado por él en producción):** defecto
+de interacción. Al seleccionar una iniciativa del grupo coincidente
+(su ejemplo: Colegio Turicará, PE-12, en el grupo de Piura con
+Colegio Vallesol, PE-13, y Universidad de Piura, PE-01),
+`select()` ponía `coincident = null`: el spiderfy se desmontaba,
+reaparecía el marcador 3D en la coordenada compartida y
+desaparecían los puntos desplegados justo al consultar la ficha.
+
+**Diseño:** se separan los dos estados que estaban unidos —
+`coincident` mantiene el grupo y su representación cartográfica;
+`coincidentPanelOpen` controla SOLO la lista flotante del
+selector. La selección desde un punto desplegado o desde una
+tarjeta del selector equivale a
+`select(id, { fly: false, preserveCoincident: true })` +
+`setCoincidentPanelOpen(false)`, sin tocar la cámara. Cerrar la
+ficha de una iniciativa del grupo (`select(null)`) restaura el
+selector con el grupo intacto. La seleccionada se distingue con
+un anillo ámbar dentro del spiderfy (capa
+`desplegados-resaltado`, propiedad `sel` por feature); el
+marcador Three.js sigue desactivado mientras exista `coincident`
+(incluida la guarda de su carga asíncrona). No se modifica ni se
+almacena ninguna coordenada.
+
+**Resize ≠ movimiento:** `map.on('resize')` marca el ajuste como
+de layout, rearma la referencia del spiderfy con la nueva
+geometría y el `moveend` acompañante se trata como recolocación,
+no como gesto del usuario. El repintado por cambio de selección
+dentro del grupo conserva la referencia de apertura (misma
+identidad de objeto `coincident` ⇒ `keepReference`).
+
+**Escape por etapas:** con la ficha del grupo abierta, el primer
+Escape cierra SOLO la ficha (el manejador en captura del selector
+está inactivo con la lista oculta) y el selector reaparece; el
+segundo Escape cierra el grupo y el foco vuelve al lienzo. Sin
+ficha, Escape cierra el grupo como hasta ahora. Se conservan los
+cierres por clic fuera (con la guarda del radio), movimiento o
+zoom significativo, filtros/país/búsqueda, Restablecer, cierre
+explícito e historial (popstate no restaura grupos).
+
+**Cambios por fichero:**
+- `apps/web/src/store.ts`: estado `coincidentPanelOpen` y acción
+  `setCoincidentPanelOpen`; `select` acepta
+  `{ fly, preserveCoincident }` (compatible con el booleano
+  anterior); todos los cierres del grupo resetean también el panel.
+- `apps/web/src/components/MapView.tsx`: el clic en un punto
+  desplegado selecciona con `preserveCoincident`; propiedad `sel`
+  en el layout del spiderfy y capa `desplegados-resaltado`;
+  manejador `resize` + guarda en `moveend`; el efecto del spiderfy
+  se repinta al cambiar la selección conservando la referencia.
+- `apps/web/src/components/CoincidentSelector.tsx`: se renderiza
+  solo con `coincidentPanelOpen`; foco y Escape activos solo con
+  la lista visible; las tarjetas seleccionan con
+  `preserveCoincident`.
+- `apps/web/src/App.tsx` y `Panels.tsx`: sin cambios (el Escape
+  global y el botón «Cerrar ficha» ya llaman a `select(null)`,
+  cuya nueva semántica restaura el selector).
+
+**Pruebas (batería `tests/functional-route.mjs`): 91/91.** 22
+comprobaciones llevan el prefijo «Hotfix 2» (nuevas o
+reformuladas). Reformuladas por el nuevo comportamiento: la de
+Club Guayre desde el selector (antes afirmaba que el selector se
+cerraba; ahora: lista oculta, grupo desplegado, resaltado, cámara
+quieta, sin 3D, Escape por etapas) y la del punto desplegado de
+Asociación Gara (idem). Nuevas, sobre el grupo de Piura en
+escritorio: apertura «3 iniciativas en Piura», las tres fichas
+sucesivas (Turicará desde la tarjeta; Vallesol y Universidad de
+Piura desde sus puntos) sin cerrar ni recalcular el grupo, zoom y
+centro idénticos, anillo único sobre la seleccionada, marcador 3D
+ausente, cierre de ficha con vuelta del selector, historial atrás
+que cierra ficha y grupo, y cero advertencias de consola en el
+tramo. En móvil: Las Palmas y Piura (pestaña Ficha, selector
+oculto, puntos desplegados en el mapa, vuelta de la lista al
+cerrar la ficha). Regresión de cierres en verde: categoría,
+Restablecer, clic exterior, Escape e historial.
+
+**Ajustes de la batería por la migración de datos (no de
+comportamiento):** la batería corre contra el catálogo v15-5 ya
+promovido, así que se actualizaron las cifras esperadas del
+conjunto anterior (1.382 → 1.411; 70/942 → 69/1.317; España
+296 → 299 y 272 → 283 con ubicación; España + Asociaciones
+juveniles 60 → 59; Sevilla 16 → 15 tras la baja de ES-236) y el
+ejemplo de registro sin coordenadas pasa de ES-218 (resuelto con
+punto en el v15-5) a ES-19 (EFA Quintanes).
+
+**Verificación:** build limpio, `test:sw` OK (3/3), batería
+completa **91/91** contra PostgreSQL local recuperado e importado
+con el v15-5 (la VM había perdido PostgreSQL en un reprovisado;
+se reinstaló postgresql-16 y se recrearon rol y base `atlas`).
+
+**Capturas** (cada una de su propio recorrido real):
+`docs/fase-7b/hotfix2-piura-ficha-desktop.png` (SHA-256
+`0f59eddb…a0783c`) y `docs/fase-7b/hotfix2-piura-ficha-movil.png`
+(SHA-256 `1467415a…c9`), generadas con
+`tests/capture-hotfix2.mjs`: spiderfy completo con las líneas al
+ancla vacía, Turicará con su anillo y su ficha abierta, sin
+marcador 3D. En móvil, un ajuste iterativo project/unproject del
+script deja el despliegue en la franja visible sobre la hoja.
+
+**Estado: verificado en local. NO desplegado** — pendiente de la
+certificación de Jon, como manda la regla de fases.

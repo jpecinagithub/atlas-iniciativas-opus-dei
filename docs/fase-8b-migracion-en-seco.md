@@ -412,3 +412,218 @@ Cambios del propio libro:
 
 **Estado: listo para la certificación final de la migración.**
 Sin importar a la API y sin desplegar; producción sigue con el v14.
+
+## Migración real al v15-5 — EJECUTADA Y REVERTIDA (2026-11-13)
+
+Con la certificación final de Jon se ejecutó la migración real
+siguiendo su regla de despliegue. Resultado: **la importación fue
+correcta sobre el conjunto v15-5, pero los totales de la base
+difirieron de lo certificado y, conforme a la regla fijada («si
+cualquier cifra difiere, revertir sin reinterpretar datos»), se
+revirtió todo. Producción queda en v14.**
+
+**Copia previa y restauración comprobada.** Carpeta en el servidor:
+`/opt/atlas/backups/pre-v15-5-20261113-113830/` (dump
+`atlas-pre-v15-5.sql.gz`, 771.267 bytes, y copia de los artefactos
+v14 de `apps/web/public/data/`). El dump se restauró en una base
+temporal y cuadró exactamente (1.382 iniciativas, 942 con punto,
+2.626 fuentes, 2.164 relaciones); la base temporal se eliminó.
+
+**Promoción.** Los 6 artefactos certificados de
+`data/generated/v15-5-trial/` se copiaron a `apps/web/public/data/`
+y `sources.json` también a `data/generated/sources.json` (la ruta
+que lee el importador), con SHA-256 de fichero idénticos a los
+certificados (catálogo `dfbf5c76…`, fuentes `257e8536…`, geojson
+`be0296a5…`). Commit local de promoción: `290a1f4`.
+
+**Despliegue e importación.** rsync sin `--delete` y reconstrucción
+de web y api (la imagen de la api incrusta catálogo, fuentes y
+Excel). VERSION servido: `207d02e7ea7b` → `e87934aab079`. La
+importación (corrida 2) aceptó únicamente el SHA del v15-5
+(`088655db…1cef5`) y produjo: países 24 actualizados / 46 sin
+cambio; fuentes 98 altas / 2.626 sin cambio (total 2.724);
+iniciativas 34 altas / 1.376 actualizadas / 1 sin cambio, con
+`missingReported` = exactamente las 5 bajas (CH-06, DO-01, ES-236,
+TW-01, TW-02); relaciones creadas 2.167 (ambiguas 8, F1 sin pareja
+128, F2 sin pareja 204); localizadas 1.317, sin localizar 94.
+
+**Verificación del conjunto v15-5 en base: perfecta.** Excluidas
+las 5 bajas: 1.411 iniciativas, 1.317 con punto, 69 países, 14
+categorías, estados 1.311 / 52 / 36 / 11 / 1; ES-218 con
+(41.63395, 1.86394) y GeoNames 8379312; ES-219 con (41.47063,
+2.08611) y 3110718; «Confirmado» a secas solo en PR-06; las 10
+categorías corregidas, exactas; relaciones del conjunto, 2.167.
+
+**La desviación.** El importador, por diseño documentado desde la
+Fase 3, informa los ausentes pero **no los borra**: las 5 bajas
+siguieron en la tabla con sus 5 relaciones. Totales reales tras
+importar: 1.416 iniciativas, 1.322 con punto, 2.172 relaciones, y
+`/api/catalog` servía las 1.416 (ES-236 «Club Alanís» seguía
+accesible). Esas cifras difieren de las certificadas (1.411 /
+1.317 / 2.167), así que se aplicó la regla: **reversión sin
+reinterpretar**.
+
+**Reversión ejecutada y verificada.** Base restaurada desde la
+copia previa (drop + restore), artefactos v14 restituidos en
+`apps/web/public/data/` y `data/generated/sources.json`, web y api
+reconstruidas. Verificación: VERSION de nuevo `207d02e7ea7b`;
+`/api/health` 1.382 / 942 / 70 / 2.626 / 2.164 con última
+importación = corrida 1 (v14); `/api/catalog` con 1.382;
+recorrido público `verify-public fresh`: VERSION `207d02e7ea7b`,
+mismas cifras, errores `[]`. Commit local de reversión:
+`1583117b6ff3`.
+
+**Qué falta para migrar.** Una decisión de Jon sobre las 5 bajas:
+el importador no las eliminará nunca por sí solo. Opciones: (a)
+borrado puntual y registrado de las 5 iniciativas y sus 5
+relaciones tras importar; (b) aceptar la semántica del importador
+y verificar por conjunto. Sin esa decisión, la migración no debe
+reintentarse.
+
+## Migración real al v15-5 — segundo intento (vía 1): EJECUTADA Y VERIFICADA. Fase 8B CERRADA
+
+Jon eligió la **vía 1**: las cinco bajas deben desaparecer de la base
+y de la API, pero no con SQL manual posterior, sino como una
+**operación explícita, transaccional y reproducible del importador**.
+Esta sección registra la implementación, la verificación previa
+obligatoria y la migración definitiva.
+
+### Implementación: modo `--prune-missing` del importador
+
+Commit `190b571`. Ficheros: `apps/api/src/import.ts`,
+`apps/api/prune-manifest.v15-5.json` (nuevo, versionado junto al
+importador; la imagen de la API lo incorpora vía `apps/api/Dockerfile`)
+y `tests/import-prune.mjs` (batería permanente, ver más abajo).
+
+- Invocación: `npm run import -- --prune-missing` (en producción:
+  `docker compose -f docker-compose.prod.yml run --rm api node
+  dist/import.js --prune-missing`). Sin el flag, el comportamiento es
+  el de siempre: no se borra nada y el resumen no lleva clave `prune`.
+- El manifiesto declara `sha256 =
+  088655db8d0d3bffd38cc1f4f23454ad61df413ff34b1cb7bc01e1f62811cef5`
+  y los IDs exactos: **CH-06, DO-01, ES-236, TW-01, TW-02**.
+- Comprobaciones ANTES de escribir (con el flag): (a) el SHA-256 del
+  Excel entrante es exactamente el del manifiesto; (b) ningún ID del
+  manifiesto aparece en el conjunto entrante (catálogo derivado del
+  Excel; el importador nunca parsea el libro, lo hashea); si algo
+  falla, aborta antes de abrir la transacción.
+- DENTRO de la única transacción, antes de cualquier escritura, se
+  calcula el conjunto de ausentes (en base, no en el archivo) de
+  países, fuentes e iniciativas: cualquier ausente fuera del
+  manifiesto aborta y revierte la transacción sin haber escrito. Lo
+  que se poda es exactamente ese conjunto ∩ manifiesto.
+- Upserts, recreación de relaciones, borrado de las relaciones de
+  las bajas y borrado de las iniciativas van en la MISMA
+  transacción; si el número borrado difiere del previsto, rollback
+  entero. Las bajas NO pasan a Histórico: desaparecen.
+- La corrida registra en su resumen `prune: { manifest, deleted,
+  ids, relationsDeleted }`. Idempotencia: la segunda ejecución da
+  `deleted: 0` y cero altas/actualizaciones.
+
+### Verificación previa (batería `tests/import-prune.mjs`, 38/38 PASS)
+
+Sobre restauraciones temporales del v14 (dump acreditado
+`/opt/atlas/backups/pre-v15-5-20261113-113830/`, 771.267 bytes,
+descargado y restaurado en PostgreSQL local; bases temporales
+`atlas_prune_test`/`atlas_b404`, eliminadas al terminar; producción
+no se tocó):
+
+1. Punto de partida v14 restaurado: 1.382 / 942 / 2.626 / 2.164,
+   1 corrida.
+2. Importación SIN flag: reproduce **1.416** iniciativas (1.322 con
+   punto, 2.724 fuentes, 2.172 relaciones), `missingReported` = las
+   5 del manifiesto y **no borra nada** (las 5 siguen presentes).
+3. Importación CON flag desde v14: **1.411 iniciativas · 1.317 con
+   punto · 94 sin punto · 69 países con registros · 2.724 fuentes ·
+   2.167 relaciones**; resumen con `prune: { deleted: 5, ids:
+   [CH-06, DO-01, ES-236, TW-01, TW-02], relationsDeleted: 5 }`.
+4. Los cinco IDs: 0 filas y 0 relaciones en base; y contra la API
+   levantada sobre la base temporal, **HTTP 404** en
+   `/api/initiatives/{CH-06,DO-01,ES-236,TW-01,TW-02}` (ES-218: 200)
+   y ausentes de `/api/catalog` (1.411 iniciativas).
+5. Segunda importación CON flag: inserted 0, updated 0 (todo
+   unchanged: 1.411), `prune.deleted: 0`; totales intactos.
+6. Aborto: con UN ausente adicional fuera del manifiesto (ES-01
+   retirado solo del catálogo en memoria de la prueba; catálogo
+   restaurado byte a byte después, SHA-256 `dfbf5c76…` verificado),
+   la importación con flag **aborta nombrando ES-01** y la base
+   queda intacta (1.382 / 2.164, sin corrida nueva).
+
+### Migración real (2026-11-13)
+
+1. Estado previo verificado: producción exactamente en el v14
+   acreditado — VERSION `207d02e7ea7b`, health 1.382 / 942 / 70 /
+   2.626 / 2.164, artefactos del servidor con los hashes v14.
+   Punto de rollback: la copia acreditada
+   `/opt/atlas/backups/pre-v15-5-20261113-113830/` (restauración ya
+   comprobada en el primer intento). Perfil PWA sembrado con esa
+   VERSION (`verify-public seed`, errores `[]`).
+2. Promoción de los artefactos certificados de
+   `data/generated/v15-5-trial/` (commit `7ac6698`): SHA-256 de
+   fichero idénticos (catálogo `dfbf5c76…`, fuentes `257e8536…`),
+   verificados también en el servidor tras el rsync. Nada
+   regenerado (advertencia Natural Earth cumplida). rsync sin
+   `--delete` y `docker compose up -d --build web api`.
+3. **VERSION: `207d02e7ea7b` → `e87934aab079`** — idéntica a la del
+   intento revertido, como corresponde a un build determinista con
+   los mismos artefactos.
+4. Importación en producción con `--prune-missing`. Salida literal
+   (resumen): corrida **2**, fichero
+   `Directorio_Opus_Dei_MUNDIAL_v15-5.xlsx`, SHA-256
+   `088655db8d0d3bffd38cc1f4f23454ad61df413ff34b1cb7bc01e1f62811cef5`;
+   países 0/24/46 (inserted/updated/unchanged), fuentes 98/0/2.626,
+   iniciativas 34/1.376/1 con `missingReported` = las 5 bajas;
+   relaciones creadas **2.167** (ambiguas 8, sin coincidencia F1 128,
+   F2 204); **`prune: { deleted: 5, ids: [CH-06, DO-01, ES-236,
+   TW-01, TW-02], relationsDeleted: 5 }`**; localizadas **1.317**,
+   sin localizar **94**.
+5. Verificación en base de producción (SQL directo): iniciativas
+   **1.411** · con punto **1.317** · sin punto **94** · países con
+   registros **69** (70 filas en la tabla de países) · fuentes
+   **2.724** · relaciones **2.167** · categorías **14** · estados:
+   parciales **1.311**, contrastados **52**, Pendiente **36**,
+   Histórico **11**, «Confirmado» **1**. Casos concretos: ES-218
+   (41.63395, 1.86394; GeoNames 8379312) y ES-219 (41.47063,
+   2.08611; 3110718) exactos; «Confirmado» a secas solo en PR-06;
+   las 10 categorías corregidas, exactas (ES-294/NG-33/JP-11 →
+   Escuelas de formación Técnica; PH-064/JP-09 → Centros
+   culturales; ES-299/LB-04 → Residencias universitarias; VE-20/
+   VE-21 → Centros de promoción social; LB-05 → Clubes juveniles);
+   los 5 IDs podados: 0 presentes, 0 relaciones.
+6. Verificación por la URL pública (https://jpecina.duckdns.org/atlas/,
+   vía el túnel de `tests/verify-public.mjs`):
+   - `verify-public migrate` (perfil sembrado con `207d02e7ea7b`):
+     VERSION `e87934aab079`, SW activo tras recarga, errores `[]`.
+     (El script parametriza ahora el titular esperado por
+     `ATLAS_HEADLINE`; por defecto sigue siendo el del v14.)
+   - `verify-public fresh`: recorrido mundo → España → Colegios →
+     ficha de Colegio Tajamar; counts por la API 1.411 / 1.317 / 70
+     / 2.724 / 2.167; errores `[]`.
+   - Titulares en portada: «1.411 iniciativas», «69 países o
+     territorios», «1.317 con ubicación en el mapa».
+   - Ficha de ES-218 («Casa de retiros Can Viladoms») abierta con
+     su punto (captura `prod-v15-5-es218.png`).
+   - Grupo coincidente de Las Palmas operativo por el camino del
+     usuario (ficha de ES-200 → «Acercar a esta iniciativa» → clic
+     en el punto): selector «2 iniciativas en Las Palmas de Gran
+     Canaria» con spiderfy y sin círculo central (captura
+     `prod-v15-5-laspalmas.png`).
+   - Búsqueda «Club Alanís» (ES-236): «Sin resultados con estos
+     filtros» — la baja podada no aparece en búsquedas ni conteos.
+   - Consola limpia en todas las pasadas.
+   Capturas en `docs/fase-8b/`: `prod-v15-5-mapa.png`,
+   `prod-v15-5-es218.png`, `prod-v15-5-laspalmas.png` (más las
+   `publica-*.png` de `verify-public fresh` en `docs/fase-7b/`).
+
+### Cierre
+
+**Fase 8B CERRADA tras verificación por la URL pública.** El
+directorio v15-5 es el conjunto autoritativo en producción: 1.411
+iniciativas, 1.317 con punto, 69 países con registros, 2.724
+fuentes, 2.167 relaciones, y las cinco bajas eliminadas por el modo
+explícito `--prune-missing` del importador (manifiesto versionado;
+el comportamiento por defecto sigue sin borrar). La copia previa
+acreditada permanece en el servidor como punto de rollback. Los
+frentes futuros (Sexo en texto libre, citas F2 sin URL, corrección
+manual de AU-08 — esta última ya resuelta por el propio libro)
+quedan registrados en PENDIENTES sin ejecutar.

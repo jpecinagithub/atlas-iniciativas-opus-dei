@@ -142,13 +142,20 @@ try {
       glyphErrors.push(m.text());
     }
   });
+  // Advertencias de consola en general: el hotfix 2 exige cero
+  // advertencias durante su recorrido (grupo de Piura); se cuentan
+  // aparte y se comprueba el tramo, no toda la sesión.
+  const warnings = [];
+  page.on('console', (m) => {
+    if (m.type() === 'warning') warnings.push(m.text());
+  });
 
   await page.goto(BASE, { waitUntil: 'load' });
-  await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
+  await page.getByText('1.411 iniciativas').first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(6000); // primer render del globo (sin GPU es lento)
-  check('Mundo: contador total', true, '1.382 iniciativas');
+  check('Mundo: contador total', true, '1.411 iniciativas');
   const worldCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
-  check('Mundo: 70 países y 942 con ubicación', worldCounters.includes('70') && worldCounters.includes('942'), worldCounters.replace(/\n/g, ' '));
+  check('Mundo: 69 países y 1.317 con ubicación', worldCounters.includes('69') && worldCounters.includes('1.317'), worldCounters.replace(/\n/g, ' '));
   check('Inmersivo (7B): acción primaria «Explorar por país» y secundaria de categorías visibles',
     await page.getByRole('button', { name: /Explorar por país/ }).isVisible() &&
     await page.getByRole('button', { name: /Categorías/ }).first().isVisible(), '');
@@ -183,8 +190,8 @@ try {
 
   // España
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '296');
-  check('España: 296 iniciativas', true, 'contadores');
+  await waitCounters(page, '299');
+  check('España: 299 iniciativas', true, 'contadores');
   await page.screenshot({ path: join(SHOTS, '02-espana-desktop.png') });
 
   // Colegios
@@ -198,10 +205,10 @@ try {
   const ctx = page.getByLabel('Contexto de España').first();
   await ctx.waitFor({ timeout: 10000 });
   const ctxText = await ctx.innerText();
-  check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('296'), '');
+  check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('299'), '');
   check('Contexto de país: desglose por categoría (Colegios 108)', /Colegios\s+108/.test(ctxText), '');
   check('País (7B): el panel muestra «Sin punto» junto a iniciativas y con ubicación',
-    ctxText.includes('Sin punto') && ctxText.includes('272'), '');
+    ctxText.includes('Sin punto') && ctxText.includes('283'), '');
   const brand = await page.evaluate(() => {
     const h1 = document.querySelector('h1');
     const input = document.querySelector('#buscador');
@@ -298,7 +305,7 @@ try {
   // que no son URLs (textos documentales, dominios desnudos, comillas
   // tipográficas). Deben mostrarse como texto, nunca como enlace/visor.
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
   const normCases = await page.evaluate(() => {
     const n = (window).__atlasNormalize;
     return [
@@ -344,8 +351,8 @@ try {
 
   // Restablecer
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
-  check('Restablecer: vuelve a 1.382', true, 'contadores');
+  await waitCounters(page, '1.411');
+  check('Restablecer: vuelve a 1.411', true, 'contadores');
 
   // Países Bajos: NL intacto
   await page.getByRole('button', { name: /^Países Bajos/ }).first().click();
@@ -355,16 +362,17 @@ try {
   const nlList = await page.getByRole('list', { name: 'Resultados' }).innerText();
   check('Países Bajos: Club De Reusel en la lista', nlList.includes('Club De Reusel'), '');
 
-  // Registro sin coordenadas: ES-218 Can Viladoms
+  // Registro sin coordenadas: ES-19 EFA Quintanes (ES-218, el
+  // ejemplo anterior, quedó resuelto con punto en el v15-5)
   await page.getByRole('button', { name: 'Restablecer' }).click();
   await page.waitForTimeout(600);
-  await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Can Viladoms');
+  await page.getByLabel('Buscar por nombre, localidad, región o entidad titular').fill('Quintanes');
   await page.waitForTimeout(700);
   const sinPuntoCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   check('Sin coordenadas: cuenta en totales, 0 con ubicación', sinPuntoCounters.includes('1 iniciativas') && sinPuntoCounters.includes('0 con ubicación'), sinPuntoCounters.replace(/\n/g, ' '));
   const listaSinPunto = await page.getByRole('list', { name: 'Resultados' }).innerText();
-  check('Sin coordenadas: aparece en la lista con distintivo', listaSinPunto.includes('Can Viladoms') && listaSinPunto.includes('sin punto'), '');
-  await page.getByRole('button', { name: /Can Viladoms/ }).first().click();
+  check('Sin coordenadas: aparece en la lista con distintivo', listaSinPunto.includes('EFA Quintanes') && listaSinPunto.includes('sin punto'), '');
+  await page.getByRole('button', { name: /EFA Quintanes/ }).first().click();
   await page.waitForTimeout(500);
   const fichaSinPunto = await page.getByRole('article').innerText();
   check('Sin coordenadas: la ficha lo explica', fichaSinPunto.includes('Sin ubicación en el mapa'), '');
@@ -387,9 +395,9 @@ try {
 
   // Historial atrás/adelante: cada lugar de la exploración es una entrada
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '296');
+  await waitCounters(page, '299');
   await page.getByRole('checkbox', { name: /Colegios/ }).check();
   await waitCounters(page, '108');
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
@@ -400,14 +408,14 @@ try {
   check('Historial: atrás cierra la ficha y mantiene España + Colegios',
     !page.url().includes('sel=') && page.url().includes('pais=ES') && page.url().includes('categorias=Colegios'), page.url());
   await page.goBack();
-  await waitCounters(page, '296');
+  await waitCounters(page, '299');
   check('Historial: atrás quita las categorías y mantiene España',
     !page.url().includes('categorias=') && page.url().includes('pais=ES'), page.url());
   await page.goBack();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
   check('Historial: atrás vuelve al mundo', !page.url().includes('pais='), page.url());
   await page.goForward();
-  await waitCounters(page, '296');
+  await waitCounters(page, '299');
   check('Historial: adelante vuelve a España', page.url().includes('pais=ES'), page.url());
   await page.goForward();
   await waitCounters(page, '108');
@@ -440,17 +448,33 @@ try {
   };
   const selectorDialog = () => page.getByRole('dialog', { name: /iniciativas en esta ubicación/ });
   const selectorOpen = async () => page.evaluate(() => !!document.querySelector('div[role="dialog"]'));
+  // Estado observable del spiderfy y del mapa (hotfix 2): puntos y
+  // líneas desplegados (deduplicados por id), resaltado `sel` por
+  // iniciativa, cámara y si el marcador 3D está renderizando.
+  const spiderState = (pg) => pg.evaluate(() => {
+    const map = window.__atlasMap;
+    const feats = (src) => map?.querySourceFeatures(src) ?? [];
+    const pts = [...new Set(feats('desplegados').map((f) => f.properties?.id).filter(Boolean))].sort();
+    const lines = new Set(feats('desplegados-lineas').map((f) => f.properties?.id).filter(Boolean)).size;
+    const sel = {};
+    for (const f of feats('desplegados')) if (f.properties?.id) sel[f.properties.id] = f.properties.sel === true;
+    return {
+      zoom: map.getZoom(), center: map.getCenter().toArray(),
+      pts, lines, sel,
+      markerVisible: window.__atlasMarker?.lastRender?.visible ?? false,
+    };
+  });
 
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
 
   // --- Las Palmas: España + Asociaciones juveniles, grupo de 2
   await page.getByRole('button', { name: /Categorías/ }).first().click();
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '296');
+  await waitCounters(page, '299');
   await page.getByRole('checkbox', { name: /Asociaciones juveniles/ }).check();
-  await waitCounters(page, '60 iniciativas');
+  await waitCounters(page, '59 iniciativas');
   await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 8, duration: 700 }));
   await page.waitForTimeout(2800);
   await clickAtLngLat([-15.41573, 28.10178]);
@@ -498,13 +522,40 @@ try {
   check('Hotfix clústeres: el selector recibe el foco al abrir',
     focusInSelector.includes('iniciativas en esta ubicación'), focusInSelector);
 
-  // Abrir la ficha de Club Guayre desde el selector
+  // Abrir la ficha de Club Guayre desde el selector. HOTFIX 2
+  // (2026-11-13): antes la selección ponía coincident = null y el
+  // spiderfy desaparecía al consultar la ficha; ahora la lista se
+  // oculta pero el grupo PERMANECE desplegado, sin mover el mapa
+  // y sin marcador 3D, con la iniciativa resaltada en el despliegue.
+  const camAntesGuayre = await page.evaluate(() => ({
+    zoom: window.__atlasMap.getZoom(), center: window.__atlasMap.getCenter().toArray(),
+  }));
   await selectorDialog().getByRole('button', { name: /Club Guayre/ }).click();
   await page.getByRole('heading', { name: 'Club Guayre' }).waitFor({ timeout: 10000 });
-  check('Hotfix clústeres: Club Guayre abre su ficha desde el selector (sel=ES-199) y el selector se cierra',
+  await page.waitForTimeout(600);
+  check('Hotfix 2: Club Guayre abre su ficha desde el selector (sel=ES-199) y la lista se oculta',
     page.url().includes('sel=ES-199') && (await selectorDialog().count()) === 0, page.url());
+  const trasGuayre = await spiderState(page);
+  check('Hotfix 2: con la ficha abierta, el grupo sigue desplegado (2 puntos y 2 líneas) y Guayre va resaltado',
+    trasGuayre.pts.join() === 'ES-199,ES-200' && trasGuayre.lines === 2 &&
+    trasGuayre.sel['ES-199'] === true && trasGuayre.sel['ES-200'] === false,
+    JSON.stringify(trasGuayre.sel));
+  check('Hotfix 2: abrir la ficha no mueve el mapa ni muestra el marcador 3D en el ancla',
+    trasGuayre.zoom === camAntesGuayre.zoom && trasGuayre.center.join() === camAntesGuayre.center.join() &&
+    !trasGuayre.markerVisible,
+    `zoom ${camAntesGuayre.zoom}→${trasGuayre.zoom}`);
+  // Escape por etapas: el primero cierra la ficha y RECUPERA el
+  // selector con el grupo intacto; el segundo cierra el grupo.
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
+  check('Hotfix 2: primer Escape cierra la ficha y vuelve el selector con el grupo intacto',
+    (await page.getByRole('article').count()) === 0 &&
+    (await selectorDialog().count()) === 1 &&
+    (await spiderState(page)).pts.join() === 'ES-199,ES-200', '');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  check('Hotfix 2: segundo Escape cierra el grupo y vacía el spiderfy',
+    (await selectorDialog().count()) === 0 && (await spiderState(page)).pts.length === 0, '');
 
   // Reabrir y abrir Asociación Gara pulsando su PUNTO DESPLEGADO
   await clickAtLngLat([-15.41573, 28.10178]);
@@ -521,8 +572,13 @@ try {
   }, null, { polling: 100, timeout: 10000 }).then((h) => h.jsonValue());
   await page.mouse.click(garaPx.x, garaPx.y);
   await page.getByRole('heading', { name: 'Asociación Gara' }).waitFor({ timeout: 10000 });
-  check('Hotfix clústeres: el punto desplegado de Asociación Gara abre su ficha (sel=ES-200)',
-    page.url().includes('sel=ES-200'), page.url());
+  await page.waitForTimeout(500);
+  check('Hotfix 2: el punto desplegado de Asociación Gara abre su ficha (sel=ES-200) con el grupo desplegado',
+    page.url().includes('sel=ES-200') && (await spiderState(page)).pts.join() === 'ES-199,ES-200', page.url());
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  check('Hotfix 2: Escape recupera el selector tras cerrar la ficha de Gara',
+    (await selectorDialog().count()) === 1, '');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
 
@@ -557,20 +613,21 @@ try {
   check('Hotfix clústeres: cambiar la categoría cierra el selector y vacía el spiderfy',
     (await selectorDialog().count()) === 0 && spiderAfterFilter, '');
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
 
-  // --- Sevilla: 16 iniciativas en la misma coordenada (el encargo
-  // decía 7 por error; la realidad de los datos v14 es 16).
+  // --- Sevilla: 15 iniciativas en la misma coordenada (el encargo
+  // decía 7 por error; eran 16 en el v14 y son 15 en el v15-5,
+  // tras la baja de ES-236).
   await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-5.97317, 37.38283], zoom: 10, duration: 700 }));
   await page.waitForTimeout(2800);
   await clickAtLngLat([-5.97317, 37.38283]);
   await selectorDialog().waitFor({ timeout: 12000 });
-  check('Hotfix clústeres: Sevilla muestra «16 iniciativas en Sevilla» (16 reales, no 7)',
-    await selectorDialog().getByText('16 iniciativas en Sevilla').isVisible(), '');
+  check('Hotfix clústeres: Sevilla muestra «15 iniciativas en Sevilla» (15 reales en el v15-5, no 7)',
+    await selectorDialog().getByText('15 iniciativas en Sevilla').isVisible(), '');
   const sevillaItems = await selectorDialog().locator('li').count();
   const sevillaText = await selectorDialog().textContent() ?? '';
-  check('Hotfix clústeres: el selector de Sevilla lista las 16 iniciativas',
-    sevillaItems === 16 && sevillaText.includes('Colegio de Fomento Tabladilla') &&
+  check('Hotfix clústeres: el selector de Sevilla lista las 15 iniciativas',
+    sevillaItems === 15 && sevillaText.includes('Colegio de Fomento Tabladilla') &&
     sevillaText.includes('Colegio Mayor Guadaira') && sevillaText.includes('Centro Educativo Altair'),
     `${sevillaItems} elementos`);
   await page.keyboard.press('Escape');
@@ -622,7 +679,99 @@ try {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
+
+  // ===== Hotfix 2 (2026-11-13): consultar las fichas del grupo
+  // sin desmontarlo. Grupo de Piura: PE-01 (Universidad de Piura),
+  // PE-12 (Colegio Turicará) y PE-13 (Colegio Vallesol) comparten
+  // la coordenada representativa de la localidad (-5.18192,
+  // -80.65715). Es el caso que reportó Jon con Turicará. =====
+  const warningsAntesPiura = warnings.length;
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-80.65715, -5.18192], zoom: 11, duration: 700 }));
+  await page.waitForTimeout(2800);
+  await clickAtLngLat([-80.65715, -5.18192]);
+  await selectorDialog().waitFor({ timeout: 12000 });
+  check('Hotfix 2: Piura abre el selector «3 iniciativas en Piura»',
+    await selectorDialog().getByText('3 iniciativas en Piura').isVisible(), '');
+  // La fuente de las líneas se reprocesa en el worker tras abrir:
+  // se espera al despliegue completo, no se lee en el acto.
+  const piuraSpiderOk = await page.waitForFunction(() => {
+    const map = window.__atlasMap;
+    const uniq = (src) => new Set((map?.querySourceFeatures(src) ?? []).map((f) => f.properties?.id));
+    const pts = uniq('desplegados');
+    const lines = uniq('desplegados-lineas');
+    return pts.size === 3 && pts.has('PE-01') && pts.has('PE-12') && pts.has('PE-13') && lines.size === 3;
+  }, null, { polling: 100, timeout: 10000 }).then(() => true).catch(() => false);
+  const piuraAbierto = await spiderState(page);
+  check('Hotfix 2: el spiderfy de Piura despliega 3 puntos con sus líneas (PE-01, PE-12, PE-13)',
+    piuraSpiderOk, piuraAbierto.pts.join());
+  const camPiura = { zoom: piuraAbierto.zoom, center: piuraAbierto.center };
+  const clickDesplegado = async (id) => {
+    const px = await page.waitForFunction((target) => {
+      const map = window.__atlasMap;
+      const f = (map.querySourceFeatures('desplegados') ?? []).find((x) => x.properties?.id === target);
+      if (!f) return null;
+      const p = map.project(f.geometry.coordinates);
+      return { x: p.x, y: p.y };
+    }, id, { polling: 100, timeout: 10000 }).then((h) => h.jsonValue());
+    await page.mouse.click(px.x, px.y);
+  };
+  // Ficha 1 — Colegio Turicará, desde la tarjeta del selector
+  await selectorDialog().getByRole('button', { name: /Colegio Turicará/ }).click();
+  await page.getByRole('heading', { name: 'Colegio Turicará' }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(600);
+  const trasTuricara = await spiderState(page);
+  check('Hotfix 2: la ficha de Turicará se abre con el grupo desplegado y la lista oculta',
+    page.url().includes('sel=PE-12') && (await selectorDialog().count()) === 0 &&
+    trasTuricara.pts.join() === 'PE-01,PE-12,PE-13' && trasTuricara.lines === 3, page.url());
+  const anilloTuricara = await page.evaluate(() =>
+    (window.__atlasMap.queryRenderedFeatures({ layers: ['desplegados-resaltado'] }) ?? [])
+      .map((f) => f.properties?.id));
+  check('Hotfix 2: Turicará queda resaltado con anillo en el spiderfy y es el único',
+    trasTuricara.sel['PE-12'] === true && trasTuricara.sel['PE-01'] === false &&
+    trasTuricara.sel['PE-13'] === false && anilloTuricara.join() === 'PE-12',
+    JSON.stringify(trasTuricara.sel));
+  check('Hotfix 2: ni el mapa se mueve ni aparece el marcador 3D con la ficha del grupo abierta',
+    trasTuricara.zoom === camPiura.zoom && trasTuricara.center.join() === camPiura.center.join() &&
+    !trasTuricara.markerVisible, `zoom ${camPiura.zoom}→${trasTuricara.zoom}`);
+  // Ficha 2 — Colegio Vallesol, desde su punto desplegado
+  await clickDesplegado('PE-13');
+  await page.getByRole('heading', { name: 'Colegio Vallesol' }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(500);
+  const trasVallesol = await spiderState(page);
+  check('Hotfix 2: el punto de Vallesol cambia la ficha sin cerrar ni recalcular el grupo',
+    page.url().includes('sel=PE-13') && trasVallesol.pts.join() === 'PE-01,PE-12,PE-13' &&
+    trasVallesol.sel['PE-13'] === true && trasVallesol.sel['PE-12'] === false &&
+    trasVallesol.zoom === camPiura.zoom && trasVallesol.center.join() === camPiura.center.join(), page.url());
+  // Ficha 3 — Universidad de Piura, desde su punto desplegado
+  await clickDesplegado('PE-01');
+  await page.getByRole('heading', { name: /Universidad de Piura/ }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(500);
+  const trasUdep = await spiderState(page);
+  check('Hotfix 2: la tercera ficha (Universidad de Piura) mantiene el despliegue y el resaltado pasa a PE-01',
+    page.url().includes('sel=PE-01') && trasUdep.pts.join() === 'PE-01,PE-12,PE-13' &&
+    trasUdep.sel['PE-01'] === true && !trasUdep.markerVisible, page.url());
+  // Cerrar la ficha con su botón: vuelve el selector, grupo intacto
+  await page.getByRole('button', { name: 'Cerrar ficha' }).click();
+  await selectorDialog().waitFor({ timeout: 10000 });
+  const trasCerrarFicha = await spiderState(page);
+  check('Hotfix 2: al cerrar la ficha vuelve el selector y el spiderfy sigue intacto',
+    (await selectorDialog().locator('li').count()) === 3 &&
+    trasCerrarFicha.pts.join() === 'PE-01,PE-12,PE-13', '');
+  // Historial: la ficha del grupo crea entrada; atrás la cierra y
+  // también cierra el grupo (applyStateFromUrl no restaura grupos).
+  await selectorDialog().getByRole('button', { name: /Colegio Turicará/ }).click();
+  await page.getByRole('heading', { name: 'Colegio Turicará' }).waitFor({ timeout: 10000 });
+  await page.goBack();
+  await page.waitForTimeout(700);
+  check('Hotfix 2: atrás en el historial cierra la ficha y el grupo',
+    !page.url().includes('sel=') && (await selectorDialog().count()) === 0 &&
+    (await spiderState(page)).pts.length === 0, page.url());
+  check('Hotfix 2: sin advertencias de consola durante el recorrido del grupo de Piura',
+    warnings.length === warningsAntesPiura,
+    warnings.slice(warningsAntesPiura).slice(0, 2).join(' | '));
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.411');
 
   // PWA (Fase 5): manifiesto, service worker y carcasa sin conexión
   const manifest = await page.evaluate(async () => {
@@ -650,9 +799,9 @@ try {
   // ya controlada por el service worker. Se restablece el mundo, se
   // recarga en línea (segunda visita) y solo entonces se corta la red.
   await page.getByRole('button', { name: 'Restablecer' }).first().click();
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
   await page.reload({ waitUntil: 'load' });
-  await waitCounters(page, '1.382');
+  await waitCounters(page, '1.411');
   offlineDrill = true;
   await page.context().setOffline(true);
   await page.reload({ waitUntil: 'load' });
@@ -663,11 +812,11 @@ try {
   // (la API responde vía NetworkFirst desde el service worker).
   let offlineCounters = '';
   try {
-    await waitCounters(page, '1.382', 30000);
+    await waitCounters(page, '1.411', 30000);
     offlineCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   } catch { /* counters quedan vacíos y la comprobación falla */ }
-  check('PWA: sin conexión, abre con lo último consultado (1.382 iniciativas)',
-    offlineCounters.includes('1.382'), offlineCounters.replace(/\n/g, ' '));
+  check('PWA: sin conexión, abre con lo último consultado (1.411 iniciativas)',
+    offlineCounters.includes('1.411'), offlineCounters.replace(/\n/g, ' '));
   await page.context().setOffline(false);
   await page.reload({ waitUntil: 'load' });
   await page.waitForTimeout(1000);
@@ -677,7 +826,7 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, ...contextOptions });
   mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '', frameHost: null, offline: false }));
   await mobile.goto(BASE, { waitUntil: 'load' });
-  await mobile.locator('text=1.382 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
+  await mobile.locator('text=1.411 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
   await mobile.screenshot({ path: join(SHOTS, '07-movil-mundo.png') });
   const mobileOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -726,19 +875,68 @@ try {
   await mobile.getByRole('heading', { name: 'Asociación Gara' }).waitFor({ timeout: 10000 });
   check('Hotfix móvil: Asociación Gara abre su ficha desde el selector (sel=ES-200)',
     mobile.url().includes('sel=ES-200'), mobile.url());
+  // Hotfix 2 en móvil: la ficha se abre en la pestaña Ficha y la
+  // hoja del selector se oculta, pero los puntos del grupo
+  // PERMANECEN desplegados en el mapa; al cerrar la ficha, la
+  // lista del grupo vuelve.
+  const lpMovilTrasFicha = await mobile.evaluate(() =>
+    [...new Set((window.__atlasMap?.querySourceFeatures('desplegados') ?? []).map((f) => f.properties?.id))].sort());
+  check('Hotfix 2 móvil: con la ficha abierta, el grupo de Las Palmas sigue desplegado en el mapa',
+    lpMovilTrasFicha.join() === 'ES-199,ES-200' && (await mobileDialog.count()) === 0,
+    lpMovilTrasFicha.join());
+  await mobile.locator('button[aria-label="Cerrar ficha"]:visible').first().click();
+  await mobileDialog.waitFor({ timeout: 10000 });
+  check('Hotfix 2 móvil: al cerrar la ficha vuelve la hoja del selector con el grupo intacto',
+    await mobileDialog.getByText('2 iniciativas en Las Palmas de Gran Canaria').isVisible(), '');
+  await mobileDialog.getByRole('button', { name: 'Cerrar selector' }).click();
+  await mobile.waitForTimeout(400);
+
+  // Hotfix 2 en móvil: el grupo de Piura completo (el caso de Jon).
+  await mobile.getByRole('button', { name: 'Cambiar la altura del panel' }).click();
+  await mobile.waitForTimeout(400);
+  await mobile.getByRole('button', { name: 'Cambiar la altura del panel' }).click();
+  await mobile.waitForTimeout(400);
+  await mobile.evaluate(() => window.__atlasMap?.flyTo({ center: [-80.65715, -5.18192], zoom: 10, duration: 600 }));
+  await mobile.waitForTimeout(2800);
+  const piuraMovilPt = await mobile.evaluate(() => {
+    const p = window.__atlasMap.project([-80.65715, -5.18192]);
+    return { x: p.x, y: p.y };
+  });
+  await mobile.touchscreen.tap(piuraMovilPt.x, piuraMovilPt.y);
+  const piuraDialog = mobile.getByRole('dialog', { name: /iniciativas en esta ubicación/ });
+  await piuraDialog.waitFor({ timeout: 12000 });
+  check('Hotfix 2 móvil: Piura abre el selector «3 iniciativas en Piura»',
+    await piuraDialog.getByText('3 iniciativas en Piura').isVisible(), '');
+  await piuraDialog.getByRole('button', { name: /Colegio Turicará/ }).click();
+  await mobile.getByRole('heading', { name: 'Colegio Turicará' }).waitFor({ timeout: 10000 });
+  await mobile.waitForTimeout(500);
+  const piuraMovilTrasFicha = await mobile.evaluate(() => ({
+    pts: [...new Set((window.__atlasMap?.querySourceFeatures('desplegados') ?? []).map((f) => f.properties?.id))].sort(),
+    tabActiva: document.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.trim() ?? '',
+  }));
+  check('Hotfix 2 móvil: la ficha de Turicará se abre en la pestaña Ficha con el grupo desplegado y el selector oculto',
+    mobile.url().includes('sel=PE-12') && piuraMovilTrasFicha.pts.join() === 'PE-01,PE-12,PE-13' &&
+    /ficha/i.test(piuraMovilTrasFicha.tabActiva) && (await piuraDialog.count()) === 0,
+    piuraMovilTrasFicha.pts.join());
+  await mobile.locator('button[aria-label="Cerrar ficha"]:visible').first().click();
+  await piuraDialog.waitFor({ timeout: 10000 });
+  check('Hotfix 2 móvil: al cerrar la ficha vuelve la lista del grupo de Piura',
+    await piuraDialog.getByText('3 iniciativas en Piura').isVisible(), '');
+  await piuraDialog.getByRole('button', { name: 'Cerrar selector' }).click();
+  await mobile.waitForTimeout(400);
 
   // Movimiento reducido (7B): sin vuelos animados, todo funciona igual
   const rmContext = await browser.newContext({ reducedMotion: 'reduce', ...contextOptions });
   const rm = await rmContext.newPage();
   rm.on('pageerror', (e) => errors.push({ text: `reduced-motion: ${e}`, url: '', frameHost: null, offline: false }));
   await rm.goto(BASE, { waitUntil: 'load' });
-  await rm.getByText('1.382 iniciativas').first().waitFor({ timeout: 30000 });
+  await rm.getByText('1.411 iniciativas').first().waitFor({ timeout: 30000 });
   await rm.getByRole('button', { name: /Explorar por país/ }).click();
   await rm.waitForTimeout(400);
   await rm.getByRole('button', { name: /^España/ }).first().click();
-  await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/296/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
+  await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/299/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
   const rmCounters = await rm.getByRole('status', { name: 'Contadores' }).first().innerText();
-  check('Movimiento reducido (7B): navegar a España funciona sin animación', rmCounters.includes('296'), rmCounters.replace(/\n/g, ' '));
+  check('Movimiento reducido (7B): navegar a España funciona sin animación', rmCounters.includes('299'), rmCounters.replace(/\n/g, ' '));
   await rmContext.close();
 
   // Errores esperados, clasificados de forma exclusiva: SOLO los del

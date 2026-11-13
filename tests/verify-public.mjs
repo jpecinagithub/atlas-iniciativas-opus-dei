@@ -23,6 +23,9 @@ const OUT = join(ROOT, 'docs', 'fase-7b');
 const BASE = 'https://jpecina.duckdns.org:8443/atlas/';
 const PROFILE = '/tmp/atlas-perfil-heredado';
 const mode = process.argv[2];
+// Titular esperado en portada; cambia con cada migración de datos
+// (semilla v14 por defecto; tras migrar: ATLAS_HEADLINE='1.411 iniciativas').
+const HEADLINE = process.env.ATLAS_HEADLINE ?? '1.382 iniciativas';
 if (!['seed', 'migrate', 'fresh'].includes(mode)) throw new Error('Modo: seed | migrate | fresh');
 
 const args = [
@@ -53,7 +56,7 @@ if (mode === 'seed' || mode === 'migrate') {
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
   await page.goto(BASE, { waitUntil: 'load' });
-  await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 45000 });
+  await page.getByText(HEADLINE).first().waitFor({ timeout: 45000 });
   await page.waitForTimeout(4000);
   const version = await servedVersion(page);
   const sw = await activeSw(page);
@@ -63,7 +66,7 @@ if (mode === 'seed' || mode === 'migrate') {
     // y recargar para quedar bajo su control.
     await page.waitForTimeout(6000);
     await page.reload({ waitUntil: 'load' });
-    await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 45000 });
+    await page.getByText(HEADLINE).first().waitFor({ timeout: 45000 });
     await page.waitForTimeout(3000);
     const sw2 = await activeSw(page);
     console.log(JSON.stringify({ mode: mode + '-tras-recarga', version: await servedVersion(page), sw: sw2, errors }, null, 1));
@@ -79,7 +82,7 @@ if (mode === 'seed' || mode === 'migrate') {
   page.on('requestfailed', (r) => errors.push('requestfailed: ' + r.url().slice(0, 110)));
   page.on('response', (r) => { if (r.status() >= 400) errors.push('http ' + r.status() + ': ' + r.url().slice(0, 130)); });
   await page.goto(BASE, { waitUntil: 'load' });
-  await page.getByText('1.382 iniciativas').first().waitFor({ timeout: 45000 });
+  await page.getByText(HEADLINE).first().waitFor({ timeout: 45000 });
   await page.waitForTimeout(6500);
   mkdirSync(OUT, { recursive: true });
   await page.screenshot({ path: join(OUT, 'publica-mundo.png') });

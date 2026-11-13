@@ -19,11 +19,30 @@
  *   coincide con el Excel presente, la importación se RECHAZA antes de
  *   abrir la transacción: ninguna corrida puede acreditar una versión
  *   que no es la importada.
+ *
+ * Modo de poda (opt-in, Fase 8B): con `--prune-missing` el importador
+ * puede BORRAR las iniciativas ausentes, pero solo las listadas en el
+ * manifiesto versionado apps/api/prune-manifest.v15-5.json y solo tras
+ * comprobar, antes de escribir nada, que:
+ *   1. el SHA-256 del Excel entrante es EXACTAMENTE el del manifiesto;
+ *   2. ningún ID del manifiesto aparece en el conjunto entrante;
+ *   3. el conjunto de ausentes en base coincide con el manifiesto:
+ *      ninguna baja adicional (de iniciativas, países o fuentes) fuera
+ *      de él — si la hay, la corrida ABORTA sin escribir.
+ * Upserts, recreación de relaciones y borrados van en la MISMA
+ * transacción: cualquier discrepancia la revierte entera. La corrida
+ * registra la poda (deleted, ids, relationsDeleted) en su resumen.
+ * Sin el flag, el comportamiento es el de siempre: no se borra nada.
+ * La poda es idempotente: repetir la corrida da deleted: 0.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pool, ensureMigrated, repoRoot } from './db.js';
+
+// Modo de poda: solo con el flag explícito. Sin él, nada se borra.
+const PRUNE = process.argv.slice(2).includes('--prune-missing');
+const PRUNE_MANIFEST_PATH = process.env.PRUNE_MANIFEST_PATH ?? null;
 
 function canonical(v: unknown): string {
   if (v === null || typeof v !== 'object') return JSON.stringify(v) ?? 'null';
@@ -76,8 +95,32 @@ async function upsertTable(
   return { inserted, updated, unchanged, missing };
 }
 
+/**
+ * Carga el manifiesto de poda (modo --prune-missing). Sin el flag no se
+ * lee siquiera. Con el flag, un manifiesto ausente o mal formado aborta
+ * la importación antes de abrir la transacción.
+ */
+interface PruneManifest { file: string; sha256: string; ids: string[] }
+
+function loadPruneManifest(root: string): PruneManifest {
+  const path = PRUNE_MANIFEST_PATH ?? join(root, 'apps/api/prune-manifest.v15-5.json');
+  if (!existsSync(path)) {
+    throw new Error(`--prune-missing: no existe el manifiesto de poda (${path}). Importación abortada sin escribir.`);
+  }
+  const raw = JSON.parse(readFileSync(path, 'utf-8'));
+  const ids: unknown = raw.ids;
+  if (typeof raw.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(raw.sha256)
+      || !Array.isArray(ids) || ids.length === 0
+      || !ids.every((x) => typeof x === 'string' && x.length > 0)
+      || new Set(ids as string[]).size !== (ids as string[]).length) {
+    throw new Error(`--prune-missing: manifiesto de poda mal formado (${path}). Importación abortada sin escribir.`);
+  }
+  return { file: path, sha256: raw.sha256 as string, ids: ids as string[] };
+}
+
 async function main(): Promise<void> {
   const root = repoRoot();
+  const manifest = PRUNE ? loadPruneManifest(root) : null;
   const catalog = JSON.parse(readFileSync(join(root, 'apps/web/public/data/catalog.json'), 'utf-8'));
   const sourcesFile = JSON.parse(readFileSync(join(root, 'data/generated/sources.json'), 'utf-8'));
   const sourceName: string = catalog.meta.sourceFile;
@@ -99,6 +142,25 @@ async function main(): Promise<void> {
       `Importación rechazada: ${problems.join('; ')}. ` +
       `El hash del Excel presente es ${fileSha}. Regenera los artefactos con «npm run data» y vuelve a intentarlo.`,
     );
+  }
+
+  // Modo de poda, comprobaciones previas SIN base de datos (antes de
+  // migrar y de abrir la transacción): el SHA entrante debe ser el del
+  // manifiesto y ningún ID del manifiesto puede venir en el archivo.
+  if (manifest) {
+    if (fileSha !== manifest.sha256) {
+      throw new Error(
+        `--prune-missing: el SHA-256 del Excel entrante (${fileSha}) no coincide con el del manifiesto ` +
+        `(${manifest.sha256}). Poda abortada sin escribir.`,
+      );
+    }
+    const present = manifest.ids.filter((id) => (catalog.initiatives as Row[]).some((i) => i.id === id));
+    if (present.length > 0) {
+      throw new Error(
+        `--prune-missing: el manifiesto lista IDs que SÍ vienen en el archivo entrante (${present.join(', ')}). ` +
+        'Poda abortada sin escribir.',
+      );
+    }
   }
 
   await ensureMigrated();
@@ -136,6 +198,39 @@ async function main(): Promise<void> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+
+    // Modo de poda: DENTRO de la transacción pero ANTES de cualquier
+    // escritura, el conjunto de ausentes (en base, no en el archivo)
+    // debe coincidir con el manifiesto. Lo que se borrará es
+    // exactamente ese conjunto intersectado con el manifiesto; una
+    // baja adicional fuera de él (o cualquier ausente de países o
+    // fuentes) aborta y la transacción se revierte sin haber escrito.
+    let pruneIds: string[] = [];
+    if (manifest) {
+      const missingOf = async (table: string, keyField: string, incoming: string[]): Promise<string[]> => {
+        const inDb = (await client.query(`SELECT ${keyField} AS k FROM ${table}`)).rows.map((r: any) => r.k as string);
+        const seen = new Set(incoming);
+        return inDb.filter((k) => !seen.has(k));
+      };
+      const missCountries = await missingOf('countries', 'code', countries.map((c) => c.code));
+      const missSources = await missingOf('sources', 'id', sources.map((s) => s.id));
+      const missInitiatives = await missingOf('initiatives', 'id', initiatives.map((i) => i.id));
+      const inManifest = new Set(manifest.ids);
+      const offManifest = [
+        ...missCountries.map((k) => `país ${k}`),
+        ...missSources.map((k) => `fuente ${k}`),
+        ...missInitiatives.filter((k) => !inManifest.has(k)),
+      ];
+      if (offManifest.length > 0) {
+        throw new Error(
+          `--prune-missing: hay bajas en base FUERA del manifiesto (${offManifest.join(', ')}). ` +
+          'Poda abortada: la transacción se revierte sin escribir.',
+        );
+      }
+      pruneIds = manifest.ids.filter((id) => missInitiatives.includes(id));
+      console.log(`--prune-missing: manifiesto verificado; bajas a podar: ${pruneIds.length} (${pruneIds.join(', ') || 'ninguna'})`);
+    }
+
     const run = await client.query(
       'INSERT INTO import_runs (file_name, file_sha256) VALUES ($1, $2) RETURNING id',
       [sourceName, fileSha],
@@ -180,6 +275,31 @@ async function main(): Promise<void> {
       );
     }
 
+    // Modo de poda: en la MISMA transacción, borrar primero las
+    // relaciones de las bajas (no heredadas por las entrantes, que ya
+    // se recrearon arriba) y después las iniciativas. Las bajas NO
+    // pasan a Histórico: desaparecen del conjunto certificado.
+    let pruneSummary: { manifest: string; deleted: number; ids: string[]; relationsDeleted: number } | undefined;
+    if (manifest) {
+      let relationsDeleted = 0;
+      let deleted = 0;
+      if (pruneIds.length > 0) {
+        relationsDeleted = (await client.query(
+          'DELETE FROM initiative_sources WHERE initiative_id = ANY($1)', [pruneIds],
+        )).rowCount ?? 0;
+        deleted = (await client.query(
+          'DELETE FROM initiatives WHERE id = ANY($1)', [pruneIds],
+        )).rowCount ?? 0;
+        if (deleted !== pruneIds.length) {
+          throw new Error(
+            `--prune-missing: se esperaban borrar ${pruneIds.length} iniciativas y se borraron ${deleted}. ` +
+            'La transacción se revierte entera.',
+          );
+        }
+      }
+      pruneSummary = { manifest: manifest.file, deleted, ids: pruneIds, relationsDeleted };
+    }
+
     const located = initiatives.filter((i) => i.lat !== null && i.lat !== undefined).length;
     const summary = {
       file: sourceName,
@@ -188,6 +308,7 @@ async function main(): Promise<void> {
       sources: { inserted: sRes.inserted, updated: sRes.updated, unchanged: sRes.unchanged, missingReported: sRes.missing },
       initiatives: { inserted: iRes.inserted, updated: iRes.updated, unchanged: iRes.unchanged, missingReported: iRes.missing },
       relations: { created: relCreated, ambiguousUrl: relAmbiguous, unmatchedFuente1: relUnmatched1, unmatchedFuente2: relUnmatched2 },
+      ...(pruneSummary ? { prune: pruneSummary } : {}),
       located,
       unlocated: initiatives.length - located,
     };
