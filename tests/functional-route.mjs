@@ -82,6 +82,41 @@ if (!(await apiHealth())) {
   }
   if (!(await apiHealth())) throw new Error('La API no respondió en 60 s (¿PostgreSQL en marcha?)');
 }
+// ===== Fase 8C: cifras del directorio v15-6 servido por la API =====
+const CANONICAL_CATS = ['Asociaciones juveniles', 'Casa de retiros', 'Centros Médicos',
+  'Centros culturales', 'Centros de mujeres', 'Centros de promoción social',
+  'Centros de varones', 'Clubes juveniles', 'Colegios', 'Escuelas de formación Técnica',
+  'Iglesias', 'Oficinas de Información', 'Residencias universitarias', 'Universidades'];
+{
+  const h = await apiHealth();
+  check('Datos (8C): API 1.409 · 1.387 ubicadas · 70 países · 2.728 fuentes · 2.159 relaciones',
+    h?.counts?.initiatives === 1409 && h?.counts?.located === 1387 &&
+    h?.counts?.countries === 70 && h?.counts?.sources === 2728 && h?.counts?.relations === 2159,
+    JSON.stringify(h?.counts));
+  const cat = await (await fetch(`${API}/api/catalog`)).json();
+  const items = cat.initiatives ?? [];
+  const cats = [...new Set(items.map((i) => i.category))];
+  check('Datos (8C): exactamente las 14 categorías canónicas en el catálogo',
+    cats.length === 14 && CANONICAL_CATS.every((c) => cats.includes(c)), cats.join(', '));
+  const st = {};
+  for (const i of items) st[i.verificationState] = (st[i.verificationState] ?? 0) + 1;
+  check('Datos (8C): estados 1.309 parciales · 52 contrastados · 36 Pendiente · 11 Histórico · 1 Confirmado',
+    st['Confirmado con datos parciales'] === 1309 && st['Confirmado y contrastado'] === 52 &&
+    st['Pendiente'] === 36 && st['Histórico'] === 11 && st['Confirmado'] === 1,
+    JSON.stringify(st));
+  const ids = new Set(items.map((i) => i.id));
+  check('Datos (8C): altas CO-37, ES-301, ES-302 presentes; bajas CO-32, ES-153, ES-219, ES-230, MX-47 ausentes',
+    ['CO-37', 'ES-301', 'ES-302'].every((id) => ids.has(id)) &&
+    ['CO-32', 'ES-153', 'ES-219', 'ES-230', 'MX-47'].every((id) => !ids.has(id)), '');
+  const sinPunto = items.filter((i) => i.lat == null);
+  check('Datos (8C): 22 sin punto; ES-218 y ES-240 entre ellos (pérdidas intencionadas, no regresiones)',
+    sinPunto.length === 22 && ids.has('ES-218') && ids.has('ES-240') &&
+    items.find((i) => i.id === 'ES-218')?.lat == null && items.find((i) => i.id === 'ES-240')?.lat == null,
+    `${sinPunto.length} sin punto`);
+  check('Datos (8C): 69 países con registros',
+    new Set(items.map((i) => i.countryCode)).size === 69, '');
+}
+
 if ((await apiHealth())?.counts?.initiatives === 0) {
   const { spawnSync } = await import('node:child_process');
   const imp = spawnSync(process.execPath, [join(ROOT, 'apps', 'api', 'dist', 'import.js')], {
@@ -104,6 +139,20 @@ if (process.env.ATLAS_CHROMIUM_PATH) launchOptions.executablePath = process.env.
 if (process.env.ATLAS_PROXY) launchOptions.proxy = { server: process.env.ATLAS_PROXY };
 const browser = await chromium.launch(launchOptions);
 const contextOptions = process.env.ATLAS_PROXY ? { ignoreHTTPSErrors: true } : {};
+
+// Fase 8C: las subcategorías viven dentro de su familia, plegada por
+// defecto. Despliega la familia pulsando su botón visible (puede
+// haber dos paneles en el DOM — escritorio y móvil —; se pulsa el
+// que está a la vista).
+async function expandFamily(page, familyName) {
+  const clicked = await page.evaluate((name) => {
+    const b = [...document.querySelectorAll('button')].find(
+      (x) => x.getAttribute('aria-label') === `Mostrar subcategorías de ${name}` && x.offsetParent !== null);
+    if (b) { b.click(); return true; }
+    return false;
+  }, familyName);
+  if (clicked) await page.waitForTimeout(350);
+}
 
 async function waitCounters(page, text, timeout = 25000) {
   await page.waitForFunction(
@@ -151,11 +200,29 @@ try {
   });
 
   await page.goto(BASE, { waitUntil: 'load' });
-  await page.getByText('1.411 iniciativas').first().waitFor({ timeout: 30000 });
+  await page.getByText('1.409 iniciativas').first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(6000); // primer render del globo (sin GPU es lento)
-  check('Mundo: contador total', true, '1.411 iniciativas');
+  check('Mundo: contador total', true, '1.409 iniciativas');
+  // Fase 8C: cada clúster lleva el conteo de puntos por familia
+  // (propiedades f0…f5); su suma es el total del clúster, y en el
+  // mundo hay clústeres heterogéneos (ninguna familia lo cubre).
+  const clusterFams = await page.evaluate(() => {
+    const keys = ['f0', 'f1', 'f2', 'f3', 'f4', 'f5'];
+    const clusters = (window.__atlasMap?.querySourceFeatures('iniciativas') ?? [])
+      .filter((f) => f.properties?.point_count);
+    return {
+      n: clusters.length,
+      sumaOk: clusters.length > 0 && clusters.every((c) =>
+        keys.every((k) => typeof c.properties[k] === 'number') &&
+        keys.reduce((a, k) => a + c.properties[k], 0) === c.properties.point_count),
+      heterogeneos: clusters.filter((c) => keys.every((k) => c.properties[k] < c.properties.point_count)).length,
+    };
+  });
+  check('Mapa (8C): los clústeres llevan conteos por familia que suman su total, con heterogéneos en el mundo',
+    clusterFams.sumaOk && clusterFams.heterogeneos > 0,
+    `${clusterFams.n} clústeres · ${clusterFams.heterogeneos} heterogéneos`);
   const worldCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
-  check('Mundo: 69 países y 1.317 con ubicación', worldCounters.includes('69') && worldCounters.includes('1.317'), worldCounters.replace(/\n/g, ' '));
+  check('Mundo: 69 países y 1.387 con ubicación', worldCounters.includes('69') && worldCounters.includes('1.387'), worldCounters.replace(/\n/g, ' '));
   check('Inmersivo (7B): acción primaria «Explorar por país» y secundaria de categorías visibles',
     await page.getByRole('button', { name: /Explorar por país/ }).isVisible() &&
     await page.getByRole('button', { name: /Categorías/ }).first().isVisible(), '');
@@ -181,8 +248,8 @@ try {
     (await page.getByRole('button', { name: /^España/ }).count()) === 0, '');
   await page.getByRole('button', { name: /Categorías/ }).first().click();
   await page.waitForTimeout(600);
-  check('Inmersivo (7B): «Categorías» abre el panel directamente en su sección',
-    await page.getByRole('checkbox', { name: /Colegios/ }).isVisible(), '');
+  check('Inmersivo (7B): «Categorías» abre el panel directamente en su sección (familias visibles, Fase 8C)',
+    await page.getByRole('checkbox', { name: /familia Educación/ }).isVisible(), '');
   await page.getByRole('button', { name: /Explorar por país/ }).click();
   await page.waitForTimeout(400);
   const focusPais = await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Buscar país');
@@ -190,14 +257,16 @@ try {
 
   // España
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '299');
-  check('España: 299 iniciativas', true, 'contadores');
+  await waitCounters(page, '298');
+  check('España: 298 iniciativas', true, 'contadores');
   await page.screenshot({ path: join(SHOTS, '02-espana-desktop.png') });
 
-  // Colegios
+  // Colegios (Fase 8C: dentro de la familia Educación, plegada por
+  // defecto; se despliega antes de marcar la subcategoría)
+  await expandFamily(page, 'Educación');
   await page.getByRole('checkbox', { name: /Colegios/ }).check();
-  await waitCounters(page, '108');
-  check('España + Colegios: 108 iniciativas', true, 'contadores');
+  await waitCounters(page, '110');
+  check('España + Colegios: 110 iniciativas', true, 'contadores');
   await page.screenshot({ path: join(SHOTS, '03-espana-colegios-desktop.png') });
 
   // Contexto de país (Fase 4). Existe en el panel de escritorio y en el
@@ -205,10 +274,10 @@ try {
   const ctx = page.getByLabel('Contexto de España').first();
   await ctx.waitFor({ timeout: 10000 });
   const ctxText = await ctx.innerText();
-  check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('299'), '');
-  check('Contexto de país: desglose por categoría (Colegios 108)', /Colegios\s+108/.test(ctxText), '');
+  check('Contexto de país: circunscripción y cifra del directorio', ctxText.includes('Circunscripción') && ctxText.includes('298'), '');
+  check('Contexto de país: desglose por categoría (Colegios 110)', /Colegios\s+110/.test(ctxText), '');
   check('País (7B): el panel muestra «Sin punto» junto a iniciativas y con ubicación',
-    ctxText.includes('Sin punto') && ctxText.includes('283'), '');
+    ctxText.includes('Sin punto') && ctxText.includes('289'), '');
   const brand = await page.evaluate(() => {
     const h1 = document.querySelector('h1');
     const input = document.querySelector('#buscador');
@@ -238,6 +307,9 @@ try {
     (await page.locator('section[aria-label="Panel de resultados"]:visible').count()) === 0, '');
   const ficha = await page.getByRole('article').innerText();
   check('Ficha Tajamar: localidad, estados y precisión', ficha.includes('Madrid') && ficha.includes('Confirmado con datos parciales') && ficha.includes('Ubicación aproximada'), '');
+  const fichaTxt = await page.getByRole('article').textContent() ?? '';
+  check('Ficha (8C): muestra familia y categoría canónica («Educación · Colegios»)',
+    fichaTxt.includes('Educación · Colegios'), '');
   await page.waitForTimeout(1200);
   await page.screenshot({ path: join(SHOTS, '04-ficha-tajamar-desktop.png') });
 
@@ -305,7 +377,7 @@ try {
   // que no son URLs (textos documentales, dominios desnudos, comillas
   // tipográficas). Deben mostrarse como texto, nunca como enlace/visor.
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
   const normCases = await page.evaluate(() => {
     const n = (window).__atlasNormalize;
     return [
@@ -351,8 +423,140 @@ try {
 
   // Restablecer
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
-  check('Restablecer: vuelve a 1.411', true, 'contadores');
+  await waitCounters(page, '1.409');
+  check('Restablecer: vuelve a 1.409', true, 'contadores');
+
+  // ===== Fase 8C: taxonomía visible (6 familias → 14 categorías) =====
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(600);
+  const famSection = page.locator('#panel-categorias').first();
+  const famRows = await page.evaluate(() => {
+    const sec = document.querySelector('#panel-categorias');
+    if (!sec) return { familias: [], subsVisibles: 0 };
+    const familias = [...sec.querySelectorAll('input[type="checkbox"][aria-label^="Seleccionar toda la familia"]')]
+      .map((i) => i.getAttribute('aria-label'));
+    const subsVisibles = [...sec.querySelectorAll('div[id^="subcategorias-"] input[type="checkbox"]')]
+      .filter((i) => i.offsetParent !== null).length;
+    return { familias, subsVisibles };
+  });
+  check('Taxonomía (8C): el primer nivel muestra solo las 6 familias, con las subcategorías plegadas',
+    famRows.familias.length === 6 && famRows.subsVisibles === 0,
+    famRows.familias.join(' · '));
+  // Los conteos se leen de la fila de cada familia (entre el
+  // nombre y el total va la descripción: se extrae el número que
+  // precede al chevrones de despliegue en su fila).
+  const readFamCounts = (pg) => pg.evaluate(() => {
+    const out = {};
+    for (const b of document.querySelectorAll('#panel-categorias button[aria-expanded]')) {
+      const fam = (b.getAttribute('aria-label') ?? '').replace(/^(Mostrar|Ocultar) subcategorías de /, '');
+      let row = b.parentElement;
+      while (row && !/\d[\d.]*\s*▾\s*$/.test(row.textContent ?? '')) row = row.parentElement;
+      const m = (row?.textContent ?? '').match(/(\d[\d.]*)\s*▾\s*$/);
+      out[fam] = m ? m[1] : null;
+    }
+    return out;
+  });
+  const famCounts = await readFamCounts(page);
+  check('Taxonomía (8C): conteos por familia en el mundo (Educación 524 · Centros y residencias 562 · Juventud 108)',
+    famCounts['Educación'] === '524' && famCounts['Centros y residencias'] === '562' && famCounts['Juventud'] === '108',
+    JSON.stringify(famCounts));
+  const ariaExp = await page.evaluate(() => {
+    const b = [...document.querySelectorAll('button')].find((x) => x.getAttribute('aria-label') === 'Mostrar subcategorías de Educación');
+    return b?.getAttribute('aria-expanded');
+  });
+  await expandFamily(page, 'Educación');
+  const ariaExpTras = await page.evaluate(() => {
+    const b = [...document.querySelectorAll('button')].find((x) => (x.getAttribute('aria-label') ?? '').includes('categorías de Educación'));
+    return b?.getAttribute('aria-expanded');
+  });
+  check('Taxonomía (8C): el botón de despliegue anuncia aria-expanded (false → true)',
+    ariaExp === 'false' && ariaExpTras === 'true', `${ariaExp} → ${ariaExpTras}`);
+  const eduSubs = await page.evaluate(() => {
+    const cont = document.querySelector('#subcategorias-educacion');
+    const out = {};
+    if (!cont) return out;
+    for (const lab of cont.querySelectorAll('label')) {
+      const t = lab.textContent ?? '';
+      const m = t.match(/(\d[\d.]*)\s*$/);
+      if (m) out[t.replace(/\d[\d.]*\s*$/, '').trim()] = m[1];
+    }
+    return out;
+  });
+  check('Taxonomía (8C): Educación despliega sus 3 categorías canónicas con conteos (399 · 41 · 84)',
+    eduSubs['Colegios'] === '399' && eduSubs['Universidades'] === '41' && eduSubs['Escuelas de formación Técnica'] === '84',
+    JSON.stringify(eduSubs));
+  await page.getByRole('checkbox', { name: /familia Educación/ }).first().check();
+  await waitCounters(page, '524');
+  check('Taxonomía (8C): seleccionar la familia Educación filtra sus 3 categorías (524) y la URL guarda categorías canónicas',
+    page.url().includes('categorias=') && page.url().includes('Colegios'), page.url());
+  // Desmarcar una subcategoría: la familia queda indeterminada
+  await page.getByRole('checkbox', { name: /Colegios/ }).first().uncheck();
+  await waitCounters(page, '125');
+  const eduIndet = await page.getByRole('checkbox', { name: /familia Educación/ }).first()
+    .evaluate((el) => ({ ind: el.indeterminate, aria: el.getAttribute('aria-checked') }));
+  check('Taxonomía (8C): desmarcar Colegios deja la familia indeterminada (indeterminate + aria-checked=mixed) y filtra 125',
+    eduIndet.ind === true && eduIndet.aria === 'mixed', JSON.stringify(eduIndet));
+  await famSection.getByRole('button', { name: 'Quitar todas' }).click();
+  await waitCounters(page, '1.409');
+  check('Taxonomía (8C): «Quitar todas» limpia la selección y la URL',
+    !page.url().includes('categorias='), page.url());
+  // Juventud = Asociaciones juveniles + Clubes juveniles
+  await page.getByRole('checkbox', { name: /familia Juventud/ }).first().check();
+  await waitCounters(page, '108');
+  await expandFamily(page, 'Juventud');
+  const juvSubs = await page.evaluate(() => {
+    const cont = document.querySelector('#subcategorias-juventud');
+    return cont ? [...cont.querySelectorAll('input[type="checkbox"]')].map((i) => i.checked) : [];
+  });
+  check('Taxonomía (8C): Juventud selecciona Asociaciones juveniles y Clubes juveniles (108 en el mundo)',
+    juvSubs.length === 2 && juvSubs.every(Boolean), JSON.stringify(juvSubs));
+  await page.getByRole('checkbox', { name: /familia Juventud/ }).first().uncheck();
+  await waitCounters(page, '1.409');
+  // Enlace antiguo con una sola categoría: sigue funcionando, la
+  // familia se despliega sola y su checkbox queda indeterminado
+  await page.goto(`${BASE}?categorias=Colegios`, { waitUntil: 'load' });
+  await waitCounters(page, '399');
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(600);
+  const oldLink = await page.getByRole('checkbox', { name: /familia Educación/ }).first()
+    .evaluate((el) => ({ ind: el.indeterminate })).catch(() => ({ ind: null }));
+  const colVisible = await page.getByRole('checkbox', { name: /Colegios/ }).first().isVisible().catch(() => false);
+  check('Taxonomía (8C): un enlace antiguo (?categorias=Colegios) filtra 399, despliega Educación y la deja indeterminada',
+    colVisible && oldLink.ind === true, JSON.stringify(oldLink));
+  // Conteos con país + familia: España y Educación = 145
+  await page.goto(BASE, { waitUntil: 'load' });
+  await waitCounters(page, '1.409');
+  await page.getByRole('button', { name: /Explorar por país/ }).click();
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: /^España/ }).first().click();
+  await waitCounters(page, '298');
+  await page.getByRole('button', { name: /Categorías/ }).first().click();
+  await page.waitForTimeout(500);
+  const famCountsES = await readFamCounts(page);
+  check('Taxonomía (8C): los conteos respetan el país (Educación en España = 145)',
+    famCountsES['Educación'] === '145', JSON.stringify(famCountsES));
+  await page.getByRole('checkbox', { name: /familia Educación/ }).first().check();
+  await waitCounters(page, '145');
+  check('Taxonomía (8C): España + familia Educación = 145 iniciativas', true, 'contadores');
+  await page.getByRole('button', { name: 'Restablecer' }).click();
+  await waitCounters(page, '1.409');
+  // Clúster homogéneo: el grupo coincidente de Las Palmas (2 de
+  // Juventud) forma un clúster con f_juventud = point_count
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 9, duration: 700 }));
+  await page.waitForTimeout(2800);
+  const homo = await page.evaluate(() => {
+    const keys = ['f0', 'f1', 'f2', 'f3', 'f4', 'f5'];
+    const clusters = (window.__atlasMap?.querySourceFeatures('iniciativas') ?? [])
+      .filter((f) => f.properties?.point_count);
+    const c = clusters.find((x) => x.properties.point_count === 2 &&
+      Math.abs(x.geometry.coordinates[0] + 15.41573) < 0.05 &&
+      Math.abs(x.geometry.coordinates[1] - 28.10178) < 0.05);
+    return c ? { count: c.properties.point_count, f2: c.properties.f2, solo: keys.filter((k) => c.properties[k] === c.properties.point_count) } : null;
+  });
+  check('Mapa (8C): el clúster de Las Palmas es homogéneo de Juventud (f2 = 2 = point_count)',
+    !!homo && homo.f2 === 2 && homo.solo.join() === 'f2', JSON.stringify(homo));
+  await page.evaluate(() => window.__atlasMap?.flyTo({ center: [10, 20], zoom: 1.8, duration: 700 }));
+  await page.waitForTimeout(2000);
 
   // Países Bajos: NL intacto
   await page.getByRole('button', { name: /^Países Bajos/ }).first().click();
@@ -395,30 +599,31 @@ try {
 
   // Historial atrás/adelante: cada lugar de la exploración es una entrada
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '299');
+  await waitCounters(page, '298');
+  await expandFamily(page, 'Educación');
   await page.getByRole('checkbox', { name: /Colegios/ }).check();
-  await waitCounters(page, '108');
+  await waitCounters(page, '110');
   await page.getByRole('button', { name: /Colegio Tajamar/ }).first().click();
   await page.getByRole('heading', { name: 'Colegio Tajamar' }).waitFor({ timeout: 10000 });
   check('Historial: abrir la ficha crea una entrada (sel en la URL)', page.url().includes('sel=ES-06'), page.url());
   await page.goBack();
-  await waitCounters(page, '108');
+  await waitCounters(page, '110');
   check('Historial: atrás cierra la ficha y mantiene España + Colegios',
     !page.url().includes('sel=') && page.url().includes('pais=ES') && page.url().includes('categorias=Colegios'), page.url());
   await page.goBack();
-  await waitCounters(page, '299');
+  await waitCounters(page, '298');
   check('Historial: atrás quita las categorías y mantiene España',
     !page.url().includes('categorias=') && page.url().includes('pais=ES'), page.url());
   await page.goBack();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
   check('Historial: atrás vuelve al mundo', !page.url().includes('pais='), page.url());
   await page.goForward();
-  await waitCounters(page, '299');
+  await waitCounters(page, '298');
   check('Historial: adelante vuelve a España', page.url().includes('pais=ES'), page.url());
   await page.goForward();
-  await waitCounters(page, '108');
+  await waitCounters(page, '110');
   check('Historial: adelante reaplica Colegios', page.url().includes('categorias=Colegios'), page.url());
 
   // Ficha híbrida (7B): secciones numeradas y cierre con Escape
@@ -466,13 +671,14 @@ try {
   });
 
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
 
   // --- Las Palmas: España + Asociaciones juveniles, grupo de 2
   await page.getByRole('button', { name: /Categorías/ }).first().click();
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: /^España/ }).first().click();
-  await waitCounters(page, '299');
+  await waitCounters(page, '298');
+  await expandFamily(page, 'Juventud');
   await page.getByRole('checkbox', { name: /Asociaciones juveniles/ }).check();
   await waitCounters(page, '59 iniciativas');
   await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-15.41573, 28.10178], zoom: 8, duration: 700 }));
@@ -606,6 +812,7 @@ try {
   // --- Cierre al cambiar los filtros (categoría)
   await page.getByRole('button', { name: /Categorías/ }).first().click();
   await page.waitForTimeout(500);
+  await expandFamily(page, 'Educación');
   await page.getByRole('checkbox', { name: /Colegios/ }).check();
   const spiderAfterFilter = await page.waitForFunction(() => {
     return (window.__atlasMap?.querySourceFeatures('desplegados') ?? []).length === 0;
@@ -613,11 +820,11 @@ try {
   check('Hotfix clústeres: cambiar la categoría cierra el selector y vacía el spiderfy',
     (await selectorDialog().count()) === 0 && spiderAfterFilter, '');
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
 
   // --- Sevilla: 15 iniciativas en la misma coordenada (el encargo
-  // decía 7 por error; eran 16 en el v14 y son 15 en el v15-5,
-  // tras la baja de ES-236).
+  // decía 7 por error; eran 16 en el v14, 15 desde el v15-5 por la
+  // baja de ES-236, y siguen siendo 15 en el v15-6).
   await page.evaluate(() => window.__atlasMap?.flyTo({ center: [-5.97317, 37.38283], zoom: 10, duration: 700 }));
   await page.waitForTimeout(2800);
   await clickAtLngLat([-5.97317, 37.38283]);
@@ -679,7 +886,7 @@ try {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
 
   // ===== Hotfix 2 (2026-11-13): consultar las fichas del grupo
   // sin desmontarlo. Grupo de Piura: PE-01 (Universidad de Piura),
@@ -771,7 +978,7 @@ try {
     warnings.length === warningsAntesPiura,
     warnings.slice(warningsAntesPiura).slice(0, 2).join(' | '));
   await page.getByRole('button', { name: 'Restablecer' }).click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
 
   // PWA (Fase 5): manifiesto, service worker y carcasa sin conexión
   const manifest = await page.evaluate(async () => {
@@ -799,9 +1006,9 @@ try {
   // ya controlada por el service worker. Se restablece el mundo, se
   // recarga en línea (segunda visita) y solo entonces se corta la red.
   await page.getByRole('button', { name: 'Restablecer' }).first().click();
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
   await page.reload({ waitUntil: 'load' });
-  await waitCounters(page, '1.411');
+  await waitCounters(page, '1.409');
   offlineDrill = true;
   await page.context().setOffline(true);
   await page.reload({ waitUntil: 'load' });
@@ -812,11 +1019,11 @@ try {
   // (la API responde vía NetworkFirst desde el service worker).
   let offlineCounters = '';
   try {
-    await waitCounters(page, '1.411', 30000);
+    await waitCounters(page, '1.409', 30000);
     offlineCounters = await page.getByRole('status', { name: 'Contadores' }).first().innerText();
   } catch { /* counters quedan vacíos y la comprobación falla */ }
-  check('PWA: sin conexión, abre con lo último consultado (1.411 iniciativas)',
-    offlineCounters.includes('1.411'), offlineCounters.replace(/\n/g, ' '));
+  check('PWA: sin conexión, abre con lo último consultado (1.409 iniciativas)',
+    offlineCounters.includes('1.409'), offlineCounters.replace(/\n/g, ' '));
   await page.context().setOffline(false);
   await page.reload({ waitUntil: 'load' });
   await page.waitForTimeout(1000);
@@ -826,7 +1033,7 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, ...contextOptions });
   mobile.on('pageerror', (e) => errors.push({ text: `móvil: ${e}`, url: '', frameHost: null, offline: false }));
   await mobile.goto(BASE, { waitUntil: 'load' });
-  await mobile.locator('text=1.411 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
+  await mobile.locator('text=1.409 iniciativas').locator('visible=true').first().waitFor({ timeout: 30000 });
   await mobile.waitForTimeout(5000);
   await mobile.screenshot({ path: join(SHOTS, '07-movil-mundo.png') });
   const mobileOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -930,13 +1137,13 @@ try {
   const rm = await rmContext.newPage();
   rm.on('pageerror', (e) => errors.push({ text: `reduced-motion: ${e}`, url: '', frameHost: null, offline: false }));
   await rm.goto(BASE, { waitUntil: 'load' });
-  await rm.getByText('1.411 iniciativas').first().waitFor({ timeout: 30000 });
+  await rm.getByText('1.409 iniciativas').first().waitFor({ timeout: 30000 });
   await rm.getByRole('button', { name: /Explorar por país/ }).click();
   await rm.waitForTimeout(400);
   await rm.getByRole('button', { name: /^España/ }).first().click();
-  await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/299/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
+  await rm.getByRole('status', { name: 'Contadores' }).first().getByText(/298/).first().waitFor({ timeout: 15000 }).catch(() => undefined);
   const rmCounters = await rm.getByRole('status', { name: 'Contadores' }).first().innerText();
-  check('Movimiento reducido (7B): navegar a España funciona sin animación', rmCounters.includes('299'), rmCounters.replace(/\n/g, ' '));
+  check('Movimiento reducido (7B): navegar a España funciona sin animación', rmCounters.includes('298'), rmCounters.replace(/\n/g, ' '));
   await rmContext.close();
 
   // Errores esperados, clasificados de forma exclusiva: SOLO los del

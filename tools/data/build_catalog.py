@@ -22,10 +22,18 @@ Dos modos de resolución geográfica:
      versión). No se re-geocodifica por texto ningún registro.
    - Precisión == «sin resolver»: SIN punto, aunque el libro traiga ID
      (no lo trae) o la localidad sea reconocible. Queda en listas.
-   - Si un ID no aparece en el extracto local, o la fila del extracto
-     es de otro país que el «País ISO» de la ficha, el registro queda
-     sin punto y consta como anomalía en el informe (laguna explícita,
-     nunca se rellena con otra coordenada).
+   - La comprobación de país es la del extracto contra el «País ISO»
+     GEOGRÁFICO de la ficha: si un ID no aparece en el extracto
+     local, o la fila del extracto es de otro país que el «País ISO»
+     declarado, el registro queda sin punto y consta como anomalía
+     en el informe (laguna explícita, nunca se rellena con otra
+     coordenada).
+   - Que el «País ISO» difiera del «Código país» del directorio NO
+     bloquea el punto (Fase 8C): el libro puede separar a propósito
+     el país soberano geográfico del país del directorio (caso
+     documentado: IE-15/IE-16, Belfast — País/Código IE por
+     trazabilidad, País ISO GB y GeoNames en GB). Se registra como
+     observación de trazabilidad en el informe, no como anomalía.
    - Correcciones manuales (manual_corrections.json) siguen mandando.
 
 2. Por texto (compatibilidad: libros sin bloque geográfico, p. ej. el
@@ -443,6 +451,7 @@ def main() -> int:
     ambiguous_groups: dict[str, dict] = {}
     notfound_groups: Counter = Counter()
     id_anomalies: list[dict] = []
+    id_observations: list[dict] = []
     for d in d_dicts:
         rid = d["id"]
         name, category, sexo = d["name"], d["category"], d["sexo"]
@@ -517,10 +526,16 @@ def main() -> int:
                 gid = int(gid_val)
                 rec["queryUsed"] = f"geonames-id|{gid}"
                 if iso != str(ccode).strip():
-                    geo_stats["iso_mismatch"] += 1
-                    id_anomalies.append({"id": rid, "geonameId": gid, "reason": "iso_mismatch",
-                                         "detail": f"País ISO «{iso}» != Código país «{ccode}»"})
-                elif gid not in by_id:
+                    # No bloquea (Fase 8C): el País ISO geográfico puede
+                    # separarse a propósito del país del directorio
+                    # (IE-15/IE-16, Belfast: ISO GB, directorio IE). La
+                    # comprobación que manda es extracto ↔ País ISO,
+                    # justo debajo. Queda como observación trazable.
+                    geo_stats["iso_differs_from_country_code"] += 1
+                    id_observations.append({"id": rid, "geonameId": gid,
+                                            "reason": "iso_differs_from_country_code",
+                                            "detail": f"País ISO «{iso}» != Código país «{ccode}» (separación documentada en el libro; el punto se resuelve por ID si el extracto coincide con el País ISO)"})
+                if gid not in by_id:
                     geo_stats["id_not_in_extract"] += 1
                     id_anomalies.append({"id": rid, "geonameId": gid, "reason": "id_not_in_extract",
                                          "detail": "el ID no aparece en el extracto local de GeoNames"})
@@ -722,6 +737,7 @@ def main() -> int:
         "generatedAt": now, "geoMode": geo_mode, "geoStats": dict(geo_stats),
         "locatedTotal": meta["located"], "total": len(initiatives),
         "idAnomalies": id_anomalies,
+        "idObservations": id_observations,
         "ambiguousGroups": sorted(ambiguous_groups.values(), key=lambda x: x["queryUsed"]),
         "notFoundGroups": [{"queryUsed": k, "records": v} for k, v in notfound_groups.most_common()],
         "naturalEarthMissingCodes": missing_ne,
@@ -739,7 +755,7 @@ def main() -> int:
             f"- Correcciones manuales aplicadas: **{geo_stats['manual']}**",
             f"- IDs no encontrados en el extracto local (sin punto, laguna): **{geo_stats['id_not_in_extract']}**",
             f"- IDs cuyo país en el extracto difiere del País ISO (sin punto, anomalía): **{geo_stats['id_country_mismatch']}**",
-            f"- País ISO distinto del Código país (sin punto, anomalía): **{geo_stats['iso_mismatch']}**",
+            f"- País ISO distinto del Código país (observación de trazabilidad, NO bloquea el punto): **{geo_stats['iso_differs_from_country_code']}**",
             f"- Total con punto: **{meta['located']} / {total_records}**.", "",
             "## Anomalías del modo por ID", "",
         ]
@@ -748,6 +764,10 @@ def main() -> int:
                 lines.append(f"- `{a['id']}` (GeoNames ID {a['geonameId']}): {a['reason']} — {a['detail']}")
         else:
             lines.append("- Ninguna: todos los IDs declarados se encontraron en el extracto y en su país.")
+        if id_observations:
+            lines += ["", "## Observaciones de trazabilidad (no bloquean el punto)", ""]
+            for a in id_observations:
+                lines.append(f"- `{a['id']}` (GeoNames ID {a['geonameId']}): {a['reason']} — {a['detail']}")
         lines += ["", f"Códigos del directorio sin correspondencia en Natural Earth 50m: {missing_ne or 'ninguno'}.", ""]
     else:
         lines = [

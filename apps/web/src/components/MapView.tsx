@@ -8,6 +8,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 maplibregl.setWorkerUrl(workerUrl);
 import { useAtlas, filterInitiatives, type CoincidentGroup } from '../store';
 import { categoryColor } from '../categories';
+import { FAMILIES, familyIndex } from '../taxonomy';
 // Solo el tipo: la implementación (Three.js) se carga bajo demanda en
 // su propio chunk la primera vez que hay una selección con ubicación,
 // en vez de engordar el chunk del mapa para todos los visitantes.
@@ -40,6 +41,9 @@ function toFeatureCollection(items: Initiative[]): GeoJSON.FeatureCollection {
           id: i.id, category: i.category, name: i.name,
           locality: i.locality ?? '',
           color: categoryColor(i.category),
+          // Familia de presentación (Fase 8C): índice en FAMILIES;
+          // alimenta el conteo por familia de los clústeres.
+          fam: familyIndex(i.category),
         },
       })),
   };
@@ -270,17 +274,34 @@ export default function MapView() {
         },
       });
 
+      // Fase 8C: conteo de puntos por familia dentro de cada
+      // clúster (propiedades f0…f5). Un clúster HOMOGÉNEO (todos sus
+      // puntos de una misma familia) se pinta con el color de esa
+      // familia; el heterogéneo conserva el estilo neutro de siempre.
+      const clusterProperties: Record<string, [unknown, unknown]> = {};
+      FAMILIES.forEach((fam, idx) => {
+        clusterProperties[`f${idx}`] = [
+          ['+', ['accumulated'], ['get', `f${idx}`]],
+          ['case', ['==', ['get', 'fam'], idx], 1, 0],
+        ];
+      });
+      const clusterColor = [
+        'case',
+        ...FAMILIES.flatMap((fam, idx) => [['==', ['get', `f${idx}`], ['get', 'point_count']], fam.color]),
+        '#e8a33d',
+      ];
       map.addSource('iniciativas', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
         cluster: true, clusterRadius: 55, clusterMaxZoom: 13,
+        clusterProperties,
       });
       map.addLayer({
         id: 'clusters', type: 'circle', source: 'iniciativas',
         filter: ['has', 'point_count'],
         paint: {
-          'circle-color': '#e8a33d',
-          'circle-stroke-color': '#e8a33d', 'circle-stroke-width': 1.5,
+          'circle-color': clusterColor as never,
+          'circle-stroke-color': clusterColor as never, 'circle-stroke-width': 1.5,
           'circle-radius': ['step', ['get', 'point_count'], 15, 25, 21, 80, 27, 200, 34],
           'circle-opacity': 0.14, 'circle-stroke-opacity': 0.9,
         },

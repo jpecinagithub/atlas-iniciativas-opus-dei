@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtlas, filterInitiatives } from '../store';
 import { normalizeExternalUrl } from '../urls';
 import { categoryColor, RECIPIENT_LABELS } from '../categories';
+import { FAMILIES, familyOf, type Family } from '../taxonomy';
 import type { Initiative } from '../types';
 import { fmt } from '../format';
 
@@ -32,14 +33,71 @@ function verificationBadge(state: string) {
 const SECTION_TITLE = 'text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8ca3c7]';
 const ROW_BUTTON = 'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition';
 
+/**
+ * Checkbox de familia (Fase 8C): nativo, con estado indeterminado
+ * real cuando solo están seleccionadas algunas de sus subcategorías.
+ * La propiedad `indeterminate` no es un atributo React: se aplica
+ * sobre el DOM y los lectores de pantalla anuncian «mixto».
+ */
+function FamilyCheckbox({ checked, indeterminate, onChange, label }: {
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: () => void;
+  label: string;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = indeterminate;
+  }, [indeterminate]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      aria-label={label}
+      aria-checked={indeterminate ? 'mixed' : checked}
+      className="h-4 w-4 shrink-0 accent-[#e8a33d]"
+    />
+  );
+}
+
 export function FiltersPanel() {
   const catalog = useAtlas((s) => s.catalog);
   const countryCode = useAtlas((s) => s.countryCode);
   const categories = useAtlas((s) => s.categories);
+  const query = useAtlas((s) => s.query);
   const setCountry = useAtlas((s) => s.setCountry);
   const toggleCategory = useAtlas((s) => s.toggleCategory);
   const setCategories = useAtlas((s) => s.setCategories);
   const [countrySearch, setCountrySearch] = useState('');
+  // Familias desplegadas en el filtro (Fase 8C): cerradas por defecto;
+  // una familia con subcategorías seleccionadas se despliega sola
+  // (p. ej. al recuperar el filtro desde la URL o el historial).
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
+  useEffect(() => {
+    if (categories.length === 0) return;
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      for (const cat of categories) {
+        const fam = familyOf(cat);
+        if (fam) next.add(fam.id);
+      }
+      return next.size === prev.size ? prev : next;
+    });
+  }, [categories]);
+  const toggleExpanded = (fam: Family) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(fam.id)) next.delete(fam.id); else next.add(fam.id);
+      return next;
+    });
+  const toggleFamily = (fam: Family) => {
+    const member = fam.categories as readonly string[];
+    const allOn = member.every((c) => categories.includes(c));
+    if (allOn) setCategories(categories.filter((c) => !member.includes(c)));
+    else setCategories([...new Set([...categories, ...member])]);
+  };
 
   const countryCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -47,13 +105,16 @@ export function FiltersPanel() {
     return counts;
   }, [catalog]);
 
+  // Conteos por categoría respetando país y búsqueda activos (la
+  // propia selección de categorías no se aplica: el conteo dice
+  // cuántas iniciativas aportaría cada subcategoría al resultado).
   const categoryCounts = useMemo(() => {
     if (!catalog) return new Map<string, number>();
-    const base = filterInitiatives(catalog.initiatives, countryCode, [], '');
+    const base = filterInitiatives(catalog.initiatives, countryCode, [], query);
     const counts = new Map<string, number>();
     for (const i of base) counts.set(i.category, (counts.get(i.category) ?? 0) + 1);
     return counts;
-  }, [catalog, countryCode]);
+  }, [catalog, countryCode, query]);
 
   if (!catalog) return null;
   const countries = catalog.countries
@@ -97,9 +158,9 @@ export function FiltersPanel() {
         </div>
       </section>
 
-      <section aria-label="Categorías" id="panel-categorias">
+      <section aria-label="Familias y categorías" id="panel-categorias">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className={SECTION_TITLE}>Categorías</h3>
+          <h3 className={SECTION_TITLE}>Familias</h3>
           {categories.length > 0 && (
             <button type="button" onClick={() => setCategories([])} className="text-xs text-[#f5d9a8] hover:underline">
               Quitar todas
@@ -107,24 +168,68 @@ export function FiltersPanel() {
           )}
         </div>
         <div className="space-y-0.5">
-          {catalog.meta.categories.map((cat) => {
-            const active = categories.includes(cat);
-            const count = categoryCounts.get(cat) ?? 0;
+          {FAMILIES.map((fam) => {
+            const member = fam.categories as readonly string[];
+            const selected = member.filter((c) => categories.includes(c)).length;
+            const allOn = selected === member.length;
+            const someOn = selected > 0 && !allOn;
+            const famCount = member.reduce((n, c) => n + (categoryCounts.get(c) ?? 0), 0);
+            const isOpen = expanded.has(fam.id);
             return (
-              <label
-                key={cat}
-                className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${active ? 'bg-white/10 text-slate-50' : 'text-slate-300 hover:bg-white/5'} ${count === 0 ? 'opacity-45' : ''}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={active}
-                  onChange={() => toggleCategory(cat)}
-                  className="h-4 w-4 shrink-0 accent-[#e8a33d]"
-                />
-                <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
-                <span className="flex-1">{cat}</span>
-                <span className="text-xs text-[#8ca3c7]">{count}</span>
-              </label>
+              <div key={fam.id}>
+                <div
+                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${allOn ? 'bg-white/10 text-slate-50' : someOn ? 'bg-white/[0.06] text-slate-100' : 'text-slate-200 hover:bg-white/5'} ${famCount === 0 ? 'opacity-45' : ''}`}
+                >
+                  <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5">
+                    <FamilyCheckbox
+                      checked={allOn}
+                      indeterminate={someOn}
+                      onChange={() => toggleFamily(fam)}
+                      label={`Seleccionar toda la familia ${fam.label}`}
+                    />
+                    <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: fam.color }} aria-hidden />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate">{fam.label}</span>
+                      <span className="block truncate text-[11px] font-normal text-[#8ca3c7]">{fam.description}</span>
+                    </span>
+                    <span className="text-xs text-[#8ca3c7]">{famCount}</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(fam)}
+                    aria-expanded={isOpen}
+                    aria-controls={`subcategorias-${fam.id}`}
+                    aria-label={`${isOpen ? 'Ocultar' : 'Mostrar'} subcategorías de ${fam.label}`}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#8ca3c7] transition hover:bg-white/10 hover:text-white"
+                  >
+                    <span aria-hidden>{isOpen ? '▴' : '▾'}</span>
+                  </button>
+                </div>
+                {isOpen && (
+                  <div id={`subcategorias-${fam.id}`} className="mb-1 ml-9 space-y-0.5">
+                    {member.map((cat) => {
+                      const active = categories.includes(cat);
+                      const count = categoryCounts.get(cat) ?? 0;
+                      return (
+                        <label
+                          key={cat}
+                          className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm transition ${active ? 'bg-white/10 text-slate-50' : 'text-slate-300 hover:bg-white/5'} ${count === 0 ? 'opacity-45' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={active}
+                            onChange={() => toggleCategory(cat)}
+                            className="h-4 w-4 shrink-0 accent-[#e8a33d]"
+                          />
+                          <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: categoryColor(cat) }} aria-hidden />
+                          <span className="flex-1">{cat}</span>
+                          <span className="text-xs text-[#8ca3c7]">{count}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
@@ -134,7 +239,7 @@ export function FiltersPanel() {
             onClick={() => setCountry(null)}
             className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2 text-sm text-[#f5d9a8] hover:bg-white/5"
           >
-            Ver esta categoría en el mundo
+            Ver esta selección en el mundo
           </button>
         )}
       </section>
@@ -240,7 +345,7 @@ export function DetailPanel() {
         <div className="flex items-start justify-between gap-3">
           <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f5d9a8]">
             <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: categoryColor(rec.category) }} aria-hidden />
-            {rec.category}
+            {familyOf(rec.category) ? `${familyOf(rec.category)!.label} · ` : ''}{rec.category}
             <span className="font-normal normal-case tracking-normal text-[#8ca3c7]">· {rec.id}</span>
           </p>
           <button

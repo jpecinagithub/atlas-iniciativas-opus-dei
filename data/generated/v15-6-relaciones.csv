@@ -1,0 +1,15 @@
+tipo,iniciativa,fuente,rol,causa
+perdida,CO-32,F-2294,fuente_1,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,CO-33,F-2296,fuente_2,La cita de la iniciativa cambió en el libro nuevo (source2: «https://opusdei.org/es-co/article/en-arboleda-chia-velitas-novena-villancicos-y-muchos-bunuelos/» → «https://cfmujer.org/») y la URL nueva no tiene fila en Fuentes; la fila F-2296 conserva la URL antigua.
+perdida,ES-153,F-0002,fuente_1,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,ES-153,F-1866,fuente_2,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,ES-219,F-0002,fuente_1,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,ES-230,F-0002,fuente_1,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,ES-240,F-2306,fuente_1,La cita de la iniciativa cambió en el libro nuevo (source1: «https://escora.es/» → «https://escora.es/contact-me/») y la URL nueva no tiene fila en Fuentes; la fila F-2306 conserva la URL antigua.
+perdida,ES-25,F-1670,fuente_2,La cita de la iniciativa cambió en el libro nuevo (source2: «https://www.fomento.edu/losrobles-penamayor/solicitud-informacion/» → «https://www.fomento.edu/losrobles-penamayor/contacto/») y la URL nueva no tiene fila en Fuentes; la fila F-1670 conserva la URL antigua.
+perdida,ES-43,F-1666,fuente_2,La cita de la iniciativa cambió en el libro nuevo (source2: «https://www.fomento.edu/miravalleselredin/wp-content/uploads/sites/11/2025/03/Bilingual-optimist-2024_ok_web.pdf» → «https://www.fomento.edu/miravalleselredin/contacto/») y la URL nueva no tiene fila en Fuentes; la fila F-1666 conserva la URL antigua.
+perdida,MX-47,V47-004,fuente_2,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+perdida,MX-47,V47-007,fuente_1,La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella.
+ganada,CO-37,F-2296,fuente_1,Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes.
+ganada,ES-301,F-1665,fuente_1,Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes.
+ganada,ES-302,F-1665,fuente_1,Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes.

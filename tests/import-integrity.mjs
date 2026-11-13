@@ -29,7 +29,11 @@ import pg from 'pg';
 const tsxCli = fileURLToPath(import.meta.resolve('tsx/cli'));
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const XLSX = join(ROOT, 'data/source/Directorio_Opus_Dei_MUNDIAL_v14.xlsx');
+// El libro a corromper es el que nombra la meta del catálogo vigente
+// (no un nombre fijo: cambió en v15, v15-5 y v15-6).
+const catalogMeta = JSON.parse(
+  readFileSync(join(ROOT, 'apps/web/public/data/catalog.json'), 'utf-8')).meta;
+const XLSX = join(ROOT, 'data/source', catalogMeta.sourceFile);
 const BACKUP = join(tmpdir(), 'atlas-excel-backup.xlsx');
 const DATABASE_URL =
   process.env.DATABASE_URL ?? 'postgres://atlas:atlas_dev@127.0.0.1:5432/atlas';

@@ -1,0 +1,3859 @@
+{
+ "bateria": {
+  "1_ids": {
+   "registros": 1409,
+   "unicos": 1409,
+   "ok": true
+  },
+  "2_categorias": {
+   "canonicas_14": [
+    "Asociaciones juveniles",
+    "Casa de retiros",
+    "Centros Médicos",
+    "Centros culturales",
+    "Centros de mujeres",
+    "Centros de promoción social",
+    "Centros de varones",
+    "Clubes juveniles",
+    "Colegios",
+    "Escuelas de formación Técnica",
+    "Iglesias",
+    "Oficinas de Información",
+    "Residencias universitarias",
+    "Universidades"
+   ],
+   "conteo_v15_6": {
+    "Centros de varones": 165,
+    "Residencias universitarias": 162,
+    "Centros de mujeres": 210,
+    "Colegios": 399,
+    "Casa de retiros": 126,
+    "Universidades": 41,
+    "Escuelas de formación Técnica": 84,
+    "Asociaciones juveniles": 103,
+    "Centros culturales": 25,
+    "Oficinas de Información": 21,
+    "Centros Médicos": 13,
+    "Iglesias": 45,
+    "Centros de promoción social": 10,
+    "Clubes juveniles": 5
+   },
+   "fuera_de_paleta": {},
+   "delta_vs_v15_5": {
+    "Casa de retiros": [
+     130,
+     126
+    ],
+    "Centros de mujeres": [
+     209,
+     210
+    ],
+    "Colegios": [
+     397,
+     399
+    ],
+    "Centros culturales": [
+     26,
+     25
+    ]
+   },
+   "ok": true
+  },
+  "3_puntos": {
+   "con_punto": 1387,
+   "sin_punto": 22,
+   "sin_resolver_con_punto": [],
+   "localidad_sin_punto": [],
+   "observaciones_iso_distinto_codigo": {
+    "IE-15": [
+     54.59682,
+     -5.92541
+    ],
+    "IE-16": [
+     54.59682,
+     -5.92541
+    ]
+   },
+   "errores_extracto": [],
+   "ok": true
+  },
+  "4_paises": {
+   "con_registros": 69,
+   "filas_en_catalogo": 70,
+   "ok": true
+  },
+  "5_estados": {
+   "conteo": {
+    "Confirmado con datos parciales": 1309,
+    "Pendiente": 36,
+    "Confirmado y contrastado": 52,
+    "Histórico": 11,
+    "Confirmado": 1
+   },
+   "esperado": {
+    "Confirmado con datos parciales": 1309,
+    "Confirmado y contrastado": 52,
+    "Pendiente": 36,
+    "Histórico": 11,
+    "Confirmado": 1
+   },
+   "confirmado_suelto": [
+    "PR-06"
+   ],
+   "delta_vs_v15_5": {
+    "Confirmado con datos parciales": [
+     1311,
+     1309
+    ]
+   },
+   "ok": true
+  },
+  "6_relaciones": {
+   "v15_6": {
+    "created": 2159,
+    "ambiguousUrl": 8,
+    "unmatchedFuente1": 130,
+    "unmatchedFuente2": 210
+   },
+   "v15_5_produccion": {
+    "created": 2167,
+    "ambiguousUrl": 8,
+    "unmatchedFuente1": 128,
+    "unmatchedFuente2": 204
+   },
+   "perdidas": 11,
+   "ganadas": 3,
+   "neto": -8,
+   "detalle": [
+    {
+     "tipo": "perdida",
+     "iniciativa": "CO-32",
+     "fuente": "F-2294",
+     "rol": "fuente_1",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "CO-33",
+     "fuente": "F-2296",
+     "rol": "fuente_2",
+     "causa": "La cita de la iniciativa cambió en el libro nuevo (source2: «https://opusdei.org/es-co/article/en-arboleda-chia-velitas-novena-villancicos-y-muchos-bunuelos/» → «https://cfmujer.org/») y la URL nueva no tiene fila en Fuentes; la fila F-2296 conserva la URL antigua."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-153",
+     "fuente": "F-0002",
+     "rol": "fuente_1",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-153",
+     "fuente": "F-1866",
+     "rol": "fuente_2",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-219",
+     "fuente": "F-0002",
+     "rol": "fuente_1",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-230",
+     "fuente": "F-0002",
+     "rol": "fuente_1",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-240",
+     "fuente": "F-2306",
+     "rol": "fuente_1",
+     "causa": "La cita de la iniciativa cambió en el libro nuevo (source1: «https://escora.es/» → «https://escora.es/contact-me/») y la URL nueva no tiene fila en Fuentes; la fila F-2306 conserva la URL antigua."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-25",
+     "fuente": "F-1670",
+     "rol": "fuente_2",
+     "causa": "La cita de la iniciativa cambió en el libro nuevo (source2: «https://www.fomento.edu/losrobles-penamayor/solicitud-informacion/» → «https://www.fomento.edu/losrobles-penamayor/contacto/») y la URL nueva no tiene fila en Fuentes; la fila F-1670 conserva la URL antigua."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "ES-43",
+     "fuente": "F-1666",
+     "rol": "fuente_2",
+     "causa": "La cita de la iniciativa cambió en el libro nuevo (source2: «https://www.fomento.edu/miravalleselredin/wp-content/uploads/sites/11/2025/03/Bilingual-optimist-2024_ok_web.pdf» → «https://www.fomento.edu/miravalleselredin/contacto/») y la URL nueva no tiene fila en Fuentes; la fila F-1666 conserva la URL antigua."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "MX-47",
+     "fuente": "V47-004",
+     "rol": "fuente_2",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "perdida",
+     "iniciativa": "MX-47",
+     "fuente": "V47-007",
+     "rol": "fuente_1",
+     "causa": "La iniciativa es una de las 5 bajas del directorio: su relación desaparece con ella."
+    },
+    {
+     "tipo": "ganada",
+     "iniciativa": "CO-37",
+     "fuente": "F-2296",
+     "rol": "fuente_1",
+     "causa": "Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes."
+    },
+    {
+     "tipo": "ganada",
+     "iniciativa": "ES-301",
+     "fuente": "F-1665",
+     "rol": "fuente_1",
+     "causa": "Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes."
+    },
+    {
+     "tipo": "ganada",
+     "iniciativa": "ES-302",
+     "fuente": "F-1665",
+     "rol": "fuente_1",
+     "causa": "Alta del directorio nuevo: su cita coincide por URL exacta con la fila de Fuentes."
+    }
+   ],
+   "fuentes": {
+    "total_v15_6": 2728,
+    "total_v15_5": 2724,
+    "nuevas": [
+     "v54-APCEContacto",
+     "v54-DeltaContacto",
+     "v54-IBODelta",
+     "v54-JacarandaContacto"
+    ],
+    "retiradas": [],
+    "url_cambiadas": []
+   },
+   "urls_duplicadas": 14,
+   "ok": true
+  },
+  "6b_relaciones_base_libro": {
+   "fuentes_en_libro": 2728,
+   "por_columna": {
+    "Fuente 1": {
+     "no_vacias": 1409,
+     "exactas": 1226,
+     "ambiguas": 3,
+     "sin_coincidencia": 180
+    },
+    "Fuente 2": {
+     "no_vacias": 1409,
+     "exactas": 933,
+     "ambiguas": 5,
+     "sin_coincidencia": 471
+    }
+   },
+   "ok": true
+  },
+  "7_hoja_paises": {
+   "paises_comprobados": 70,
+   "problemas": [],
+   "suma_total_hoja": 1409,
+   "ok": true
+  },
+  "8_regresion_v14": {
+   "diferencias_iniciativas": [],
+   "paises_distintos": [],
+   "geojson_byte_a_byte": true,
+   "fuentes_identicas": true,
+   "meta_difiere_solo_en": [],
+   "ok": true
+  },
+  "8b_regresion_v15_5": {
+   "diferencias_iniciativas": [],
+   "paises_distintos": [],
+   "geojson_byte_a_byte": true,
+   "fuentes_identicas": true,
+   "meta_difiere_solo_en": [],
+   "ok": true
+  },
+  "9_vs_v15_5": {
+   "altas": [
+    "CO-37",
+    "ES-301",
+    "ES-302"
+   ],
+   "bajas": [
+    "CO-32",
+    "ES-153",
+    "ES-219",
+    "ES-230",
+    "MX-47"
+   ],
+   "altas_ok": true,
+   "bajas_ok": true,
+   "cambios_por_campo": {
+    "geo": 92,
+    "geocodingProvider": 72,
+    "geonameId": 72,
+    "lat": 72,
+    "lng": 72,
+    "precision": 72,
+    "queryUsed": 72,
+    "reviewStatus": 72,
+    "consultedAt": 5,
+    "doubleCheck": 4,
+    "evidence": 4,
+    "locality": 8,
+    "localityRaw": 8,
+    "name": 5,
+    "region": 5,
+    "regionRaw": 5,
+    "searchText": 8,
+    "source2": 4,
+    "address": 10,
+    "addressRaw": 10,
+    "phone": 3,
+    "email": 3,
+    "postalCode": 1,
+    "recipients": 1,
+    "sexRaw": 1,
+    "source1": 2,
+    "web": 1
+   },
+   "categorias_cambiadas": {},
+   "categorias_ok": false,
+   "estados_cambiados": {},
+   "estados_ok": false,
+   "puntos_ganados": {
+    "n": 70,
+    "ids": [
+     "AR-10",
+     "AR-13",
+     "AR-24",
+     "AR-40",
+     "AU-02",
+     "CH-13",
+     "CL-03",
+     "CL-08",
+     "CL-14",
+     "CL-27",
+     "CL-29",
+     "CL-31",
+     "CL-34",
+     "CO-06",
+     "CO-33",
+     "CZ-05",
+     "ES-102",
+     "ES-140",
+     "ES-149",
+     "ES-154",
+     "ES-32",
+     "ES-43",
+     "ES-86",
+     "IE-15",
+     "IE-16",
+     "IN-01",
+     "IT-26",
+     "KE-014",
+     "KE-016",
+     "KE-017",
+     "NZ-05",
+     "PE-02",
+     "PE-03",
+     "PE-04",
+     "PE-05",
+     "PE-06",
+     "PE-07",
+     "PE-08",
+     "PE-09",
+     "PE-14",
+     "PE-15",
+     "PE-16",
+     "PE-17",
+     "PE-19",
+     "PE-20",
+     "PE-21",
+     "PH-001",
+     "PH-007",
+     "PH-008",
+     "PH-019",
+     "PH-028",
+     "PH-032",
+     "PH-045",
+     "PH-058",
+     "PH-061",
+     "PH-065",
+     "PL-14",
+     "PL-16",
+     "PL-17",
+     "SV-09",
+     "US-19",
+     "US-22",
+     "VE-01",
+     "VE-02",
+     "VE-03",
+     "VE-04",
+     "VE-05",
+     "VE-12",
+     "VE-16",
+     "VE-19"
+    ]
+   },
+   "puntos_perdidos": {
+    "n": 2,
+    "ids": [
+     "ES-218",
+     "ES-240"
+    ],
+    "intencionados_ok": true
+   },
+   "puntos_desplazados": [],
+   "detalle_cambios": [
+    {
+     "id": "AR-10",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Villa Nueva', 'canonicalCity': 'Villa Nueva', 'district': ",
+       "{'localityOriginal': 'Villa Nueva', 'canonicalCity': 'Villa Nueva', 'district': "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3832661"
+      ],
+      "lat": [
+       "None",
+       "-32.89737"
+      ],
+      "lng": [
+       "None",
+       "-68.7871"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3832661"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "AR-13",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Barracas', 'canonicalCity': 'Barracas', 'district': 'Barra",
+       "{'localityOriginal': 'Barracas', 'canonicalCity': 'Buenos Aires', 'district': 'B"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3435910"
+      ],
+      "lat": [
+       "None",
+       "-34.61315"
+      ],
+      "lng": [
+       "None",
+       "-58.37723"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3435910"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "AR-24",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Villa Nueva (Guaymallén)', 'canonicalCity': 'Villa Nueva',",
+       "{'localityOriginal': 'Villa Nueva (Guaymallén)', 'canonicalCity': 'Villa Nueva',"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3832661"
+      ],
+      "lat": [
+       "None",
+       "-32.89737"
+      ],
+      "lng": [
+       "None",
+       "-68.7871"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3832661"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "AR-40",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Villa Nueva (Guaymallén)', 'canonicalCity': 'Villa Nueva',",
+       "{'localityOriginal': 'Villa Nueva (Guaymallén)', 'canonicalCity': 'Villa Nueva',"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3832661"
+      ],
+      "lat": [
+       "None",
+       "-32.89737"
+      ],
+      "lng": [
+       "None",
+       "-68.7871"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3832661"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "AU-02",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'St Marys', 'canonicalCity': 'St Marys', 'district': None, ",
+       "{'localityOriginal': 'St Marys', 'canonicalCity': 'St Marys', 'district': None, "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "2150645"
+      ],
+      "lat": [
+       "None",
+       "-33.76585"
+      ],
+      "lng": [
+       "None",
+       "150.77419"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|2150645"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CD-009",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'No localizada *(la lista oficial lo coloca tras Johari, si",
+       "{'localityOriginal': 'No localizada *(la lista oficial lo coloca tras Johari, si"
+      ]
+     }
+    },
+    {
+     "id": "CH-13",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Flumserberg Tannenheim', 'canonicalCity': 'Flumserberg Tan",
+       "{'localityOriginal': 'Flumserberg Tannenheim', 'canonicalCity': 'Flumserberg Tan"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "6559544"
+      ],
+      "lat": [
+       "None",
+       "47.08913"
+      ],
+      "lng": [
+       "None",
+       "9.30336"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|6559544"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-03",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-08",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-14",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-27",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-29",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Recoleta', 'canonicalCity': 'Recoleta', 'district': None, ",
+       "{'localityOriginal': 'Recoleta', 'canonicalCity': 'Santiago', 'district': 'Recol"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-31",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CL-34",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Las Condes', 'district': No",
+       "{'localityOriginal': 'Las Condes', 'canonicalCity': 'Santiago', 'district': 'Las"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3871336"
+      ],
+      "lat": [
+       "None",
+       "-33.45694"
+      ],
+      "lng": [
+       "None",
+       "-70.64827"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3871336"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CO-06",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Medellín / Envigado (Antioquia)', 'canonicalCity': None, '",
+       "{'localityOriginal': 'Medellín / Envigado (Antioquia)', 'canonicalCity': 'Medell"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3674962"
+      ],
+      "lat": [
+       "None",
+       "6.245"
+      ],
+      "lng": [
+       "None",
+       "-75.57151"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3674962"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "CO-33",
+     "campos": {
+      "consultedAt": [
+       "2026-11-09",
+       "2026-11-13"
+      ],
+      "doubleCheck": [
+       "Vinculación y datos de contacto atribuidos por campo en la v13 (2026-11-09): Dir",
+       "Vinculación y datos de contacto atribuidos por campo en la v13 (2026-11-09): Dir"
+      ],
+      "evidence": [
+       "«En la ciudad de Cali, desde 1978, se viene brindando formación integral a mujer",
+       "CFM lista expresamente Cerronaya en Cali. Artículo institucional confirma Cali y"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Cali · Chía', 'canonicalCity': None, 'district': None, 'pr",
+       "{'localityOriginal': 'Cali · Chía', 'canonicalCity': 'Cali', 'district': None, '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3687925"
+      ],
+      "lat": [
+       "None",
+       "3.43054"
+      ],
+      "lng": [
+       "None",
+       "-76.5199"
+      ],
+      "locality": [
+       "Cali · Chía",
+       "Cali"
+      ],
+      "localityRaw": [
+       "Cali · Chía",
+       "Cali"
+      ],
+      "name": [
+       "Cerronaya y Centro Cultural Arboleda",
+       "Centro Cultural Cerronaya"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3687925"
+      ],
+      "region": [
+       "Valle del Cauca · Cundinamarca",
+       "Valle del Cauca"
+      ],
+      "regionRaw": [
+       "Valle del Cauca · Cundinamarca",
+       "Valle del Cauca"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ],
+      "searchText": [
+       "cerronaya y centro cultural arboleda cali chia valle del cauca cundinamarca",
+       "centro cultural cerronaya cali valle del cauca"
+      ],
+      "source2": [
+       "https://opusdei.org/es-co/article/en-arboleda-chia-velitas-novena-villancicos-y-",
+       "https://cfmujer.org/"
+      ]
+     }
+    },
+    {
+     "id": "CZ-05",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Sázava (Bělokozly)', 'canonicalCity': 'Sázava', 'district'",
+       "{'localityOriginal': 'Sázava (Bělokozly)', 'canonicalCity': 'Bělokozly', 'distri"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3079534"
+      ],
+      "lat": [
+       "None",
+       "49.85"
+      ],
+      "lng": [
+       "None",
+       "14.9"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3079534"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "EC-06",
+     "campos": {
+      "address": [
+       "Av. Samborondón, Guayaquil (formulación propia; campus en el km de la vía a Samb",
+       "Km. 12, Av. Samborondón, Guayaquil 091910 (como lo publica su web)"
+      ],
+      "addressRaw": [
+       "Av. Samborondón, Guayaquil (formulación propia; campus en el km de la vía a Samb",
+       "Km. 12, Av. Samborondón, Guayaquil 091910 (como lo publica su web)"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Daule / vía Samborondón (Guayas) — la propia web lo ubica ",
+       "{'localityOriginal': 'Daule / vía Samborondón (Guayas) — la propia web lo ubica "
+      ],
+      "locality": [
+       "Daule / vía Samborondón (Guayas) — la propia web lo ubica en «Av. Samborondón",
+       "Av. Samborondón, km 12"
+      ],
+      "localityRaw": [
+       "Daule / vía Samborondón (Guayas) — la propia web lo ubica en «Av. Samborondón",
+       "Av. Samborondón, km 12"
+      ],
+      "phone": [
+       "+593 4 500 1072; +593 4 500 1073; +593 4 522 0428",
+       "+593 4 500 1072; +593 4 500 1073; +593 4 522 0428 (PBX); móvil +593 99 950 0217;"
+      ],
+      "region": [
+       "Guayaquil»",
+       "Guayas"
+      ],
+      "regionRaw": [
+       "Guayaquil»",
+       "Guayas"
+      ],
+      "searchText": [
+       "unidad educativa bilingue delta daule via samborondon guayas la propia web lo ub",
+       "unidad educativa bilingue delta av samborondon km 12 guayas copece corporacion d"
+      ]
+     }
+    },
+    {
+     "id": "EC-09",
+     "campos": {
+      "address": [
+       "Km. 12.5 vía La Puntilla (ficha/directorio coincidente)",
+       "Km. 12.5 vía a Samborondón, parroquia Satelital La Aurora (cantón Daule), Guayas"
+      ],
+      "addressRaw": [
+       "Km. 12.5 vía La Puntilla (ficha/directorio coincidente)",
+       "Km. 12.5 vía a Samborondón, parroquia Satelital La Aurora (cantón Daule), Guayas"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Guayaquil/Daule (Guayas)', 'canonicalCity': None, 'distric",
+       "{'localityOriginal': 'Guayaquil/Daule (Guayas)', 'canonicalCity': 'La Aurora (pa"
+      ],
+      "locality": [
+       "Guayaquil/Daule (Guayas)",
+       "La Aurora (cantón Daule)"
+      ],
+      "localityRaw": [
+       "Guayaquil/Daule (Guayas)",
+       "La Aurora (cantón Daule)"
+      ],
+      "region": [
+       "vía La Puntilla",
+       "Guayas"
+      ],
+      "regionRaw": [
+       "vía La Puntilla",
+       "Guayas"
+      ],
+      "searchText": [
+       "unidad educativa jacaranda guayaquil daule guayas via la puntilla fundacion prof",
+       "unidad educativa jacaranda la aurora canton daule guayas fundacion profamilia ce"
+      ]
+     }
+    },
+    {
+     "id": "ES-101",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Arzúa', 'canonicalCity': 'Arzúa', 'district': None, 'provi",
+       "{'localityOriginal': 'Arzúa', 'canonicalCity': 'Santa María de Arzúa', 'district"
+      ]
+     }
+    },
+    {
+     "id": "ES-102",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'As Neves', 'canonicalCity': 'As Neves', 'district': None, ",
+       "{'localityOriginal': 'As Neves', 'canonicalCity': 'Tortoreos', 'district': 'As N"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3107678"
+      ],
+      "lat": [
+       "None",
+       "42.1"
+      ],
+      "lng": [
+       "None",
+       "-8.41667"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3107678"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-104",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Valdivia', 'canonicalCity': 'Valdivia', 'district': None, ",
+       "{'localityOriginal': 'Valdivia', 'canonicalCity': 'Valdivia', 'district': None, "
+      ]
+     }
+    },
+    {
+     "id": "ES-140",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'El Puig de Santa Maria', 'canonicalCity': 'El Puig de Sant",
+       "{'localityOriginal': 'El Puig de Santa Maria', 'canonicalCity': 'El Puig de Sant"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "2512162"
+      ],
+      "lat": [
+       "None",
+       "39.58869"
+      ],
+      "lng": [
+       "None",
+       "-0.30333"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|2512162"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-143",
+     "campos": {
+      "address": [
+       "None",
+       "Carretera Colmenar Viejo, M-104 km 5,5, 28750 San Agustín de Guadalix, Madrid"
+      ],
+      "addressRaw": [
+       "No localizado",
+       "Carretera Colmenar Viejo, M-104 km 5,5, 28750 San Agustín de Guadalix, Madrid"
+      ],
+      "consultedAt": [
+       "2026-11-09",
+       "2026-11-13"
+      ],
+      "email": [
+       "None",
+       "abcvaldearroyo@gmail.com"
+      ],
+      "geo": [
+       "{'localityOriginal': 'San Agustín de Guadalix', 'canonicalCity': 'San Agustín de",
+       "{'localityOriginal': 'San Agustín de Guadalix', 'canonicalCity': None, 'district"
+      ],
+      "phone": [
+       "None",
+       "+34 91 841 81 72 / +34 640 829 625"
+      ],
+      "postalCode": [
+       "None",
+       "28750"
+      ]
+     }
+    },
+    {
+     "id": "ES-149",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Urriza', 'canonicalCity': 'Urriza', 'district': None, 'pro",
+       "{'localityOriginal': 'Urriza', 'canonicalCity': 'Urritza', 'district': None, 'pr"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3107175"
+      ],
+      "lat": [
+       "None",
+       "42.96667"
+      ],
+      "lng": [
+       "None",
+       "-1.83333"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3107175"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-154",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'No localizada', 'canonicalCity': None, 'district': None, '",
+       "{'localityOriginal': 'No localizada', 'canonicalCity': 'Piera', 'district': None"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3113576"
+      ],
+      "lat": [
+       "None",
+       "41.52232"
+      ],
+      "lng": [
+       "None",
+       "1.75076"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3113576"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-19",
+     "campos": {
+      "address": [
+       "Mas Quintanes, s/n, 08508 Les Masies de Voltregà",
+       "Mas Quintanes, Carretera BV-4608 km 13,2, 08508 Les Masies de Voltregà (Barcelon"
+      ],
+      "addressRaw": [
+       "Mas Quintanes, s/n, 08508 Les Masies de Voltregà",
+       "Mas Quintanes, Carretera BV-4608 km 13,2, 08508 Les Masies de Voltregà (Barcelon"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Les Masies de Voltregà', 'canonicalCity': 'Les Masies de V",
+       "{'localityOriginal': 'Les Masies de Voltregà', 'canonicalCity': None, 'district'"
+      ]
+     }
+    },
+    {
+     "id": "ES-218",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'No localizado', 'canonicalCity': 'Castellbell i el Vilar',",
+       "{'localityOriginal': 'No localizado', 'canonicalCity': 'Castellbell i el Vilar',"
+      ],
+      "geocodingProvider": [
+       "GeoNames (por ID)",
+       "None"
+      ],
+      "geonameId": [
+       "8379312",
+       "None"
+      ],
+      "lat": [
+       "41.63395",
+       "None"
+      ],
+      "lng": [
+       "1.86394",
+       "None"
+      ],
+      "precision": [
+       "locality",
+       "unknown"
+      ],
+      "queryUsed": [
+       "geonames-id|8379312",
+       "None"
+      ],
+      "reviewStatus": [
+       "accepted",
+       "pending"
+      ]
+     }
+    },
+    {
+     "id": "ES-240",
+     "campos": {
+      "consultedAt": [
+       "2026-11-11",
+       "2026-11-13"
+      ],
+      "doubleCheck": [
+       "Vinculación y datos de contacto atribuidos por campo en la v13 (2026-11-09): Dir",
+       "13-11-2026: actualización de ficha existente, no alta duplicada. Dirección, CP, "
+      ],
+      "evidence": [
+       "Nombrada por opusdei.org entre las asociaciones de Valencia (femenino). Su web r",
+       "Web propia: asociación juvenil sin ánimo de lucro. Captura de Jon, pie web: «La "
+      ],
+      "geo": [
+       "{'localityOriginal': 'Valencia', 'canonicalCity': 'Valencia', 'district': None, ",
+       "{'localityOriginal': 'Valencia', 'canonicalCity': None, 'district': 'Urb. Serrat"
+      ],
+      "geocodingProvider": [
+       "GeoNames (por ID)",
+       "None"
+      ],
+      "geonameId": [
+       "2509954",
+       "None"
+      ],
+      "lat": [
+       "39.47391",
+       "None"
+      ],
+      "lng": [
+       "-0.37966",
+       "None"
+      ],
+      "locality": [
+       "Valencia",
+       "Canals (municipio; Urb. Serratella)"
+      ],
+      "localityRaw": [
+       "Valencia",
+       "Canals (municipio; Urb. Serratella)"
+      ],
+      "name": [
+       "Club Escora",
+       "Asociación Juvenil Escora (Club Juvenil Escora)"
+      ],
+      "phone": [
+       "+34 962 24 09 15",
+       "+34 962 240 915 / +34 626 100 066"
+      ],
+      "precision": [
+       "locality",
+       "unknown"
+      ],
+      "queryUsed": [
+       "geonames-id|2509954",
+       "None"
+      ],
+      "recipients": [
+       "femenino",
+       "no_consta"
+      ],
+      "reviewStatus": [
+       "accepted",
+       "pending"
+      ],
+      "searchText": [
+       "club escora valencia valencia asociacion cultural escora variante asociacion cul",
+       "asociacion juvenil escora club juvenil escora canals municipio urb serratella va"
+      ],
+      "sexRaw": [
+       "Femenino",
+       "No consta"
+      ],
+      "source1": [
+       "https://escora.es/",
+       "https://escora.es/contact-me/"
+      ],
+      "source2": [
+       "https://escora.es/ ; xarxajove.info (red GVA)",
+       "https://xarxajove.info/es/mapa-de-recursos/entidades/asociacion-cultural-escora/"
+      ]
+     }
+    },
+    {
+     "id": "ES-25",
+     "campos": {
+      "address": [
+       "Sede Los Robles: Urb. Soto de Llanera – Pruvia, 33423 Llanera; Sede Peñamayor: U",
+       "Urb. Soto de Llanera - Pruvia-Llanera, 33423 Asturias"
+      ],
+      "addressRaw": [
+       "Sede Los Robles: Urb. Soto de Llanera – Pruvia, 33423 Llanera; Sede Peñamayor: U",
+       "Urb. Soto de Llanera - Pruvia-Llanera, 33423 Asturias"
+      ],
+      "consultedAt": [
+       "2026-11-09",
+       "2026-11-13"
+      ],
+      "doubleCheck": [
+       "Vinculación y datos de contacto atribuidos por campo en la v8 (2026-11-09): Dire",
+       "Vinculación y datos de contacto atribuidos por campo en la v8 (2026-11-09): Dire"
+      ],
+      "email": [
+       "None",
+       "losroblespenamayor@fomento.edu"
+      ],
+      "evidence": [
+       "Carácter Propio de Fomento de Centros de Enseñanza (punto 11): «La Prelatura del",
+       "Carácter Propio de Fomento de Centros de Enseñanza (punto 11): «La Prelatura del"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Llanera / Siero', 'canonicalCity': None, 'district': None,",
+       "{'localityOriginal': 'Llanera / Siero', 'canonicalCity': 'Soto de Llanera', 'dis"
+      ],
+      "locality": [
+       "Llanera / Siero",
+       "Soto de Llanera"
+      ],
+      "localityRaw": [
+       "Llanera / Siero",
+       "Soto de Llanera"
+      ],
+      "name": [
+       "Colegio de Fomento Los Robles-Peñamayor",
+       "Colegio de Fomento Los Robles (sede Los Robles-Peñamayor)"
+      ],
+      "searchText": [
+       "colegio de fomento los robles penamayor llanera siero asturias fomento de centro",
+       "colegio de fomento los robles sede los robles penamayor soto de llanera asturias"
+      ],
+      "source2": [
+       "https://www.fomento.edu/losrobles-penamayor/solicitud-informacion/",
+       "https://www.fomento.edu/losrobles-penamayor/contacto/"
+      ]
+     }
+    },
+    {
+     "id": "ES-265",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Torreciudad', 'canonicalCity': 'Torreciudad', 'district': ",
+       "{'localityOriginal': 'Torreciudad', 'canonicalCity': None, 'district': 'Secastil"
+      ]
+     }
+    },
+    {
+     "id": "ES-31",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Simancas', 'canonicalCity': 'Simancas', 'district': None, ",
+       "{'localityOriginal': 'Simancas', 'canonicalCity': None, 'district': 'Entrepinos "
+      ]
+     }
+    },
+    {
+     "id": "ES-32",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Simancas', 'canonicalCity': 'Simancas', 'district': None, ",
+       "{'localityOriginal': 'Simancas', 'canonicalCity': 'Simancas', 'district': None, "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3108917"
+      ],
+      "lat": [
+       "None",
+       "41.59072"
+      ],
+      "lng": [
+       "None",
+       "-4.82796"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3108917"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "ES-43",
+     "campos": {
+      "address": [
+       "Sede Miravalles: Paseo de Belzeta, s/n, 31190 Cizur Menor; Sede El Redín: Vergel",
+       "Paseo Belzeta, s/n, 31190 Cizur Menor, Navarra"
+      ],
+      "addressRaw": [
+       "Sede Miravalles: Paseo de Belzeta, s/n, 31190 Cizur Menor; Sede El Redín: Vergel",
+       "Paseo Belzeta, s/n, 31190 Cizur Menor, Navarra"
+      ],
+      "consultedAt": [
+       "2026-11-09",
+       "2026-11-13"
+      ],
+      "doubleCheck": [
+       "Vinculación y datos de contacto atribuidos por campo en la v8 (2026-11-09): Dire",
+       "Vinculación y datos de contacto atribuidos por campo en la v8 (2026-11-09): Dire"
+      ],
+      "email": [
+       "None",
+       "miravalles@fomento.edu"
+      ],
+      "evidence": [
+       "Carácter Propio de Fomento de Centros de Enseñanza (punto 11): «La Prelatura del",
+       "Carácter Propio de Fomento de Centros de Enseñanza (punto 11): «La Prelatura del"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Cizur Menor / Pamplona', 'canonicalCity': None, 'district'",
+       "{'localityOriginal': 'Cizur Menor / Pamplona', 'canonicalCity': 'Cizur Menor', '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3124954"
+      ],
+      "lat": [
+       "None",
+       "42.78665"
+      ],
+      "lng": [
+       "None",
+       "-1.6773"
+      ],
+      "locality": [
+       "Cizur Menor / Pamplona",
+       "Cizur Menor"
+      ],
+      "localityRaw": [
+       "Cizur Menor / Pamplona",
+       "Cizur Menor"
+      ],
+      "name": [
+       "Colegio de Fomento Miravalles-El Redín",
+       "Colegio de Fomento Miravalles (sede Miravalles-El Redín)"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3124954"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ],
+      "searchText": [
+       "colegio de fomento miravalles el redin cizur menor pamplona navarra fomento de c",
+       "colegio de fomento miravalles sede miravalles el redin cizur menor navarra fomen"
+      ],
+      "source2": [
+       "https://www.fomento.edu/miravalleselredin/wp-content/uploads/sites/11/2025/03/Bi",
+       "https://www.fomento.edu/miravalleselredin/contacto/"
+      ]
+     }
+    },
+    {
+     "id": "ES-86",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Humanes de Mohernando', 'canonicalCity': 'Humanes de Moher",
+       "{'localityOriginal': 'Humanes de Mohernando', 'canonicalCity': 'Humanes', 'distr"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3120502"
+      ],
+      "lat": [
+       "None",
+       "40.82598"
+      ],
+      "lng": [
+       "None",
+       "-3.15257"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3120502"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "IE-15",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Belfast', 'canonicalCity': 'Belfast', 'district': None, 'p",
+       "{'localityOriginal': 'Belfast', 'canonicalCity': 'Belfast', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "2655984"
+      ],
+      "lat": [
+       "None",
+       "54.59682"
+      ],
+      "lng": [
+       "None",
+       "-5.92541"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|2655984"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "IE-16",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Belfast', 'canonicalCity': 'Belfast', 'district': None, 'p",
+       "{'localityOriginal': 'Belfast', 'canonicalCity': 'Belfast', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "2655984"
+      ],
+      "lat": [
+       "None",
+       "54.59682"
+      ],
+      "lng": [
+       "None",
+       "-5.92541"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|2655984"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "IN-01",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Nueva Delhi (Delhi)', 'canonicalCity': 'Nueva Delhi', 'dis",
+       "{'localityOriginal': 'Nueva Delhi (Delhi)', 'canonicalCity': 'Nueva Delhi', 'dis"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1261481"
+      ],
+      "lat": [
+       "None",
+       "28.62137"
+      ],
+      "lng": [
+       "None",
+       "77.2148"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1261481"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "IN-04",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Alipur, Sohna Road', 'canonicalCity': 'Alipur', 'district'",
+       "{'localityOriginal': 'Alipur, Sohna Road', 'canonicalCity': 'Alipur', 'district'"
+      ]
+     }
+    },
+    {
+     "id": "IT-26",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Galleno di Corteno Golgi', 'canonicalCity': 'Galleno di Co",
+       "{'localityOriginal': 'Galleno di Corteno Golgi', 'canonicalCity': 'Galleno', 'di"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "8951060"
+      ],
+      "lat": [
+       "None",
+       "46.16671"
+      ],
+      "lng": [
+       "None",
+       "10.2309"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|8951060"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "KE-014",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Kuruwitu', 'canonicalCity': 'Kuruwitu', 'district': None, ",
+       "{'localityOriginal': 'Kuruwitu', 'canonicalCity': 'Kuruwitu', 'district': None, "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "190194"
+      ],
+      "lat": [
+       "None",
+       "-3.78961"
+      ],
+      "lng": [
+       "None",
+       "39.82655"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|190194"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "KE-015",
+     "campos": {
+      "address": [
+       "Old Limuru Rd, Limuru (fuente oficial 2015); Maps auxiliar: Karuri Forest Edge R",
+       "Old Limuru Rd, Limuru"
+      ],
+      "addressRaw": [
+       "Old Limuru Rd, Limuru (fuente oficial 2015); Maps auxiliar: Karuri Forest Edge R",
+       "Old Limuru Rd, Limuru"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Limuru / Tigoni', 'canonicalCity': None, 'district': None,",
+       "{'localityOriginal': 'Limuru / Tigoni', 'canonicalCity': None, 'district': None,"
+      ],
+      "web": [
+       "http://www.tigonistudycentre.org",
+       "https://www.kiandafoundation.org/tigoni-study-centre"
+      ]
+     }
+    },
+    {
+     "id": "KE-016",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Vipingo / Shariani', 'canonicalCity': None, 'district': No",
+       "{'localityOriginal': 'Vipingo / Shariani', 'canonicalCity': 'Kuruwitu', 'distric"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "190194"
+      ],
+      "lat": [
+       "None",
+       "-3.78961"
+      ],
+      "lng": [
+       "None",
+       "39.82655"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|190194"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "KE-017",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Limuru / Tigoni', 'canonicalCity': None, 'district': None,",
+       "{'localityOriginal': 'Limuru / Tigoni', 'canonicalCity': 'Limuru', 'district': '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "189386"
+      ],
+      "lat": [
+       "None",
+       "-1.1136"
+      ],
+      "lng": [
+       "None",
+       "36.64205"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|189386"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "MX-04",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Ciudad de México (Santa Fe) / Huixquilucan', 'canonicalCit",
+       "{'localityOriginal': 'Ciudad de México (Santa Fe) / Huixquilucan', 'canonicalCit"
+      ]
+     }
+    },
+    {
+     "id": "NG-016",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Lagos (Isheri-North', 'canonicalCity': 'Lagos', 'district'",
+       "{'localityOriginal': 'Lagos (Isheri-North', 'canonicalCity': None, 'district': '"
+      ]
+     }
+    },
+    {
+     "id": "NG-018",
+     "campos": {
+      "address": [
+       "Aguobu-Iwollo, Ezeagu LGA, Enugu State *(ficha auxiliar: «Ezeagu, Enugu»)*",
+       "Umueze, Asaba-Onitsha Road (listado oficial opusdei.org, 2018); Aguobu-Iwollo, E"
+      ],
+      "addressRaw": [
+       "Aguobu-Iwollo, Ezeagu LGA, Enugu State *(ficha auxiliar: «Ezeagu, Enugu»)*",
+       "Umueze, Asaba-Onitsha Road (listado oficial opusdei.org, 2018); Aguobu-Iwollo, E"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Aguobu-Iwollo, Ezeagu', 'canonicalCity': 'Aguobu-Iwollo, E",
+       "{'localityOriginal': 'Aguobu-Iwollo, Ezeagu', 'canonicalCity': None, 'district':"
+      ]
+     }
+    },
+    {
+     "id": "NZ-05",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Waingaro / Ngaruawahia (Waikato)', 'canonicalCity': None, ",
+       "{'localityOriginal': 'Waingaro / Ngaruawahia (Waikato)', 'canonicalCity': 'Waing"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "2180138"
+      ],
+      "lat": [
+       "None",
+       "-37.68333"
+      ],
+      "lng": [
+       "None",
+       "175.0"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|2180138"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-02",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Miraflores', 'canonicalCity': 'Miraflores', 'district': No",
+       "{'localityOriginal': 'Miraflores', 'canonicalCity': 'Lima', 'district': 'Miraflo"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-03",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Santiago de Surco', ",
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Lima', 'district': '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-04",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'La Molina / Ate (ver discrepancia)', 'canonicalCity': None",
+       "{'localityOriginal': 'La Molina / Ate (ver discrepancia)', 'canonicalCity': 'Lim"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-05",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Santiago de Surco', ",
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Lima', 'district': '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-06",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'San Isidro', 'canonicalCity': 'San Isidro', 'district': No",
+       "{'localityOriginal': 'San Isidro', 'canonicalCity': 'Lima', 'district': 'San Isi"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-07",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Jesús María', 'canonicalCity': 'Jesús María', 'district': ",
+       "{'localityOriginal': 'Jesús María', 'canonicalCity': 'Lima', 'district': 'Jesús "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-08",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Comas', 'canonicalCity': 'Comas', 'district': None, 'provi",
+       "{'localityOriginal': 'Comas', 'canonicalCity': 'Lima', 'district': 'Comas', 'pro"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-09",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Comas', 'canonicalCity': 'Comas', 'district': None, 'provi",
+       "{'localityOriginal': 'Comas', 'canonicalCity': 'Lima', 'district': 'Comas', 'pro"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-14",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C",
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3928993"
+      ],
+      "lat": [
+       "None",
+       "-13.07556"
+      ],
+      "lng": [
+       "None",
+       "-76.38528"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3928993"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-15",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C",
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3928993"
+      ],
+      "lat": [
+       "None",
+       "-13.07556"
+      ],
+      "lng": [
+       "None",
+       "-76.38528"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3928993"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-16",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Lurigancho-Chosica', 'canonicalCity': 'Lurigancho-Chosica'",
+       "{'localityOriginal': 'Lurigancho-Chosica', 'canonicalCity': 'Chosica', 'district"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3943423"
+      ],
+      "lat": [
+       "None",
+       "-11.94306"
+      ],
+      "lng": [
+       "None",
+       "-76.70944"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3943423"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-17",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C",
+       "{'localityOriginal': 'San Vicente de Cañete', 'canonicalCity': 'San Vicente de C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3928993"
+      ],
+      "lat": [
+       "None",
+       "-13.07556"
+      ],
+      "lng": [
+       "None",
+       "-76.38528"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3928993"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-18",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Lurigancho-Chosica', 'canonicalCity': 'Lurigancho-Chosica'",
+       "{'localityOriginal': 'Lurigancho-Chosica', 'canonicalCity': 'Chosica', 'district"
+      ]
+     }
+    },
+    {
+     "id": "PE-19",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'San Borja (Lima)', 'canonicalCity': 'San Borja', 'district",
+       "{'localityOriginal': 'San Borja (Lima)', 'canonicalCity': 'Lima', 'district': 'S"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-20",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Jesús María (Lima)', 'canonicalCity': 'Jesús María', 'dist",
+       "{'localityOriginal': 'Jesús María (Lima)', 'canonicalCity': 'Lima', 'district': "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PE-21",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Santiago de Surco', ",
+       "{'localityOriginal': 'Santiago de Surco', 'canonicalCity': 'Lima', 'district': '"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3936456"
+      ],
+      "lat": [
+       "None",
+       "-12.04318"
+      ],
+      "lng": [
+       "None",
+       "-77.02824"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3936456"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-001",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-007",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-008",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'A"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-019",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Balete', 'canonicalCity': 'Balete', 'district': None, 'pro",
+       "{'localityOriginal': 'Balete', 'canonicalCity': 'Balete', 'district': 'Makina (b"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1728240"
+      ],
+      "lat": [
+       "None",
+       "14.01983"
+      ],
+      "lng": [
+       "None",
+       "121.09506"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1728240"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-028",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Bacolod', 'canonicalCity': 'Bacolod', 'district': None, 'p",
+       "{'localityOriginal': 'Bacolod', 'canonicalCity': 'Bacolod', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1729564"
+      ],
+      "lat": [
+       "None",
+       "10.66667"
+      ],
+      "lng": [
+       "None",
+       "122.95"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1729564"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-032",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-045",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Bacolod', 'canonicalCity': 'Bacolod', 'district': None, 'p",
+       "{'localityOriginal': 'Bacolod', 'canonicalCity': 'Bacolod', 'district': 'Capitol"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1729564"
+      ],
+      "lat": [
+       "None",
+       "10.66667"
+      ],
+      "lng": [
+       "None",
+       "122.95"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1729564"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-058",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'C"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-061",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': No",
+       "{'localityOriginal': 'Muntinlupa', 'canonicalCity': 'Muntinlupa', 'district': 'A"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PH-065",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Alabang, Muntinlupa City', 'canonicalCity': 'Muntinlupa Ci",
+       "{'localityOriginal': 'Alabang, Muntinlupa City', 'canonicalCity': 'Muntinlupa', "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "1699076"
+      ],
+      "lat": [
+       "None",
+       "14.39028"
+      ],
+      "lng": [
+       "None",
+       "121.0475"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|1699076"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PL-14",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p",
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "769981"
+      ],
+      "lat": [
+       "None",
+       "52.13707"
+      ],
+      "lng": [
+       "None",
+       "21.23589"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|769981"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PL-16",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p",
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "769981"
+      ],
+      "lat": [
+       "None",
+       "52.13707"
+      ],
+      "lng": [
+       "None",
+       "21.23589"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|769981"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "PL-17",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p",
+       "{'localityOriginal': 'Józefów', 'canonicalCity': 'Józefów', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "769981"
+      ],
+      "lat": [
+       "None",
+       "52.13707"
+      ],
+      "lng": [
+       "None",
+       "21.23589"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|769981"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "SK-04",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'No localizada', 'canonicalCity': None, 'district': None, '",
+       "{'localityOriginal': 'No localizada', 'canonicalCity': None, 'district': None, '"
+      ]
+     }
+    },
+    {
+     "id": "SV-09",
+     "campos": {
+      "address": [
+       "Avenida La Capilla 539 (la ficha de lugar lo sitúa en Antiguo Cuscatlán; el para",
+       "Avenida La Capilla, Calle El Espino #543, Colonia San Benito, San Salvador"
+      ],
+      "addressRaw": [
+       "Avenida La Capilla 539 (la ficha de lugar lo sitúa en Antiguo Cuscatlán; el para",
+       "Avenida La Capilla, Calle El Espino #543, Colonia San Benito, San Salvador"
+      ],
+      "geo": [
+       "{'localityOriginal': 'San Salvador / Antiguo Cuscatlán (en conflicto', 'canonica",
+       "{'localityOriginal': 'San Salvador / Antiguo Cuscatlán (en conflicto', 'canonica"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3583361"
+      ],
+      "lat": [
+       "None",
+       "13.68935"
+      ],
+      "lng": [
+       "None",
+       "-89.18718"
+      ],
+      "locality": [
+       "San Salvador / Antiguo Cuscatlán (en conflicto",
+       "San Salvador"
+      ],
+      "localityRaw": [
+       "San Salvador / Antiguo Cuscatlán (en conflicto",
+       "San Salvador"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3583361"
+      ],
+      "region": [
+       "D6)",
+       "San Salvador"
+      ],
+      "regionRaw": [
+       "D6)",
+       "San Salvador"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ],
+      "searchText": [
+       "kinder horizontes san salvador antiguo cuscatlan en conflicto d6 asociacion prom",
+       "kinder horizontes san salvador san salvador asociacion promotora de centros educ"
+      ],
+      "source1": [
+       "None",
+       "https://www.colegiosapce.edu.sv/ (pie de página: Horizontes, 2535-6610, Avenida "
+      ]
+     }
+    },
+    {
+     "id": "UG-003",
+     "campos": {
+      "address": [
+       "Garuga, Off. Entebbe Road *(sin nº de parcela en las fuentes; ver §3.5)*",
+       "Garuga, Off. Entebbe Road"
+      ],
+      "addressRaw": [
+       "Garuga, Off. Entebbe Road *(sin nº de parcela en las fuentes; ver §3.5)*",
+       "Garuga, Off. Entebbe Road"
+      ],
+      "geo": [
+       "{'localityOriginal': 'Garuga, off Entebbe Road (área de Entebbe', 'canonicalCity",
+       "{'localityOriginal': 'Garuga, off Entebbe Road (área de Entebbe', 'canonicalCity"
+      ],
+      "locality": [
+       "Garuga, off Entebbe Road (área de Entebbe",
+       "Garuga, off Entebbe Road (área de Entebbe)"
+      ],
+      "localityRaw": [
+       "Garuga, off Entebbe Road (área de Entebbe",
+       "Garuga, off Entebbe Road (área de Entebbe)"
+      ],
+      "name": [
+       "Tusimba Study Centre (grafía de la titular: «Tusiimba Conference Centre»)",
+       "Tusimba Study Centre"
+      ],
+      "region": [
+       "Wakiso)",
+       "Wakiso"
+      ],
+      "regionRaw": [
+       "Wakiso)",
+       "Wakiso"
+      ],
+      "searchText": [
+       "tusimba study centre grafia de la titular tusiimba conference centre garuga off ",
+       "tusimba study centre garuga off entebbe road area de entebbe wakiso kyoga founda"
+      ]
+     }
+    },
+    {
+     "id": "US-19",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Pembroke', 'canonicalCity': 'Pembroke', 'district': None, ",
+       "{'localityOriginal': 'Pembroke', 'canonicalCity': 'Pembroke', 'district': None, "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "4946956"
+      ],
+      "lat": [
+       "None",
+       "42.07149"
+      ],
+      "lng": [
+       "None",
+       "-70.80921"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|4946956"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "US-22",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Boston', 'canonicalCity': 'Boston', 'district': None, 'pro",
+       "{'localityOriginal': 'Boston', 'canonicalCity': 'Boston', 'district': None, 'pro"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "4748440"
+      ],
+      "lat": [
+       "None",
+       "38.54096"
+      ],
+      "lng": [
+       "None",
+       "-78.13167"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|4748440"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-01",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Caracas (Sucre)', 'canonicalCity': 'Caracas', 'district': ",
+       "{'localityOriginal': 'Caracas (Sucre)', 'canonicalCity': 'Caracas', 'district': "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-02",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Baruta, Caracas', 'canonicalCity': 'Caracas', 'district': ",
+       "{'localityOriginal': 'Baruta, Caracas', 'canonicalCity': 'Caracas', 'district': "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-03",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Baruta, Caracas', 'canonicalCity': 'Caracas', 'district': ",
+       "{'localityOriginal': 'Baruta, Caracas', 'canonicalCity': 'Caracas', 'district': "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-04",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'El Hatillo, Caracas', 'canonicalCity': 'Caracas', 'distric",
+       "{'localityOriginal': 'El Hatillo, Caracas', 'canonicalCity': 'Caracas', 'distric"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-05",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Caracas', 'canonicalCity': 'Caracas', 'district': None, 'p",
+       "{'localityOriginal': 'Caracas', 'canonicalCity': 'Caracas', 'district': None, 'p"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-12",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Caracas (Chuao, Baruta)', 'canonicalCity': 'Caracas', 'dis",
+       "{'localityOriginal': 'Caracas (Chuao, Baruta)', 'canonicalCity': 'Caracas', 'dis"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-15",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'NL (ni siquiera la localidad consta en la fuente)', 'canon",
+       "{'localityOriginal': 'NL (ni siquiera la localidad consta en la fuente)', 'canon"
+      ]
+     }
+    },
+    {
+     "id": "VE-16",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Proximidades de Caracas (El Hatillo, según la tradición de",
+       "{'localityOriginal': 'Proximidades de Caracas (El Hatillo, según la tradición de"
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3628550"
+      ],
+      "lat": [
+       "None",
+       "10.38853"
+      ],
+      "lng": [
+       "None",
+       "-66.95179"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3628550"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-19",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'La Tahona, Baruta (Caracas)', 'canonicalCity': 'La Tahona,",
+       "{'localityOriginal': 'La Tahona, Baruta (Caracas)', 'canonicalCity': 'Caracas', "
+      ],
+      "geocodingProvider": [
+       "None",
+       "GeoNames (por ID)"
+      ],
+      "geonameId": [
+       "None",
+       "3646738"
+      ],
+      "lat": [
+       "None",
+       "10.48801"
+      ],
+      "lng": [
+       "None",
+       "-66.87919"
+      ],
+      "precision": [
+       "unknown",
+       "locality"
+      ],
+      "queryUsed": [
+       "None",
+       "geonames-id|3646738"
+      ],
+      "reviewStatus": [
+       "pending",
+       "accepted"
+      ]
+     }
+    },
+    {
+     "id": "VE-21",
+     "campos": {
+      "geo": [
+       "{'localityOriginal': 'Caracas (Baruta y Anauco) y Catia La Mar (Vargas)', 'canon",
+       "{'localityOriginal': 'Caracas (Baruta y Anauco) y Catia La Mar (Vargas)', 'canon"
+      ]
+     }
+    }
+   ],
+   "ok": true
+  }
+ },
+ "sin_punto_22": [
+  {
+   "id": "CD-009",
+   "nombre": "Centre Aruwimi",
+   "pais": "RD del Congo",
+   "codigo_pais": "CD",
+   "categoria": "Centros de mujeres",
+   "localidad_clasica": "No localizada *(la lista oficial lo coloca tras Johari, sin indicar ciudad: no se le atribuye Lubumbashi por contigüidad en la lista)*",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. El listado institucional sigue sin asignar ciudad a Aruwimi; Lubumbashi aparece bajo la ficha anterior Johari. No se transmite esa ciudad por contigüidad. No se localizó web propia. Fuentes: https://opusdei.org/fr-cd/article/ou-trouver-la-formation-dispensee-par-lopus-dei-en-rd-du-congo/"
+  },
+  {
+   "id": "EC-06",
+   "nombre": "Unidad Educativa Bilingüe Delta",
+   "pais": "Ecuador",
+   "codigo_pais": "EC",
+   "categoria": "Colegios",
+   "localidad_clasica": "Av. Samborondón, km 12",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13 con captura de Jon, página abierta en origen. Web propia: «Km. 12, Av. Samborondón Guayaquil 091910» y código Plus X42H+8JJ; «Guayaquil» es la forma postal de la web. Fuentes secundarias discrepan: IBO y schooltransparency «Km 12.5 Vía Puntilla-Samborondón, Guayaquil»; micole y losmejorescolegios lo sitúan en Daule (cantón 0906). El km 12 de la vía a Samborondón cae en la zona de La Aurora (Daule) según prensa (expreso.ec), pero ninguna fuente propia ni oficial nombra la parroquia. No se asigna Guayaquil, Samborondón ni Daule/La Aurora; sin ID GeoNames. Contactos nuevos verificados en origen: celular 0999500217 y WhatsApp 0959992504; también publica admisiones@, secretaria@ y capellanía en el mismo dominio (no incorporados al campo Email)."
+  },
+  {
+   "id": "EC-09",
+   "nombre": "Unidad Educativa Jacarandá",
+   "pais": "Ecuador",
+   "codigo_pais": "EC",
+   "categoria": "Colegios",
+   "localidad_clasica": "La Aurora (cantón Daule)",
+   "ciudad_canonica": "La Aurora (parroquia urbana satélite)",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13 con captura de Jon. Web propia (contacto-3): Km. 12.5 vía a Samborondón, parroquia Satelital La Aurora; tel. (04) 371 4560; info@uejacaranda.edu.ec; horario L-V 8:00-12:00. La Aurora es parroquia urbana satélite del cantón Daule (es.wikipedia.org/wiki/La_Aurora_(Daule)); «vía a Samborondón» es otro nombre de la autopista La Puntilla-Samborondón, por lo que «vía La Puntilla» de la ficha anterior era la misma vía. No se asigna Guayaquil ni Samborondón. Sin ID: el único GeoNames «La Aurora» en Daule (3655354) está en -1.85,-79.98, a unos 25 km de la parroquia, y no se adopta. Teléfono y correo coinciden con la ficha."
+  },
+  {
+   "id": "ES-101",
+   "nombre": "EFA Piñeiral",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Escuelas de formación Técnica",
+   "localidad_clasica": "Arzúa",
+   "ciudad_canonica": "Santa María de Arzúa",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Captura de Jon contrastada 13-11-2026: el pin mostrado es Federación EFA Galicia, en Os Tilos, Teo, y NO el centro. Web propia, Concello y Xunta confirman Santa María de Arzúa. Se mantiene esa localidad sin ID aceptado: los dos registros Arzúa del catálogo no resuelven inequívocamente el núcleo/parroquia Santa María. No se transfiere la ubicación de la federación."
+  },
+  {
+   "id": "ES-104",
+   "nombre": "EFA Casagrande",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Escuelas de formación Técnica",
+   "localidad_clasica": "Valdivia",
+   "ciudad_canonica": "Valdivia",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Captura de Jon contrastada 13-11-2026 con la web propia: Ctra. Entrerríos s/n, 06720 Valdivia, Badajoz. Localidad confirmada. El catálogo ES descargado no incluye un PPL Valdivia de Badajoz: no usar el homónimo de Chile, Pomar de Valdivia ni Valdivia de Cádiz (viñedo). No sustituir por Entrerríos porque es el nombre de la carretera. ID pendiente."
+  },
+  {
+   "id": "ES-143",
+   "nombre": "Casa de retiros Valdearroyo",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "San Agustín de Guadalix",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Captura de Jon contrastada 13-11-2026 con la página propia: finca en M-104 km 5,5, entre Colmenar Viejo y San Agustín de Guadalix; contacto postal San Agustín de Guadalix 28750 Madrid. El texto confirma finca aislada y acceso, no pertenencia al núcleo urbano de San Agustín. Se completa dirección y contacto, sin forzar ID PPL ni el punto de un pueblo."
+  },
+  {
+   "id": "ES-19",
+   "nombre": "EFA Quintanes",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Escuelas de formación Técnica",
+   "localidad_clasica": "Les Masies de Voltregà",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13 con captura de Jon. Web propia (quintanes.cat/ca/contacte/11, leída hoy) publica «Escola EFA Quintanes, Mas Quintanes, Carretera BV-4608 Km 13,2, 08508 Les Masies de Voltregà, Barcelona», T 938 502 441, efa@quintanes.cat: coincide con la captura y con teléfono y email ya registrados. Se completa la dirección con carretera y punto kilométrico. Mas Quintanes es una finca en el municipio de Les Masies de Voltregà; GeoNames 6356146 es ADM3 (municipio), no localidad ni posición de la finca, y no se asigna. No sustituir por La Gleva ni por Sant Hipòlit de Voltregà sin evidencia. Fuentes: https://www.quintanes.cat/ca/contacte/11 ; https://www.quintanes.cat/es/efa-quintanes/1 ; https://www.geonames.org/6356146/les-masies-de-voltrega.html"
+  },
+  {
+   "id": "ES-218",
+   "nombre": "Casa de retiros Can Viladoms",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "No localizado",
+   "ciudad_canonica": "Castellbell i el Vilar",
+   "tenia_punto_en_v15_5": true,
+   "nota_geografica": "Captura de Jon contrastada 13-11-2026. Airina (Institució) publica retiro en Viladoms y dirección BV-1212 km 5, 08296 Castellbell i el Vilar. Inventario oficial DIBA documenta masía Viladoms y vínculo con Opus Dei. Es una finca; no se atribuye al núcleo urbano de Castellbell por municipio o dirección postal. El albergue Viladoms de Baix de Fundesplai tiene actividad propia: no se mezclan su teléfono ni instalaciones. La captura no basta para resolver la etiqueta cruzada del mapa. ID de localidad sigue pendiente."
+  },
+  {
+   "id": "ES-240",
+   "nombre": "Asociación Juvenil Escora (Club Juvenil Escora)",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Asociaciones juveniles",
+   "localidad_clasica": "Canals (municipio; Urb. Serratella)",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": true,
+   "nota_geografica": "Jon pide añadir Asociación Juvenil Escora y retirar Casa de retiros Escora. La asociación ya existía como ES-240 Club Escora: mismo dominio, dirección y teléfono; no se duplica. Web propia confirma Urb. Serratella 23, 46650 Canals (Valencia). Se retira GeoNames Valencia 2509954: era una asignación errónea de ciudad. Canals acredita municipio/dirección postal; no prueba núcleo Canals frente a Serratella/Aiacor. No se fuerza ID. Sexo Femenino previo sin respaldo localizado: la lista institucional actual no indica sexo y web propia habla de niños/chicos, sin política de admisión explícita; queda No consta, no se infiere exclusividad."
+  },
+  {
+   "id": "ES-25",
+   "nombre": "Colegio de Fomento Los Robles (sede Los Robles-Peñamayor)",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Colegios",
+   "localidad_clasica": "Soto de Llanera",
+   "ciudad_canonica": "Soto de Llanera",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Sede única identificada. Soto de Llanera es una urbanización en Pruvia, Llanera. No se equipara automáticamente al PPL Pruvia (3112803). El ID 6690420 de la tabla postal corresponde realmente a Urbanización Playa de Verdicio, Gozón: rechazado. Sin ID inequívoco de Soto en el catálogo ES consultado. Localidad original conserva el texto de la ficha conjunta. No son coordenadas del colegio."
+  },
+  {
+   "id": "ES-265",
+   "nombre": "Santuario de Torreciudad",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Iglesias",
+   "localidad_clasica": "Torreciudad",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Captura de Jon contrastada 13-11-2026. Web propia confirma teléfono +34 974 30 40 25 y dirección 22391 Torreciudad (Huesca). Su página de acceso sitúa el santuario en municipio de Secastilla, junto al embalse de El Grado, a 24 km de Barbastro. El Ayuntamiento de El Grado confirma que pertenece al vecino municipio de Secastilla. No es el núcleo de Secastilla, El Grado ni Barbastro. Catálogo ES consultado sin localidad Torreciudad, por lo que no se asigna ID aproximado."
+  },
+  {
+   "id": "ES-31",
+   "nombre": "Colegio de Fomento Peñalba",
+   "pais": "España",
+   "codigo_pais": "ES",
+   "categoria": "Colegios",
+   "localidad_clasica": "Simancas",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión con captura de Jon y web propia 13-11-2026. Dirección: Ctra. Pesqueruela km 2,3, CP 47130; Valladolid en el contacto no acredita ciudad. La web precisa municipio de Simancas, junto al campo de golf Entrepinos. Se añade zona Entrepinos, sin equipararla al núcleo Simancas ni a Pinar de Simancas o Pesqueruela. No se encuentra ID PPL inequívoco de Entrepinos en ES; permanece sin ID."
+  },
+  {
+   "id": "IN-04",
+   "nombre": "Kamalini Vocational Training Centre — Campus Sohna",
+   "pais": "India",
+   "codigo_pais": "IN",
+   "categoria": "Escuelas de formación Técnica",
+   "localidad_clasica": "Alipur, Sohna Road",
+   "ciudad_canonica": "Alipur",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. La página propia Impact aclara que el campus está dentro de la aldea Alipur, junto a la autopista Gurgaon-Sohna. No corresponde al Alipur de Delhi. Catálogo completo IN no ofrece una coincidencia inequívoca en Gurugram; localidad acreditada, ID pendiente. Fuentes: https://www.kamalini.org/impact ; https://www.kamalini.org/ ; https://download.geonames.org/export/dump/IN.zip"
+  },
+  {
+   "id": "KE-015",
+   "nombre": "Tigoni Study Centre",
+   "pais": "Kenia",
+   "codigo_pais": "KE",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "Limuru / Tigoni",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13 con captura de Jon (rotulada «Toginy Study Center»; es Tigoni Study Centre, mismo nombre, sin otra ficha Tigoni/Toginy en el Directorio). La página kiandafoundation.org/tigoni-study-centre, leída hoy, lo presenta como proyecto de Kianda Foundation («offers retreat, courses and seminar facilities»), activo en 2026, y no publica dirección. El pie con +254 742 317 180 e info@kiandafoundation.org es contacto general de la fundación y no se adopta como teléfono ni email del centro. Web oficial: pasa a la página de proyecto de la titular, activa; la anterior (http://www.tigonistudycentre.org) seguía sin resolver. Ubicación: opusdei.org (2015) «Old Limuru Rd, Limuru»; Maps auxiliar la sitúa en Tigoni ward (Karuri Forest Edge Rd, Ngecha). Siguen sin zanjarse Limuru y Tigoni; no se asigna ID (Limuru 189386 ni Tigoni 179220) ni Nairobi. Fuentes: https://www.kiandafoundation.org/tigoni-study-centre ; https://opusdei.org/en-ke/article/retreat-and-conference-centres-in-east-africa/ Anotación movida desde la dirección: Maps auxiliar la da en Karuri Forest Edge Rd, Ngecha, Tigoni ward, Kiambu (fuente oficial: Old Limuru Rd, 2015)."
+  },
+  {
+   "id": "MX-04",
+   "nombre": "Universidad Panamericana — Sede Santa Fe / Ciudad UP",
+   "pais": "México",
+   "codigo_pais": "MX",
+   "categoria": "Universidades",
+   "localidad_clasica": "Ciudad de México (Santa Fe) / Huixquilucan",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. Registro combinado de dos sedes distintas: Ciudad UP en Texcalucan, Huixquilucan, Estado de México, y Santa Fe en Álvaro Obregón, CDMX. La propia web las separa. No asignar un punto único ni escoger una sin desglosar la ficha. Fuentes: https://www.up.edu.mx/alumni/contacto/"
+  },
+  {
+   "id": "NG-016",
+   "nombre": "Institute for Industrial Technology (IIT)",
+   "pais": "Nigeria",
+   "codigo_pais": "NG",
+   "categoria": "Escuelas de formación Técnica",
+   "localidad_clasica": "Lagos (Isheri-North",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. Web propia actual: Namso Akpan Drive (Road 10), Isheri-North GRA, off Channels TV Avenue, OPIC, off Lagos-Ibadan Expressway, Lagos. Surulere es referencia anterior y no prueba la sede actual. Falta contrastar frontera Lagos/Ogun antes de asignar provincia. Fuentes: https://iit.edu.ng/contact-us/"
+  },
+  {
+   "id": "NG-018",
+   "nombre": "Iwollo Conference Centre (Aguobu-Iwollo Conference Centre)",
+   "pais": "Nigeria",
+   "codigo_pais": "NG",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "Aguobu-Iwollo, Ezeagu",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13 con captura de Jon (búsqueda Google: «Aguobu-Iwollo Conference Centre», código plus C6HR+289, «Umueze 401132, Enugu, Nigeria»; otro resultado «Iwollo Conference Centre Gate»). Contraste: opusdei.org en-ng, «Retreats and Conference Centres» (2018) lista «Iwollo Conference Centre, Umueze, Asaba-Onitsha Road, Enugu State»; su programa de retiros 2026 lo sitúa en «Agwuobu-Iwollo, Enugu»; el directorio de sacerdotes de la diócesis de Enugu lo ubica en Aguobu-Iwollo. Umueze y Aguobu-Iwollo son por tanto dos nombres de lugar para el mismo centro según la fuente; el punto de Google (con su código postal 401132) lo confirma, pero es dato aportado por captura y no se adopta como código postal. Segunda captura de Jon: el panel «Iwollo Conference Centre Gate» muestra «Aguobu 401132, Enugu, Nigeria» y el del centro mostraba «Umueze 401132»; mismo código 401132 y mismo punto de mapa, es decir, dos rótulos de Google para el mismo sitio, no dos centros ni dos altas. La coincidencia de Google con Aguobu apoya la localidad Aguobu-Iwollo, pero sigue siendo dato aportado por captura (CP no adoptado). Comunidad Aguobu-Iwollo en Ezeagu LGA, Enugu (web comunitaria aguobuiwollo.ng). Sin ID GeoNames: el «Iwollo-Oghe» del catálogo (2336890) es otro lugar y no se usa; no se adopta Enugu ciudad ni Umueze/Aguobu por cercanía. Fuentes: https://opusdei.org/en-ng/article/retreats-and-conference-centres/ ; https://opusdei.org/en-ng/article/spiritual-retreats-in-nigeria-2026/ ; https://www.catholicdioceseenugu.org.ng/opus-dei-priests/ ; https://aguobuiwollo.ng/history/"
+  },
+  {
+   "id": "PE-18",
+   "nombre": "Larboleda (La Arboleda) — Casa de Retiros de Chosica",
+   "pais": "Perú",
+   "codigo_pais": "PE",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "Lurigancho-Chosica",
+   "ciudad_canonica": "Chosica",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. Hay fuente institucional de 2024 que recuerda Larboleda como casa de retiros en Chosica, pero relata hechos de 1974. Un agregador da dirección actual en Lurigancho-Chosica. Se documenta la localización histórica, sin tomarla por confirmación vigente del predio; web propia no localizada. Fuentes: https://opusdei.org/es-pe/article/jorge-gandolfo-unir-lo-humano-y-lo-divino/ ; https://opusdei.org/es-es/article/peru-imperio-del-sol/ ; https://pe.archivo.biz/centro-cultural-larboleda || Revisión 2026-11-13 con captura de Jon (resumen de IA de Google): propone Centro Cultural Larboleda, Deacon y Wiese 215, Lurigancho-Chosica. No se adopta: la dirección solo aparece en directorios (pe.archivo.biz) y la misma calle y número figuran para el Colegio La Ribera 1198 en planetaperu.pe y foodyas.com; ninguna fuente propia ni institucional la da. Chosica como localización queda como estaba. El Instagram arboleda_cc que cita la captura es el Centro Cultural Arboleda de Chía, Colombia (CO-37), y no se usa para Perú. Sin ID, sin cambios de datos."
+  },
+  {
+   "id": "SK-04",
+   "nombre": "Teologické centrum Atheneum",
+   "pais": "Eslovaquia",
+   "codigo_pais": "SK",
+   "categoria": "Centros culturales",
+   "localidad_clasica": "No localizada",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. El artículo institucional menciona Atheneum sin asignarle dirección o ciudad expresamente. No se infiere Bratislava por proximidad con los párrafos de otros centros. No se localizó web propia. Fuentes: https://opusdei.org/sk-sk/article/opus-dei-na-slovensku/"
+  },
+  {
+   "id": "UG-003",
+   "nombre": "Tusimba Study Centre",
+   "pais": "Uganda",
+   "codigo_pais": "UG",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "Garuga, off Entebbe Road (área de Entebbe)",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión 2026-11-13 por captura de Jon (kyogafoundationltd.org/contact). Esa página es el contacto general de la titular Kyoga Foundation: Plot 23/29/31, Garuga Road, Ttende Estate, Entebbe. Es la misma dirección de Pearlcrest (UG-004) y la página propia de Tusimba no publica dirección, así que NO se adopta como dirección del centro. Localización contrastada: listado oficial de opusdei.org «Garuga, Off. Entebbe Road»; la web de la titular lo sitúa como centro de retiros de Kyoga Foundation; OpenStreetMap/Mapcarta lo ubica en Katabi (Busiro, distrito de Wakiso), junto a Tende hill y Garuga Resort (fuente secundaria). Se mantiene Garuga / Wakiso. Sin ID GeoNames: no hay localidad Garuga en el catálogo nacional y no se usa Entebbe ni Katabi por cercanía. Corregido el texto partido de Región y Localidad. Fuentes: https://www.kyogafoundationltd.org/contact ; https://www.kyogafoundationltd.org/projects/tusimba-study-center ; https://opusdei.org/en-ke/article/retreat-and-conference-centres-in-east-africa/ ; https://mapcarta.com/N4822591850 Anotaciones movidas desde los campos: la titular escribe el nombre «Tusiimba Conference Centre»; las fuentes no publican número de parcela."
+  },
+  {
+   "id": "VE-15",
+   "nombre": "Portones (centro de encuentros)",
+   "pais": "Venezuela",
+   "codigo_pais": "VE",
+   "categoria": "Casa de retiros",
+   "localidad_clasica": "NL (ni siquiera la localidad consta en la fuente)",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. Nueva fuente institucional sitúa expresamente Centro de Encuentros Portones en municipio Mara, estado Zulia. No identifica localidad exacta; no usar Maracaibo por cercanía o por origen de los participantes. No se localizó web propia. Fuentes: https://opusdei.org/es-ve/article/60-muchachos-y-3-toneladas/"
+  },
+  {
+   "id": "VE-21",
+   "nombre": "Asociación Civil Salud y Familia",
+   "pais": "Venezuela",
+   "codigo_pais": "VE",
+   "categoria": "Centros de promoción social",
+   "localidad_clasica": "Caracas (Baruta y Anauco) y Catia La Mar (Vargas)",
+   "ciudad_canonica": "",
+   "tenia_punto_en_v15_5": false,
+   "nota_geografica": "Revisión individual 2026-11-13. Web propia confirma tres sedes: Baruta (Miranda), Anauco (La Candelaria, Municipio Libertador, Caracas) y Catia La Mar (Vargas/La Guaira). Ficha multiciudad, sin punto único. Fuentes: https://saludyfamiliaid.wixsite.com/syfamilia/contactanos"
+  }
+ ]
+}

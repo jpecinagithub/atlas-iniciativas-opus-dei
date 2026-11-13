@@ -20,10 +20,13 @@
  *   abrir la transacción: ninguna corrida puede acreditar una versión
  *   que no es la importada.
  *
- * Modo de poda (opt-in, Fase 8B): con `--prune-missing` el importador
- * puede BORRAR las iniciativas ausentes, pero solo las listadas en el
- * manifiesto versionado apps/api/prune-manifest.v15-5.json y solo tras
- * comprobar, antes de escribir nada, que:
+ * Modo de poda (opt-in, Fase 8B; selección por SHA en la Fase 8C):
+ * con `--prune-missing` el importador puede BORRAR las iniciativas
+ * ausentes, pero solo las listadas en el manifiesto versionado
+ * apps/api/prune-manifest.<versión>.json QUE CORRESPONDA al SHA-256
+ * del Excel entrante (se escanean los manifiestos presentes y se
+ * elige el de hash coincidente; PRUNE_MANIFEST_PATH fuerza uno
+ * concreto) y solo tras comprobar, antes de escribir nada, que:
  *   1. el SHA-256 del Excel entrante es EXACTAMENTE el del manifiesto;
  *   2. ningún ID del manifiesto aparece en el conjunto entrante;
  *   3. el conjunto de ausentes en base coincide con el manifiesto:
@@ -36,7 +39,7 @@
  * La poda es idempotente: repetir la corrida da deleted: 0.
  */
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pool, ensureMigrated, repoRoot } from './db.js';
 
@@ -96,14 +99,13 @@ async function upsertTable(
 }
 
 /**
- * Carga el manifiesto de poda (modo --prune-missing). Sin el flag no se
- * lee siquiera. Con el flag, un manifiesto ausente o mal formado aborta
- * la importación antes de abrir la transacción.
+ * Carga y valida UN manifiesto de poda desde su fichero. Un manifiesto
+ * ausente o mal formado aborta la importación antes de abrir la
+ * transacción.
  */
 interface PruneManifest { file: string; sha256: string; ids: string[] }
 
-function loadPruneManifest(root: string): PruneManifest {
-  const path = PRUNE_MANIFEST_PATH ?? join(root, 'apps/api/prune-manifest.v15-5.json');
+function readPruneManifest(path: string): PruneManifest {
   if (!existsSync(path)) {
     throw new Error(`--prune-missing: no existe el manifiesto de poda (${path}). Importación abortada sin escribir.`);
   }
@@ -118,14 +120,42 @@ function loadPruneManifest(root: string): PruneManifest {
   return { file: path, sha256: raw.sha256 as string, ids: ids as string[] };
 }
 
+/**
+ * Selecciona el manifiesto de poda que corresponde al Excel entrante
+ * (Fase 8C): sin PRUNE_MANIFEST_PATH se escanean los
+ * apps/api/prune-manifest.*.json versionados y se elige el cuyo
+ * sha256 coincide EXACTAMENTE con el del archivo entrante. Si ninguno
+ * coincide, la poda aborta sin escribir: jamás se poda con el
+ * manifiesto de otra versión. Sin el flag no se lee ningún manifiesto.
+ */
+function selectPruneManifest(root: string, fileSha: string): PruneManifest {
+  if (PRUNE_MANIFEST_PATH) return readPruneManifest(PRUNE_MANIFEST_PATH);
+  const dir = join(root, 'apps/api');
+  const candidates = readdirSync(dir)
+    .filter((f) => /^prune-manifest\..+\.json$/.test(f))
+    .sort();
+  const parsed = candidates.map((f) => readPruneManifest(join(dir, f)));
+  const match = parsed.find((m) => m.sha256 === fileSha);
+  if (!match) {
+    throw new Error(
+      `--prune-missing: ningún manifiesto de poda corresponde al SHA-256 del Excel entrante (${fileSha}); ` +
+      `manifiestos conocidos: ${parsed.map((m) => `${m.sha256.slice(0, 8)}… (${m.file.split('/').pop()})`).join(', ') || 'ninguno'}. ` +
+      'Poda abortada sin escribir.',
+    );
+  }
+  return match;
+}
+
 async function main(): Promise<void> {
   const root = repoRoot();
-  const manifest = PRUNE ? loadPruneManifest(root) : null;
   const catalog = JSON.parse(readFileSync(join(root, 'apps/web/public/data/catalog.json'), 'utf-8'));
   const sourcesFile = JSON.parse(readFileSync(join(root, 'data/generated/sources.json'), 'utf-8'));
   const sourceName: string = catalog.meta.sourceFile;
   const xlsx = readFileSync(join(root, 'data/source', sourceName));
   const fileSha = createHash('sha256').update(xlsx).digest('hex');
+  // La selección del manifiesto va DESPUÉS de conocer el hash del
+  // Excel entrante: cada versión se poda solo con su manifiesto.
+  const manifest = PRUNE ? selectPruneManifest(root, fileSha) : null;
 
   // Integridad: los artefactos deben proceder EXACTAMENTE del Excel
   // presente. Si el Excel se sustituyó sin regenerar (`npm run data`),
