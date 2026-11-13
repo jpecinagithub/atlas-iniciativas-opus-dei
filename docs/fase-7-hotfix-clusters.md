@@ -396,3 +396,45 @@ script deja el despliegue en la franja visible sobre la hoja.
 
 **Estado: verificado en local. NO desplegado** — pendiente de la
 certificación de Jon, como manda la regla de fases.
+
+## 12. Despliegue del hotfix 2 (2026-11-13)
+
+Desplegado por orden expresa de Jon tras su certificación.
+Producción servía la VERSION `e87934aab079` (código del hotfix 1,
+datos v15-5); el despliegue es solo de código web — ningún dato
+cambia (el diff contra el estado desplegado no contiene borrados
+de ficheros, solo modificaciones en `store.ts`, `MapView.tsx` y
+`CoincidentSelector.tsx`, más tests y docs).
+
+- **VERSION: `e87934aab079` → `5722ebd12b04`** (leída del `sw.js`
+  servido en el puerto del servidor tras reconstruir solo el
+  servicio web con `docker-compose.prod.yml`; api y base de datos
+  no se recrearon).
+- **Sondas en el puerto del servidor (127.0.0.1:8180), todas 200:**
+  índice, `data/catalog.json` (1.411 iniciativas, 1.317 localizadas,
+  SHA del v15-5 `088655db…`), `data/countries.geojson`, glyphs y
+  `api/health` con **1.411 / 1.317 / 2.724 / 2.167** — datos
+  intactos.
+- **Verificación pública** (`tests/verify-public.mjs`, con
+  `ATLAS_HEADLINE='1.411 iniciativas'`): `migrate` — el perfil con
+  el SW anterior carga, el SW nuevo se activa y, tras recargar,
+  sirve la VERSION `5722ebd12b04` con **errores `[]`**; `fresh` —
+  perfil nuevo, misma VERSION y conteos exactos, **errores `[]`**.
+- **Verificación funcional del hotfix en producción** (Playwright
+  contra la URL pública, grupo de Piura): 10/10 comprobaciones —
+  selector «3 iniciativas en Piura»; spiderfy con 3 puntos y 3
+  líneas (PE-01, PE-12, PE-13); la ficha de Colegio Turicará se
+  abre (`sel=PE-12`) y la lista se oculta **sin desmontar el
+  grupo** (siguen los 3 puntos y las 3 líneas); Turicará es el
+  único resaltado y la capa de anillo renderiza solo PE-12; sin
+  marcador 3D en el ancla (`markerVisible=false`) y con la cámara
+  inmóvil (zoom 11 → 11, centro idéntico); al cerrar la ficha
+  vuelve el selector con el grupo intacto; consola sin errores en
+  todo el recorrido.
+- **Captura:** `docs/fase-7b/prod-hotfix2-piura-ficha.png`, del
+  recorrido real de producción (ficha de Turicará abierta, grupo
+  desplegado y anillo visible). Nota de transparencia: el PNG
+  resultante es byte-idéntico al de la captura local del §11
+  (misma escena determinista: mismo build, mismos datos y un
+  fondo cartográfico uniforme en esa zona); la hora de escritura
+  del fichero corresponde a la corrida de producción.

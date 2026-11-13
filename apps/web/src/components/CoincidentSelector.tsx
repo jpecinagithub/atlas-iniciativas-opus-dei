@@ -21,9 +21,18 @@ import type { Initiative } from '../types';
  * esta ubicación»; recibe el foco al abrir; la lista son botones
  * (Tab/Enter nativos); Escape lo cierra y el foco vuelve al lienzo
  * del mapa (evento `atlas:focus-map` que escucha MapView).
+ *
+ * Hotfix 2 (2026-11-13): la lista se muestra solo si
+ * `coincidentPanelOpen`. Pulsar una tarjeta abre la ficha con
+ * preserveCoincident: el grupo (y su spiderfy) permanece, la lista
+ * se oculta y vuelve a aparecer al cerrar la ficha. El Escape es
+ * por etapas: con la ficha abierta, ESTE manejador no actúa (no
+ * está montado el panel) y el primer Escape cierra solo la ficha;
+ * con la lista visible, Escape cierra el grupo entero.
  */
 export function CoincidentSelector() {
   const coincident = useAtlas((s) => s.coincident);
+  const panelOpen = useAtlas((s) => s.coincidentPanelOpen);
   const catalog = useAtlas((s) => s.catalog);
   const closeCoincident = useAtlas((s) => s.closeCoincident);
   const select = useAtlas((s) => s.select);
@@ -36,11 +45,14 @@ export function CoincidentSelector() {
       .filter((r): r is Initiative => !!r);
   }, [coincident, catalog]);
 
-  // Foco al abrir y cierre con Escape (en captura, para ganar a
-  // cualquier otro Escape global: cerrar el selector no debe cerrar
-  // también la ficha que pudiera haber debajo).
+  // Foco al abrir (o al reaparecer tras cerrar una ficha del
+  // grupo) y cierre con Escape (en captura, para ganar a cualquier
+  // otro Escape global). El manejador solo está activo con la
+  // lista visible: con la ficha del grupo abierta, el primer
+  // Escape debe cerrar SOLO la ficha (lo hace el manejador de App)
+  // y este panel reaparece; un segundo Escape ya cierra el grupo.
   useEffect(() => {
-    if (!coincident) return;
+    if (!coincident || !panelOpen) return;
     const t = setTimeout(() => panelRef.current?.focus({ preventScroll: true }), 60);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -54,9 +66,9 @@ export function CoincidentSelector() {
       clearTimeout(t);
       window.removeEventListener('keydown', onKey, true);
     };
-  }, [coincident, closeCoincident]);
+  }, [coincident, panelOpen, closeCoincident]);
 
-  if (!coincident || records.length === 0) return null;
+  if (!coincident || !panelOpen || records.length === 0) return null;
   const n = records.length;
   const title = `${fmt(n)} iniciativas en ${coincident.locality}`;
 
@@ -95,7 +107,7 @@ export function CoincidentSelector() {
           <li key={rec.id}>
             <button
               type="button"
-              onClick={() => select(rec.id)}
+              onClick={() => select(rec.id, { preserveCoincident: true })}
               className="w-full rounded-xl border border-white/10 bg-[#141f38] px-3.5 py-3 text-left transition hover:border-[#e8a33d]/50 hover:bg-[#1a2947] lg:bg-white/[0.03] lg:hover:bg-white/[0.06]"
             >
               <span className="block truncate text-sm font-medium text-slate-50">{rec.name}</span>

@@ -6,7 +6,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 
 maplibregl.setWorkerUrl(workerUrl);
-import { useAtlas, filterInitiatives } from '../store';
+import { useAtlas, filterInitiatives, type CoincidentGroup } from '../store';
 import { categoryColor } from '../categories';
 // Solo el tipo: la implementación (Three.js) se carga bajo demanda en
 // su propio chunk la primera vez que hay una selección con ubicación,
@@ -90,6 +90,11 @@ export default function MapView() {
   // hay que recolocar el círculo; no se rearma con movimientos
   // menores, para que la deriva acumulada también cuente.
   const spiderRef = useRef<{ zoom0: number; pixel0: { x: number; y: number }; anchor: [number, number] } | null>(null);
+  // Marca de «el último moveend viene de un cambio de tamaño, no de
+  // un gesto»: al redimensionar, el píxel del ancla cambia sin que
+  // el usuario haya movido el mapa, y eso no debe cerrar el grupo.
+  const resizedRef = useRef(false);
+  const prevCoincidentRef = useRef<CoincidentGroup | null>(null);
 
   /**
    * Pinta (o limpia) el spiderfy del grupo coincidente: puntos
@@ -143,6 +148,10 @@ export default function MapView() {
         properties: {
           id: rec.id, category: rec.category, name: rec.name,
           locality: rec.locality ?? '', color: categoryColor(rec.category), side,
+          // Hotfix 2: la iniciativa seleccionada del grupo se
+          // distingue DENTRO del spiderfy (anillo de la capa
+          // desplegados-resaltado), sin marcador 3D en el ancla.
+          sel: rec.id === st.selectedId,
         },
       });
       lineFeatures.push({
@@ -345,6 +354,19 @@ export default function MapView() {
           'circle-opacity': 1,
         },
       });
+      // Hotfix 2: anillo de resaltado de la iniciativa seleccionada
+      // dentro del spiderfy (la propiedad `sel` la pone
+      // layoutSpiderfy). Sustituye visualmente al marcador 3D, que
+      // permanece desactivado mientras el grupo está abierto.
+      map.addLayer({
+        id: 'desplegados-resaltado', type: 'circle', source: 'desplegados',
+        filter: ['==', ['get', 'sel'], true],
+        paint: {
+          'circle-color': '#e8a33d', 'circle-opacity': 0,
+          'circle-radius': 13.5,
+          'circle-stroke-color': '#e8a33d', 'circle-stroke-width': 3, 'circle-stroke-opacity': 1,
+        },
+      });
       // Etiquetas de los puntos desplegados: una capa por lado
       // dominante, cada una anclada hacia fuera del ancla (la
       // propiedad `side` la calcula layoutSpiderfy). Así ningún
@@ -468,7 +490,9 @@ export default function MapView() {
         const deployed = byLayer('desplegados');
         if (deployed) {
           const id = (deployed.properties as { id?: string }).id;
-          if (id) useAtlas.getState().select(id);
+          // Hotfix 2: pulsar un punto desplegado abre su ficha SIN
+          // desmontar el grupo ni mover el mapa.
+          if (id) useAtlas.getState().select(id, { preserveCoincident: true });
           return;
         }
         const cluster = byLayer('clusters');
@@ -501,6 +525,20 @@ export default function MapView() {
         map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
       }
 
+      // Cambio de tamaño del lienzo (rotación, redimensionado de
+      // la ventana, cambios de layout): NO es un gesto del
+      // usuario. El píxel del ancla cambia sin que cambien centro
+      // ni zoom, así que se repinta el spiderfy con la nueva
+      // geometría, se rearma la referencia y el moveend que
+      // acompañe al resize se trata como recolocación, no como
+      // movimiento significativo (hotfix 2).
+      map.on('resize', () => {
+        if (!useAtlas.getState().coincident) return;
+        resizedRef.current = true;
+        spiderRef.current = null;
+        layoutSpiderfy(true);
+      });
+
       // Cierre del spiderfy por movimiento significativo del
       // mapa: |Δzoom| ≥ 0,5 o desplazamiento del ancla en
       // pantalla ≥ 25 % del lado menor del lienzo, medidos desde
@@ -511,6 +549,13 @@ export default function MapView() {
         const st = useAtlas.getState();
         const open = spiderRef.current;
         if (!st.coincident || !open) return;
+        if (resizedRef.current) {
+          // El movimiento fue el ajuste por el cambio de tamaño:
+          // recolocar (la referencia ya se rearmó en 'resize').
+          resizedRef.current = false;
+          layoutSpiderfy(true);
+          return;
+        }
         const zoomDelta = Math.abs(map.getZoom() - open.zoom0);
         const p = map.project(open.anchor);
         const shift = Math.hypot(p.x - open.pixel0.x, p.y - open.pixel0.y);
@@ -567,14 +612,19 @@ export default function MapView() {
   // ---- Spiderfy del grupo coincidente: pintar al abrir, limpiar
   // al cerrar (incluye los cierres por cambio de filtros/país/
   // búsqueda, que la store ya refleja poniendo coincident a null).
+  // Hotfix 2: también se repinta al cambiar la selección DENTRO del
+  // grupo (la propiedad `sel` del resaltado), conservando la
+  // referencia de apertura: abrir una ficha no es un movimiento.
   useEffect(() => {
-    const apply = () => { if (readyRef.current) layoutSpiderfy(); };
+    const sameGroup = prevCoincidentRef.current === coincident;
+    prevCoincidentRef.current = coincident;
+    const apply = () => { if (readyRef.current) layoutSpiderfy(sameGroup); };
     if (readyRef.current) apply();
     else {
       const t = setInterval(() => { if (readyRef.current) { apply(); clearInterval(t); } }, 250);
       return () => clearInterval(t);
     }
-  }, [coincident, catalog, layoutSpiderfy]);
+  }, [coincident, selectedId, catalog, layoutSpiderfy]);
 
   // ---- Marcador 3D + halo del seleccionado
   useEffect(() => {

@@ -16,8 +16,16 @@ export interface CameraRequest {
  * representativa de localidad (hotfix Fase 7): el mapa las despliega
  * visualmente (spiderfy) y este estado alimenta el selector. Es un
  * estado transitorio de interacción: se limpia al cambiar filtros,
- * país, búsqueda, selección o al restablecer. Los desplazamientos
- * del spiderfy son solo visuales; nunca se guardan como coordenadas.
+ * país, búsqueda o al restablecer. Los desplazamientos del spiderfy
+ * son solo visuales; nunca se guardan como coordenadas.
+ *
+ * Hotfix 2 (2026-11-13): el grupo y su lista son DOS estados
+ * separados. `coincident` mantiene el grupo y su representación
+ * cartográfica; `coincidentPanelOpen` controla SOLO si se muestra
+ * la lista flotante del selector. Seleccionar una iniciativa del
+ * grupo (desde su punto desplegado o desde una tarjeta del
+ * selector) ya NO cierra el grupo: la ficha se abre con el spiderfy
+ * intacto y, al cerrarla, vuelve el selector.
  */
 export interface CoincidentGroup {
   anchor: [number, number];
@@ -34,10 +42,13 @@ interface AtlasState {
   query: string;
   selectedId: string | null;
   camera: CameraRequest | null;
-  /** Grupo coincidente abierto (spiderfy + selector), o null. */
+  /** Grupo coincidente abierto (su representación en el mapa), o null. */
   coincident: CoincidentGroup | null;
+  /** Si la lista flotante del selector del grupo está visible. */
+  coincidentPanelOpen: boolean;
   openCoincident: (group: CoincidentGroup) => void;
   closeCoincident: () => void;
+  setCoincidentPanelOpen: (open: boolean) => void;
   /** Fichas completas (Fase 4) cacheadas por ID, desde la API. */
   details: Record<string, InitiativeDetail>;
   detailFailedFor: string | null;
@@ -47,7 +58,7 @@ interface AtlasState {
   toggleCategory: (category: string) => void;
   setCategories: (categories: string[]) => void;
   setQuery: (q: string) => void;
-  select: (id: string | null, fly?: boolean) => void;
+  select: (id: string | null, opts?: boolean | { fly?: boolean; preserveCoincident?: boolean }) => void;
   reset: () => void;
   viewResultsOnMap: () => void;
 }
@@ -68,8 +79,10 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   selectedId: null,
   camera: null,
   coincident: null,
-  openCoincident: (group) => set({ coincident: group }),
-  closeCoincident: () => set({ coincident: null }),
+  coincidentPanelOpen: false,
+  openCoincident: (group) => set({ coincident: group, coincidentPanelOpen: true }),
+  closeCoincident: () => set({ coincident: null, coincidentPanelOpen: false }),
+  setCoincidentPanelOpen: (open) => set({ coincidentPanelOpen: open }),
   details: {},
   detailFailedFor: null,
 
@@ -115,28 +128,44 @@ export const useAtlas = create<AtlasState>((set, get) => ({
   },
 
   setCountry: (code, fly = true) =>
-    set((s) => ({ countryCode: code, coincident: null, camera: fly ? (code ? cam('country', { countryCode: code }) : cam('world')) : s.camera })),
+    set((s) => ({ countryCode: code, coincident: null, coincidentPanelOpen: false, camera: fly ? (code ? cam('country', { countryCode: code }) : cam('world')) : s.camera })),
   toggleCategory: (category) =>
     set((s) => ({
       coincident: null,
+      coincidentPanelOpen: false,
       categories: s.categories.includes(category)
         ? s.categories.filter((c) => c !== category)
         : [...s.categories, category],
     })),
-  setCategories: (categories) => set({ categories, coincident: null }),
-  setQuery: (query) => set({ query, coincident: null }),
-  select: (id, fly = false) => {
+  setCategories: (categories) => set({ categories, coincident: null, coincidentPanelOpen: false }),
+  setQuery: (query) => set({ query, coincident: null, coincidentPanelOpen: false }),
+  select: (id, opts) => {
     const s = get();
+    const fly = typeof opts === 'boolean' ? opts : opts?.fly ?? false;
+    const preserve = typeof opts === 'object' && opts !== null ? opts.preserveCoincident ?? false : false;
     const rec = id ? s.catalog?.initiatives.find((i) => i.id === id) : undefined;
+    const group = s.coincident;
+    // Hotfix 2: cerrar la ficha de una iniciativa DEL GRUPO no
+    // cierra el grupo: el spiderfy permanece y vuelve el selector.
+    if (id === null && group && s.selectedId !== null && group.ids.includes(s.selectedId)) {
+      set({ selectedId: null, coincidentPanelOpen: true });
+      return;
+    }
+    // Hotfix 2: seleccionar una iniciativa del grupo con
+    // preserveCoincident (desde su punto desplegado o desde el
+    // selector) mantiene el grupo y solo oculta la lista; la
+    // cámara no se toca (fly viene false en esos llamadores).
+    const keepGroup = !!group && id !== null && preserve && group.ids.includes(id);
     set({
       selectedId: id,
-      coincident: null,
+      coincident: keepGroup ? group : null,
+      coincidentPanelOpen: false,
       camera: fly && rec && rec.lat !== null && rec.lng !== null
         ? cam('point', { lng: rec.lng, lat: rec.lat })
         : s.camera,
     });
   },
-  reset: () => set({ countryCode: null, categories: [], query: '', selectedId: null, coincident: null, camera: cam('world') }),
+  reset: () => set({ countryCode: null, categories: [], query: '', selectedId: null, coincident: null, coincidentPanelOpen: false, camera: cam('world') }),
   viewResultsOnMap: () => {
     const s = get();
     if (s.countryCode) set({ camera: cam('country', { countryCode: s.countryCode }) });
@@ -218,6 +247,7 @@ export function applyStateFromUrl() {
     query,
     selectedId,
     coincident: null,
+    coincidentPanelOpen: false,
     camera: countryCode ? cam('country', { countryCode }) : cam('world'),
   });
   lastNavKey = navKeyOf(countryCode, categories, selectedId);
