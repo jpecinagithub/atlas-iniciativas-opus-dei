@@ -2,9 +2,16 @@
  * Prueba permanente del modo de poda del importador en el escenario
  * MULTI-MANIFIESTO (Fase 8C; adaptada en la corrección de Jon de
  * 2026-11-13 a la migración v15-5 → v15-6). Sobre bases temporales
- * verifica el ciclo completo de `npm run import -- --prune-missing`
+ * verifica el ciclo completo del modo de poda del importador
  * con los dos manifiestos versionados (apps/api/prune-manifest.
- * v15-5.json y prune-manifest.v15-6.json):
+ * v15-5.json y prune-manifest.v15-6.json). La antigua invocación
+ * `npm run import -- --prune-missing` NO propagaba el flag a
+ * través de los dos niveles de npm (corrección operativa de la
+ * Fase 8C, 2026-11-13): el comando público es ahora
+ * `npm run import:prune`. La importación positiva v15-6 (paso 4)
+ * se lanza por ESE camino del operador; el resto de ejecuciones
+ * invocan el importador directamente, porque su objeto es el
+ * comportamiento del importador y no el comando:
  *
  * 1. Punto de partida: restauración del dump acreditado del v14
  *    (1.382 / 942 / 2.626 / 2.164, 1 corrida).
@@ -16,11 +23,14 @@
  * 3. RECHAZO del manifiesto v15-5: con los artefactos ya en v15-6,
  *    forzar PRUNE_MANIFEST_PATH al manifiesto v15-5 ABORTA por SHA
  *    sin escribir: ni corrida nueva ni ningún total se mueve.
- * 4. Importación v15-6 con flag (selección automática del manifiesto
- *    v15-6 por SHA): poda exacta de las 5 bajas del manifiesto
- *    (CO-32, ES-153, ES-219, ES-230, MX-47) con 7 relaciones
- *    eliminadas, relaciones creadas 2.159 y totales 1.409 · 1.387 ·
- *    22 · 69 · 2.728 · 2.159.
+ * 4. Importación v15-6 con poda, lanzada por el CAMINO DEL
+ *    OPERADOR (`npm run import:prune` desde la raíz del repo;
+ *    selección automática del manifiesto v15-6 por SHA): la salida
+ *    debe acreditar literalmente la clave `prune`, el manifiesto
+ *    prune-manifest.v15-6.json, deleted 5 y relationsDeleted 7;
+ *    poda exacta de las 5 bajas del manifiesto (CO-32, ES-153,
+ *    ES-219, ES-230, MX-47), relaciones creadas 2.159 y totales en
+ *    base 1.409 · 1.387 · 22 · 69 · 2.728 · 2.159.
  * 5. Las cinco bajas no existen ni tienen relaciones.
  * 6. Idempotencia: segunda importación v15-6 con flag: inserted 0,
  *    updated 0, deleted 0 y totales intactos.
@@ -94,6 +104,19 @@ function runImporter(args = [], extraEnv = {}) {
     [tsxCli, join(ROOT, 'apps/api/src/import.ts'), ...args],
     { cwd: ROOT, encoding: 'utf-8', env },
   );
+}
+
+// Camino del operador: el comando público documentado
+// (`npm run import:prune` en la raíz del repo), con la base
+// temporal en el entorno, igual que lo ejecutaría quien importa
+// a mano. Si el comando dejara de transmitir el flag, la salida
+// no llevaría clave `prune` y el paso 4 fallaría.
+function runImporterOperator(extraEnv = {}) {
+  const env = { ...process.env, DATABASE_URL: TEST_URL };
+  delete env.PRUNE_MANIFEST_PATH;
+  Object.assign(env, extraEnv);
+  return spawnSync('npm', ['run', 'import:prune'],
+    { cwd: ROOT, encoding: 'utf-8', env });
 }
 
 function parseSummary(result) {
@@ -209,11 +232,18 @@ try {
   expectTotals('Tras el rechazo v15-5, la base sigue en v15-5', t,
     { initiatives: 1411, located: 1317, sources: 2724, relations: 2167, runs: 2 });
 
-  // 4) Importación v15-6 con flag: selección automática del
-  // manifiesto v15-6 por SHA; poda exacta de 5 y 7 relaciones.
-  const toV156 = runImporter(['--prune-missing']);
-  check('v15-6: la importación con flag funciona', !toV156.error && toV156.status === 0,
+  // 4) Importación v15-6 con poda por el CAMINO DEL OPERADOR:
+  // `npm run import:prune` desde la raíz (selección automática
+  // del manifiesto v15-6 por SHA). Se exige que la salida
+  // acredite la poda literalmente: clave `prune`, manifiesto
+  // v15-6, deleted 5 y relationsDeleted 7.
+  const toV156 = runImporterOperator();
+  check('v15-6 (operador): `npm run import:prune` funciona', !toV156.error && toV156.status === 0,
     toV156.error ? toV156.error.message : `código ${toV156.status}\n${toV156.stderr ?? ''}`);
+  check('v15-6 (operador): la salida incluye la clave `prune`',
+    /"prune"\s*:/.test(toV156.stdout ?? ''));
+  check('v15-6 (operador): la salida nombra el manifiesto prune-manifest.v15-6.json',
+    /prune-manifest\.v15-6\.json/.test(toV156.stdout ?? ''));
   const sum156 = parseSummary(toV156);
   check('v15-6: prune.deleted = 5 (manifiesto v15-6 auto-seleccionado)',
     sum156.prune?.deleted === 5 && JSON.stringify([...(sum156.prune?.ids ?? [])].sort()) === JSON.stringify(PRUNE6_IDS),

@@ -495,10 +495,14 @@ Commit `190b571`. Ficheros: `apps/api/src/import.ts`,
 importador; la imagen de la API lo incorpora vía `apps/api/Dockerfile`)
 y `tests/import-prune.mjs` (batería permanente, ver más abajo).
 
-- Invocación: `npm run import -- --prune-missing` (en producción:
-  `docker compose -f docker-compose.prod.yml run --rm api node
-  dist/import.js --prune-missing`). Sin el flag, el comportamiento es
-  el de siempre: no se borra nada y el resumen no lleva clave `prune`.
+- Invocación (corregida el 2026-11-13 en la Fase 8C, §13 de su
+  informe: la forma original `npm run import -- --prune-missing`
+  NO propaga el flag a través de los dos niveles de npm y ejecutaba
+  la importación SIN poda): en local, `npm run import:prune`; en
+  producción, exclusivamente `docker compose -f
+  docker-compose.prod.yml run --rm api node dist/import.js
+  --prune-missing`. Sin poda, el comportamiento es el de siempre:
+  no se borra nada y el resumen no lleva clave `prune`.
 - El manifiesto declara `sha256 =
   088655db8d0d3bffd38cc1f4f23454ad61df413ff34b1cb7bc01e1f62811cef5`
   y los IDs exactos: **CH-06, DO-01, ES-236, TW-01, TW-02**.

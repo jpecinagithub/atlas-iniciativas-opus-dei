@@ -33,6 +33,8 @@ npm run data        # catalog.json + countries.geojson + sources.json
 
 # 3) Base de datos: migraciones + importación (idempotente)
 npm run import      # informa altas/cambios/ausentes; no borra nada
+npm run import:prune  # importación CON poda de las bajas del manifiesto
+                      # versionado (apps/api/prune-manifest.*.json)
 
 # 4) API y web (dos terminales)
 npm run api         # http://127.0.0.1:3001 (GET /api/health, /api/catalog…)
@@ -42,6 +44,15 @@ npm run dev         # http://127.0.0.1:5173 (Vite redirige /api a la API)
 npm run build       # tsc --noEmit + vite build → apps/web/dist
 cd apps/web && npx vite preview --port 4173   # también redirige /api
 ```
+
+La importación sin poda nunca borra; la poda solo ocurre con
+`npm run import:prune` (en local) o con el comando docker de
+producción (abajo), y solo sobre los IDs del manifiesto cuyo
+SHA-256 coincide con el libro entrante. **No uses
+`npm run import -- --prune-missing`**: npm no propaga el argumento
+entre los dos niveles de workspaces y la importación se ejecutaría
+SIN podar (defecto corregido el 2026-11-13; ver
+`docs/fase-8c-migracion-taxonomia.md` §13).
 
 Variables: `DATABASE_URL` y `PORT` para la API (defectos de desarrollo
 en `apps/api/.env.example`). La ruta base es configurable para un
@@ -58,6 +69,9 @@ del servidor; ver `docs/fase-6-informe.md`):
 # En el servidor, en /opt/atlas (.env con ATLAS_DB_PASSWORD, 0600)
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml run --rm api node dist/import.js
+# Importación CON poda en producción (vía exclusiva; el manifiesto se
+# selecciona por el SHA-256 del libro entrante):
+docker compose -f docker-compose.prod.yml run --rm api node dist/import.js --prune-missing
 /opt/atlas/backup.sh   # copia de la base (cron: domingos 04:30)
 ```
 

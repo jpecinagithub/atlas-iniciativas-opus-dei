@@ -8,6 +8,7 @@
     "data": "tools/data/.venv/bin/python tools/data/build_catalog.py",
     "dev": "npm run dev --workspace=@atlas/web",
     "import": "npm run import --workspace=@atlas/api",
+    "import:prune": "npm run import:prune --workspace=@atlas/api",
     "test:api": "node tests/api-smoke.mjs",
     "test:integrity": "node tests/import-integrity.mjs",
     "test:functional": "npm run build && npm run build:api && node tests/functional-route.mjs",

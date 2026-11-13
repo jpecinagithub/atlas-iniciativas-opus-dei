@@ -273,8 +273,10 @@ taxonomía. La API no se ha tocado.
   `data/generated/v15-6-trial/`.
 - **Despliegue NO ejecutado.** La Fase 6 requerirá: aprobación visual de
   Jon sobre estas capturas, certificación de Codex, promoción de los
-  artefactos v15-6, importación en el servidor con `--prune-missing`
-  (manifiesto v15-6) y verificación por la ruta pública.
+  artefactos v15-6, importación en el servidor con el comando de
+  producción fijado (`docker compose -f docker-compose.prod.yml run
+  --rm api node dist/import.js --prune-missing`; manifiesto v15-6) y
+  verificación por la ruta pública.
 
 ## 11. Commits locales de la fase
 
@@ -434,3 +436,111 @@ en ambas plataformas (en escritorio ocupa dos líneas; en móvil, una).
 
 **Estado: correcciones aplicadas y verificadas. El despliegue (Fase
 6) continúa pendiente de la certificación de Jon y de Codex.**
+
+## 13. Corrección del camino operativo de poda (2026-11-13)
+
+Certificadas las cuatro correcciones del §12, Jon detectó un
+último bloqueo operativo: el comando documentado
+`npm run import -- --prune-missing` **no transmite el argumento**
+(el `--` no atraviesa los dos niveles de `npm run` entre la raíz
+y el workspace `@atlas/api`) y realiza una importación **sin
+poda**. Es el mismo defecto que ya había mordido dentro de esta
+fase (§12.5). Y la prueba permanente `tests/import-prune.mjs`
+invocaba el importador directamente (Node/tsx): probaba bien el
+importador, pero **no el camino que usa el operador**.
+
+### 13.1 Comando explícito nuevo
+
+Sin reenvío de argumentos: el flag viaja dentro del propio script.
+
+- `apps/api/package.json`:
+  `"import:prune": "tsx src/import.ts --prune-missing"`.
+- `package.json` (raíz):
+  `"import:prune": "npm run import:prune --workspace=@atlas/api"`.
+
+El comando `import` de siempre no cambia (importación sin poda,
+que nunca borra).
+
+### 13.2 Vía exclusiva de producción
+
+La importación con poda en producción se hará únicamente con el
+binario compilado dentro del contenedor de la API:
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm api \
+  node dist/import.js --prune-missing
+```
+
+El build de la API (`tsc`) emite `dist/import.js` (comprobado en
+esta corrección). El README prescribe ya ambas vías y retira la
+que no funciona, advirtiendo del defecto; la invocación
+prescriptiva del informe de la 8B queda igualmente corregida con
+nota fechada (su narrativa histórica no se altera).
+
+### 13.3 La prueba cubre el camino del operador
+
+`tests/import-prune.mjs`: la importación positiva v15-6 (paso 4)
+se lanza ahora con **`npm run import:prune` ejecutado desde la
+raíz del repo**, con la base temporal en `DATABASE_URL`, y exige
+en la salida del importador:
+
+- la clave `prune`;
+- el manifiesto `prune-manifest.v15-6.json`;
+- `deleted: 5`;
+- `relationsDeleted: 7`;
+
+y, como antes, verifica tras la corrida los totales en base:
+**1.409 iniciativas · 1.387 localizadas · 2.728 fuentes ·
+2.159 relaciones**. El resto de ejecuciones de la prueba
+(construcción de la base v15-5, rechazo cruzado de manifiesto,
+idempotencia y aborto ante la sexta baja) siguen invocando el
+importador directamente: su objeto es el comportamiento del
+importador, no el comando.
+
+Salida literal de la ejecución por el camino del operador sobre
+una base desechable (v14 restaurado → v15-5 → v15-6), recortada
+a lo esencial:
+
+```
+--prune-missing: manifiesto verificado; bajas a podar: 5 (CO-32, ES-153, ES-219, ES-230, MX-47)
+ "prune": {
+  "manifest": "…/apps/api/prune-manifest.v15-6.json",
+  "deleted": 5,
+  "ids": [
+   "CO-32",
+   "ES-153",
+   "ES-219",
+   "ES-230",
+   "MX-47"
+  ],
+  "relationsDeleted": 7
+ },
+ "located": 1387,
+ "unlocated": 22
+```
+
+Totales verificados en esa base tras la corrida: 1.409 ·
+1.387 · 2.728 · 2.159.
+
+### 13.4 Re-verificación
+
+- Build de la API (tipos + `tsc`): en verde, con
+  `apps/api/dist/import.js` presente.
+- **Batería de poda completa: 63/63** — los 61 checks del
+  escenario multi-manifiesto más los 2 nuevos del camino del
+  operador (presencia de la clave `prune` y del manifiesto
+  v15-6 en la salida de `npm run import:prune`); la ejecución
+  positiva exige además `deleted: 5`, `relationsDeleted: 7` y
+  los totales en base. Árbol restaurado byte a byte al v15-5
+  certificado al final (verificado por SHA-256) y bases
+  temporales eliminadas.
+- No se han repetido las capturas ni las 114 comprobaciones
+  funcionales: esta corrección no toca la web (Jon lo exime
+  expresamente).
+- Producción intacta, confirmada al terminar por la ruta
+  pública: VERSION `5722ebd12b04` y salud de la API
+  1.411/1.317/2.724/2.167 (datos v15-5).
+
+**Estado: bloqueo operativo corregido y verificado. Pendiente
+únicamente la certificación de Jon y de Codex para desplegar
+(Fase 6).**
